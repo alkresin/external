@@ -50,6 +50,7 @@ type Widget struct {
 	BColor   int32
 	Tooltip  string
 	Anchor   int32
+	pFont    *Font
 	AProps   map[string]string
 	aWidgets []*Widget
 }
@@ -63,6 +64,7 @@ var bConnExist = false
 var mfu map[string]func([]string) string
 var pMainWindow *Widget
 var aDialogs []*Widget
+var aFonts []*Font
 var iIdCount int32
 
 var PLastWindow *Widget
@@ -71,6 +73,8 @@ var PLastWidget *Widget
 var mWidgs = make(map[string]map[string]string)
 
 func init() {
+	mWidgs["main"] = nil
+	mWidgs["dialog"] = nil
 	mWidgs["label"] = map[string]string{"Transpa": "L"}
 	mWidgs["edit"] = map[string]string{"Picture": "C"}
 	mWidgs["button"] = nil
@@ -358,10 +362,61 @@ func CreateFont(pFont *Font) *Font {
 		pFont.Name = fmt.Sprintf("f%d", iIdCount)
 		iIdCount++
 	}
+	if aFonts == nil {
+		aFonts = make([]*Font, 0, 16)
+	}
+	aFonts = append(aFonts, pFont)
 	sParams := fmt.Sprintf("[\"crfont\",\"%s\",\"%s\",%d,%t,%t,%t,%t,%d]", pFont.Name, pFont.Family, pFont.Height,
 		pFont.Bold, pFont.Italic, pFont.Underline, pFont.Strikeout, pFont.Charset)
 	Sendout(sParams)
 	return pFont
+}
+
+func setprops(pWidg *Widget, mwidg map[string]string) string {
+
+	sPar := ""
+	if pWidg.Winstyle != 0 {
+		sPar += fmt.Sprintf(",\"Winstyle\": %d", pWidg.Winstyle)
+	}
+	if pWidg.TColor != 0 {
+		sPar += fmt.Sprintf(",\"TColor\": %d", pWidg.TColor)
+	}
+	if pWidg.BColor != 0 {
+		sPar += fmt.Sprintf(",\"BColor\": %d", pWidg.BColor)
+	}
+	if pWidg.Tooltip != "" {
+		sPar += fmt.Sprintf(",\"Tooltip\": \"%s\"", pWidg.Tooltip)
+	}
+	if pWidg.pFont != nil {
+		sPar += fmt.Sprintf(",\"Font\": \"%s\"", pWidg.pFont.Name)
+	}
+	if pWidg.Anchor != 0 {
+		if pWidg.Anchor == A_TOPLEFT {
+			pWidg.Anchor = 0
+		}
+		sPar += fmt.Sprintf(",\"Anchor\": %d", pWidg.Anchor)
+	}
+	if pWidg.AProps != nil {
+		for name, val := range pWidg.AProps {
+			cType, bOk := mwidg[name]
+			if bOk {
+				if cType == "C" {
+					sPar += fmt.Sprintf(",\"%s\": \"%s\"", name, val)
+				} else if cType == "L" {
+					sPar += fmt.Sprintf(",\"%s\": \"%s\"", name, val)
+				} else if cType == "N" {
+					sPar += fmt.Sprintf(",\"%s\": %d", name, val)
+				}
+			} else {
+				WriteLog(sLogName, fmt.Sprintf("Error! \"%s\" does not defined for \"%s\"", name, pWidg.Type))
+				return ""
+			}
+		}
+	}
+	if sPar != "" {
+		sPar = ",{" + sPar[1:] + "}"
+	}
+	return sPar
 }
 
 func InitMainWindow(pWnd *Widget) bool {
@@ -369,8 +424,9 @@ func InitMainWindow(pWnd *Widget) bool {
 	PLastWindow = pWnd
 	pWnd.Type = "main"
 	pWnd.Name = "main"
-	sParams := fmt.Sprintf("[\"crmainwnd\",[%d,%d,%d,%d,\"%s\"]]", pWnd.X, pWnd.Y, pWnd.W,
-		pWnd.H, pWnd.Title)
+	sPar2 := setprops(pWnd, mWidgs["main"])
+	sParams := fmt.Sprintf("[\"crmainwnd\",[%d,%d,%d,%d,\"%s\"]%s]", pWnd.X, pWnd.Y, pWnd.W,
+		pWnd.H, pWnd.Title, sPar2)
 	return Sendout(sParams)
 }
 
@@ -386,8 +442,9 @@ func InitDialog(pWnd *Widget) bool {
 	}
 	aDialogs = append(aDialogs, pWnd)
 
-	sParams := fmt.Sprintf("[\"crdialog\",\"%s\",[%d,%d,%d,%d,\"%s\"]]", pWnd.Name, pWnd.X, pWnd.Y, pWnd.W,
-		pWnd.H, pWnd.Title)
+	sPar2 := setprops(pWnd, mWidgs["dialog"])
+	sParams := fmt.Sprintf("[\"crdialog\",\"%s\",[%d,%d,%d,%d,\"%s\"]%s]", pWnd.Name, pWnd.X, pWnd.Y, pWnd.W,
+		pWnd.H, pWnd.Title, sPar2)
 	return Sendout(sParams)
 }
 
@@ -426,7 +483,7 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 	}
 }
 
-func MsgInfo( sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string ) {
+func MsgInfo(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -434,11 +491,11 @@ func MsgInfo( sMessage string, sTitle string, sFunc string, fu func([]string) st
 		sFunc = ""
 		sName = ""
 	}
-	sParams := fmt.Sprintf("[\"common\",\"minfo\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle )
+	sParams := fmt.Sprintf("[\"common\",\"minfo\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle)
 	Sendout(sParams)
 }
 
-func MsgStop( sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string ) {
+func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -446,11 +503,11 @@ func MsgStop( sMessage string, sTitle string, sFunc string, fu func([]string) st
 		sFunc = ""
 		sName = ""
 	}
-	sParams := fmt.Sprintf("[\"common\",\"mstop\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle )
+	sParams := fmt.Sprintf("[\"common\",\"mstop\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle)
 	Sendout(sParams)
 }
 
-func MsgYesNo( sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string ) {
+func MsgYesNo(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -458,7 +515,43 @@ func MsgYesNo( sMessage string, sTitle string, sFunc string, fu func([]string) s
 		sFunc = ""
 		sName = ""
 	}
-	sParams := fmt.Sprintf("[\"common\",\"myesno\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle )
+	sParams := fmt.Sprintf("[\"common\",\"myesno\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle)
+	Sendout(sParams)
+}
+
+func SelectFile(sPath string, sFunc string, fu func([]string) string, sName string) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"common\",\"cfile\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sPath)
+	Sendout(sParams)
+}
+
+func SelectColor(iColor int32, sFunc string, fu func([]string) string, sName string) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"common\",\"ccolor\",\"%s\",\"%s\",%d]", sFunc, sName, iColor)
+	Sendout(sParams)
+}
+
+func SelectFont(sFunc string, fu func([]string) string, sName string) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"common\",\"cfont\",\"%s\",\"%s\"]", sFunc, sName)
 	Sendout(sParams)
 }
 
@@ -524,45 +617,7 @@ func (o *Widget) AddWidget(pWidg *Widget) *Widget {
 		iIdCount++
 	}
 
-	sPar2 := ""
-	if pWidg.Winstyle != 0 {
-		sPar2 += fmt.Sprintf(",\"Winstyle\": %d", pWidg.Winstyle)
-	}
-	if pWidg.TColor != 0 {
-		sPar2 += fmt.Sprintf(",\"TColor\": %d", pWidg.TColor)
-	}
-	if pWidg.BColor != 0 {
-		sPar2 += fmt.Sprintf(",\"BColor\": %d", pWidg.BColor)
-	}
-	if pWidg.Tooltip != "" {
-		sPar2 += fmt.Sprintf(",\"Tooltip\": \"%s\"", pWidg.Tooltip)
-	}
-	if pWidg.Anchor != 0 {
-		if pWidg.Anchor == A_TOPLEFT {
-			pWidg.Anchor = 0
-		}
-		sPar2 += fmt.Sprintf(",\"Anchor\": %d", pWidg.Anchor)
-	}
-	if pWidg.AProps != nil {
-		for name, val := range pWidg.AProps {
-			cType, bOk := mwidg[name]
-			if bOk {
-				if cType == "C" {
-					sPar2 += fmt.Sprintf(",\"%s\": \"%s\"", name, val)
-				} else if cType == "L" {
-					sPar2 += fmt.Sprintf(",\"%s\": \"%s\"", name, val)
-				} else if cType == "N" {
-					sPar2 += fmt.Sprintf(",\"%s\": %d", name, val)
-				}
-			} else {
-				WriteLog(sLogName, fmt.Sprintf("Error! \"%s\" does not defined for \"%s\"", name, pWidg.Type))
-				return nil
-			}
-		}
-		if sPar2 != "" {
-			sPar2 = ",{" + sPar2[1:] + "}"
-		}
-	}
+	sPar2 := setprops(pWidg, mwidg)
 	sParams := fmt.Sprintf("[\"addwidg\",\"%s\",\"%s\",[\"%s\",%d,%d,%d,%d,\"%s\"]%s]",
 		pWidg.Type, pWidg.Name, o.Name, pWidg.X, pWidg.Y, pWidg.W,
 		pWidg.H, pWidg.Title, sPar2)

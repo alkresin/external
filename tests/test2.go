@@ -63,6 +63,7 @@ func fsett1(p []string)string {
 func fsett3(p []string)string {
 	if p == nil {}
 
+	egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
 	pDlg := &(egui.Widget{X: 300, Y: 200, W: 200, H: 370, Title: "Dialog Test"})
 	egui.InitDialog(pDlg)
 
