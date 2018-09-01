@@ -22,6 +22,8 @@ func main() {
 	egui.AddMenuItem( "New",
 		func (p []string)string { pLabel.SetText(p[0]); return "" }, "fsett2", "Bye...1" )
 	egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
+	egui.AddMenuSeparator()
+	egui.AddMenuItem( "Message box", fmbox1, "fmbox1" )
 	egui.EndMenu()
 	egui.Menu( "Help" )
 	egui.AddMenuItem( "About", nil, "hwg_MsgInfo(\"Test\",\"About\")" )
@@ -59,8 +61,8 @@ func fsett1(p []string)string {
 
 
 func fsett3(p []string)string {
-	if p == nil {
-	}
+	if p == nil {}
+
 	pDlg := &(egui.Widget{X: 300, Y: 200, W: 200, H: 370, Title: "Dialog Test"})
 	egui.InitDialog(pDlg)
 
@@ -79,10 +81,18 @@ func fsett3(p []string)string {
 }
 
 func fsett4(p []string)string {
-	if p == nil {
-	}
+	if p == nil {}
 	s := pEdi1.GetText()
 	fmt.Println( s )
 	egui.PLastWindow.Close()
+	return ""
+}
+
+func fmbox1(p []string)string {
+	if len(p) == 0 {
+		egui.MsgInfo( "Test1", "MsgBox", "fmbox1", fmbox1, "mm1" )
+	} else if p[0] == "mm1" {
+		egui.MsgInfo( "Test2", "MsgBox", "", nil, "" )
+	}
 	return ""
 }

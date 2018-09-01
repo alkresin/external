@@ -426,6 +426,42 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 	}
 }
 
+func MsgInfo( sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string ) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"common\",\"minfo\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle )
+	Sendout(sParams)
+}
+
+func MsgStop( sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string ) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"common\",\"mstop\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle )
+	Sendout(sParams)
+}
+
+func MsgYesNo( sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string ) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"common\",\"myesno\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle )
+	Sendout(sParams)
+}
+
 func SetImagePath(sValue string) {
 
 	sParams := fmt.Sprintf("[\"setparam\",\"bmppath\",\"%s\"]", sValue)
