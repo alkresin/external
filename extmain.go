@@ -50,7 +50,7 @@ type Widget struct {
 	BColor   int32
 	Tooltip  string
 	Anchor   int32
-	pFont    *Font
+	Font     *Font
 	AProps   map[string]string
 	aWidgets []*Widget
 }
@@ -387,8 +387,8 @@ func setprops(pWidg *Widget, mwidg map[string]string) string {
 	if pWidg.Tooltip != "" {
 		sPar += fmt.Sprintf(",\"Tooltip\": \"%s\"", pWidg.Tooltip)
 	}
-	if pWidg.pFont != nil {
-		sPar += fmt.Sprintf(",\"Font\": \"%s\"", pWidg.pFont.Name)
+	if pWidg.Font != nil {
+		sPar += fmt.Sprintf(",\"Font\": \"%s\"", pWidg.Font.Name)
 	}
 	if pWidg.Anchor != 0 {
 		if pWidg.Anchor == A_TOPLEFT {
