@@ -36,6 +36,16 @@ type Font struct {
 	Charset   int16
 }
 
+type Style struct {
+	Name      string
+	Orient    int16
+	Colors    []int32
+	Corners   []int32
+	BorderW   int8
+	BorderClr int32
+	Bitmap    string
+}
+
 type Widget struct {
 	Parent   *Widget
 	Type     string
@@ -65,6 +75,7 @@ var mfu map[string]func([]string) string
 var pMainWindow *Widget
 var aDialogs []*Widget
 var aFonts []*Font
+var aStyles []*Style
 var iIdCount int32
 
 var PLastWindow *Widget
@@ -85,7 +96,7 @@ func init() {
 	mWidgs["combo"] = map[string]string{"AItems": "A"}
 	mWidgs["bitmap"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C"}
 	mWidgs["line"] = map[string]string{"Vertical": "L"}
-	mWidgs["panel"] = nil
+	mWidgs["panel"] = map[string]string{"HStyle": "C"}
 }
 
 func Init(sOpt string) bool {
@@ -370,6 +381,25 @@ func CreateFont(pFont *Font) *Font {
 		pFont.Bold, pFont.Italic, pFont.Underline, pFont.Strikeout, pFont.Charset)
 	Sendout(sParams)
 	return pFont
+}
+
+func CreateStyle(pStyle *Style) *Style {
+
+	if pStyle.Name == "" {
+		pStyle.Name = fmt.Sprintf("s%d", iIdCount)
+		iIdCount++
+	}
+	if aStyles == nil {
+		aStyles = make([]*Style, 0, 16)
+	}
+	aStyles = append(aStyles, pStyle)
+	b1, _ := json.Marshal(pStyle.Colors)
+	b2, _ := json.Marshal(pStyle.Corners)
+	sParams := fmt.Sprintf("[\"crstyle\",\"%s\",%s,%d,%s,%d,%d,\"%s\"]", pStyle.Name,
+		string(b1), pStyle.Orient, string(b2),
+		pStyle.BorderW, pStyle.BorderClr, pStyle.Bitmap)
+	Sendout(sParams)
+	return pStyle
 }
 
 func setprops(pWidg *Widget, mwidg map[string]string) string {
