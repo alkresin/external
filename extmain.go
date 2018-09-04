@@ -97,6 +97,7 @@ func init() {
 	mWidgs["bitmap"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C"}
 	mWidgs["line"] = map[string]string{"Vertical": "L"}
 	mWidgs["panel"] = map[string]string{"HStyle": "C"}
+	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C"}
 }
 
 func Init(sOpt string) bool {
@@ -142,6 +143,8 @@ func Init(sOpt string) bool {
 
 	connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
 	if err != nil {
+		time.Sleep(1000 * time.Millisecond)
+		connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
 		WriteLog(sLogName, fmt.Sprintln(sServer, sIp, iPort))
 		WriteLog(sLogName, fmt.Sprintln(err))
 		return false
@@ -345,6 +348,16 @@ func RegFunc(sName string, fu func([]string) string) {
 		mfu = make(map[string]func([]string) string)
 	}
 	mfu[sName] = fu
+}
+
+func widgFullName(pWidg *Widget) string {
+	sName := pWidg.Name
+
+	for pWidg.Parent != nil {
+		pWidg = pWidg.Parent
+		sName = pWidg.Name + "." + sName
+	}
+	return sName
 }
 
 func Wnd(sName string) *Widget {
@@ -648,8 +661,8 @@ func (o *Widget) AddWidget(pWidg *Widget) *Widget {
 	}
 
 	sPar2 := setprops(pWidg, mwidg)
-	sParams := fmt.Sprintf("[\"addwidg\",\"%s\",\"%s\",[\"%s\",%d,%d,%d,%d,\"%s\"]%s]",
-		pWidg.Type, pWidg.Name, o.Name, pWidg.X, pWidg.Y, pWidg.W,
+	sParams := fmt.Sprintf("[\"addwidg\",\"%s\",\"%s\",[%d,%d,%d,%d,\"%s\"]%s]",
+		pWidg.Type, widgFullName(pWidg), pWidg.X, pWidg.Y, pWidg.W,
 		pWidg.H, pWidg.Title, sPar2)
 	Sendout(sParams)
 	PLastWidget = pWidg
@@ -662,18 +675,15 @@ func (o *Widget) AddWidget(pWidg *Widget) *Widget {
 
 func (o *Widget) SetText(sText string) {
 
-	var sName = o.Name
+	var sName = widgFullName(o)
 	o.Title = sText
-	if o.Parent != nil {
-		sName = o.Parent.Name + "." + sName
-	}
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"text\",\"%s\"]", sName, sText)
 	Sendout(sParams)
 }
 
 func (o *Widget) SetImage(sImage string) {
 
-	var sName = o.Name
+	var sName = widgFullName(o)
 
 	mwidg, bOk := mWidgs[o.Type]
 	if !bOk {
@@ -685,18 +695,12 @@ func (o *Widget) SetImage(sImage string) {
 	}
 
 	o.AProps["Image"] = sImage
-	if o.Parent != nil {
-		sName = o.Parent.Name + "." + sName
-	}
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"image\",\"%s\"]", sName, sImage)
 	Sendout(sParams)
 }
 func (o *Widget) GetText() string {
-	var sName = o.Name
-	//o.Title = sText
-	if o.Parent != nil {
-		sName = o.Parent.Name + "." + sName
-	}
+	var sName = widgFullName(o)
+
 	sParams := fmt.Sprintf("[\"get\",\"%s\",\"text\"]", sName)
 	b := SendoutAndReturn(sParams, 1024)
 	if b[0] == byte('+') && b[1] == byte('"') {
@@ -707,20 +711,16 @@ func (o *Widget) GetText() string {
 
 func (o *Widget) SetColor(tColor int32, bColor int32) {
 
-	var sName = o.Name
-	if o.Parent != nil {
-		sName = o.Parent.Name + "." + sName
-	}
+	var sName = widgFullName(o)
+
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"color\",[%d,%d]]", sName, tColor, bColor)
 	Sendout(sParams)
 }
 
 func (o *Widget) SetCallBackProc(sbName string, fu func([]string) string, sCode string, params ...string) {
 
-	var sName = o.Name
-	if o.Parent != nil {
-		sName = o.Parent.Name + "." + sName
-	}
+	var sName = widgFullName(o)
+
 	if fu != nil {
 		RegFunc(sCode, fu)
 		sCode = "pgo(\"" + sCode + "\",{\"" + sName + "\""
@@ -736,10 +736,8 @@ func (o *Widget) SetCallBackProc(sbName string, fu func([]string) string, sCode 
 
 func (o *Widget) SetCallBackFunc(sbName string, fu func([]string) string, sCode string, params ...string) {
 
-	var sName = o.Name
-	if o.Parent != nil {
-		sName = o.Parent.Name + "." + sName
-	}
+	var sName = widgFullName(o)
+
 	if fu != nil {
 		RegFunc(sCode, fu)
 		sCode = "fgo(\"" + sCode + "\",{\"" + sName + "\""

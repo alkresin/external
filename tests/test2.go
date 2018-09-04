@@ -39,10 +39,10 @@ func main() {
 		AProps: map[string]string{"Transpa":"t"} }))
 
 	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 16, W: 100, H: 32, Title: "Click"}))
-	egui.PLastWidget.SetCallBackProc("bclick", nil, "private sss:=\"Done\"\r\nhwg_MsgInfo(sss)")
+	egui.PLastWidget.SetCallBackProc("onclick", nil, "private sss:=\"Done\"\r\nhwg_MsgInfo(sss)")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 60, W: 100, H: 32, Title: "SetText"}))
-	egui.PLastWidget.SetCallBackProc("bclick", fsett1, "fsett1", "first parameter")
+	egui.PLastWidget.SetCallBackProc("onclick", fsett1, "fsett1", "first parameter")
 
 	pWindow.Activate()
 
@@ -75,7 +75,7 @@ func fsett3(p []string)string {
 	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi3", X: 20, Y: 164, W: 160, H: 24 }))
 
 	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 50, Y: 330, W: 100, H: 32, Title: "Ok"}))
-	egui.PLastWidget.SetCallBackProc("bclick", fsett4, "fsett4")
+	egui.PLastWidget.SetCallBackProc("onclick", fsett4, "fsett4")
 
 	pDlg.Activate()
 	return ""
