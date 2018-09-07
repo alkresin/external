@@ -5,14 +5,26 @@ import (
 	egui "github.com/alkresin/external"
 )
 
+const (
+	CLR_LBLUE  = 16759929
+	CLR_LBLUE0 = 12164479
+	CLR_LBLUE3 = 16772062
+	CLR_LBLUE4 = 16775920
+)
+
 var pLabel *egui.Widget
 var pEdi1 *egui.Widget
 
 func main() {
 
-	if !egui.Init("") {
+	if !egui.Init("port=3105") {
 		return
 	}
+
+	egui.CreateStyle( &(egui.Style{Name: "st1", Orient: 1, Colors: []int32{CLR_LBLUE,CLR_LBLUE3}}) )
+	egui.CreateStyle( &(egui.Style{Name: "st2", Colors: []int32{CLR_LBLUE}, BorderW: 3}) )
+	egui.CreateStyle( &(egui.Style{Name: "st3", Colors: []int32{CLR_LBLUE},
+		BorderW: 2, BorderClr: CLR_LBLUE0}) )
 
 	pWindow := &(egui.Widget{X: 100, Y: 100, W: 400, H: 220, Title: "External"})
 	egui.InitMainWindow(pWindow)
@@ -30,18 +42,24 @@ func main() {
 	egui.EndMenu()
 	egui.EndMenu()
 
+	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "panel", X: 0, Y: 0, W: 400, H: 40,
+		AProps: map[string]string{"HStyle":"st1"} }))
+	pOwn := pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 56, H: 40, Title: "Own1",
+		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
+	pOwn.SetCallBackProc("onclick", nil, "hwg_MsgInfo(\"Ok\")")
+
 	pLabel = pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
-		X: 20, Y: 20, W: 180, H: 24, Title: "Test of a label",
+		X: 20, Y: 60, W: 180, H: 24, Title: "Test of a label",
 		AProps: map[string]string{"Transpa":"t"} }))
 
 	pWindow.AddWidget(&(egui.Widget{Type: "label",
-		X: 20, Y: 50, W: 180, H: 24, Title: "Second", TColor: 255,
+		X: 20, Y: 90, W: 180, H: 24, Title: "Second", TColor: 255,
 		AProps: map[string]string{"Transpa":"t"} }))
 
-	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 16, W: 100, H: 32, Title: "Click"}))
+	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 56, W: 100, H: 32, Title: "Click"}))
 	egui.PLastWidget.SetCallBackProc("onclick", nil, "private sss:=\"Done\"\r\nhwg_MsgInfo(sss)")
 
-	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 60, W: 100, H: 32, Title: "SetText"}))
+	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 100, W: 100, H: 32, Title: "SetText"}))
 	egui.PLastWidget.SetCallBackProc("onclick", fsett1, "fsett1", "first parameter")
 
 	pWindow.Activate()
@@ -73,6 +91,9 @@ func fsett3(p []string)string {
 	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 104, W: 160, H: 24 }))
 	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 140, W: 180, H: 24, Title: "Профессия:"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi3", X: 20, Y: 164, W: 160, H: 24 }))
+
+	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 200, W: 160, H: 24,
+	      AProps: map[string]string{"AItems": egui.ArrStrings("first","second","third")} }))
 
 	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 50, Y: 330, W: 100, H: 32, Title: "Ok"}))
 	egui.PLastWidget.SetCallBackProc("onclick", fsett4, "fsett4")
