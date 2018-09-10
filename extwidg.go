@@ -88,7 +88,6 @@ func init() {
 	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
 }
 
-
 func widgFullName(pWidg *Widget) string {
 	sName := pWidg.Name
 
@@ -184,6 +183,11 @@ func OpenMainForm(sForm string) bool {
 	return b
 }
 
+func OpenReport(sForm string) bool {
+	var b bool
+	b = Sendout("[\"openreport\",\"" + sForm + "\"]")
+	return b
+}
 func CreateFont(pFont *Font) *Font {
 
 	if pFont.Name == "" {
