@@ -42,7 +42,7 @@ func main() {
 	egui.EndMenu()
 	egui.EndMenu()
 
-	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "panel", X: 0, Y: 0, W: 400, H: 40,
+	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "paneltop", X: 0, Y: 0, W: 56, H: 40,
 		AProps: map[string]string{"HStyle":"st1"} }))
 	pOwn := pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 56, H: 40, Title: "Own1",
 		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))

@@ -14,7 +14,7 @@ import (
 var sLogName = "egui.log"
 var bEndProg = false
 
-var connOut net.Conn
+var connOut, connIn net.Conn
 var bConnExist = false
 
 func Init(sOpt string) bool {
@@ -70,7 +70,6 @@ func Init(sOpt string) bool {
 			return false
 		}
 	}
-
 	_, err = connOut.Read(buf)
 	if err != nil {
 		WriteLog(sLogName, fmt.Sprintln(err))
@@ -78,11 +77,24 @@ func Init(sOpt string) bool {
 		return false
 	}
 
+	connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
+	if err != nil {
+		WriteLog(sLogName, fmt.Sprintln(sServer, sIp, iPort+1))
+		WriteLog(sLogName, fmt.Sprintln(err))
+		return false
+	}
+	_, err = connIn.Read(buf)
+	if err != nil {
+		WriteLog(sLogName, fmt.Sprintln(err))
+		connIn.Close()
+		return false
+	}
+
 	bConnExist = true
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
 
-	Sendout("[\"setbconn\"]")
+	//Sendout("[\"setbconn\"]")
 	return true
 
 }
@@ -97,24 +109,26 @@ func listen(iPort int) {
 
 	var bErr bool
 
-	listener, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", iPort))
-	//listener, err := net.ListenTCP("tcp4", &net.TCPAddr{IP: net.IPv4(127,0,0,1), Port: iPort})
-	if err != nil {
-		WriteLog(sLogName, "Listen error\r\n")
-		return
-	}
+	/*
+		listener, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", iPort))
+		//listener, err := net.ListenTCP("tcp4", &net.TCPAddr{IP: net.IPv4(127,0,0,1), Port: iPort})
+		if err != nil {
+			WriteLog(sLogName, "Listen error\r\n")
+			return
+		}
 
-	conn, err := listener.Accept()
-	if err != nil {
-		WriteLog(sLogName, "Accept error\r\n")
-		return
-	}
+		conn, err := listener.Accept()
+		if err != nil {
+			WriteLog(sLogName, "Accept error\r\n")
+			return
+		}
 
-	//conn.SetKeepAlive( true )
-	//conn.SetNoDelay( true )
+		//conn.SetKeepAlive( true )
+		//conn.SetNoDelay( true )
 
-	listener.Close()
-	sendResponse(conn, "Ok")
+		listener.Close()
+		sendResponse(conn, "Ok")
+	*/
 
 	//fmt.Println( ">  listen 4" )
 	buffer := make([]byte, 1024)
@@ -122,7 +136,7 @@ func listen(iPort int) {
 	for {
 
 		bErr = false
-		length, err := conn.Read(buffer)
+		length, err := connIn.Read(buffer)
 		if err != nil {
 			WriteLog(sLogName, "Read error\r\n")
 			return
@@ -145,7 +159,7 @@ func listen(iPort int) {
 		if !bErr && len(arr) > 0 {
 			switch arr[0] {
 			case "runproc":
-				sendResponse(conn, "[\"Ok\"]")
+				sendResponse(connIn, "[\"Ok\"]")
 				if len(arr) > 1 {
 					if fnc, bExist := mfu[arr[1]]; bExist {
 						var ap []string
@@ -176,16 +190,16 @@ func listen(iPort int) {
 						//WriteLog(sLogName, fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
 						s := fnc(ap)
 						b, _ := json.Marshal(s)
-						sendResponse(conn, "[\""+string(b)+"\"]")
+						sendResponse(connIn, "[\""+string(b)+"\"]")
 					} else {
-						sendResponse(conn, "[\"Err\"]")
+						sendResponse(connIn, "[\"Err\"]")
 					}
 				} else {
 					bErr = true
-					sendResponse(conn, "[\"Err\"]")
+					sendResponse(connIn, "[\"Err\"]")
 				}
 			case "exit":
-				sendResponse(conn, "[\"Ok\"]")
+				sendResponse(connIn, "[\"Ok\"]")
 				if len(arr) > 1 {
 					oW := Wnd(arr[1])
 					if oW != nil {
@@ -195,13 +209,13 @@ func listen(iPort int) {
 					bErr = true
 				}
 			case "endapp":
-				sendResponse(conn, "[\"Goodbye\"]")
+				sendResponse(connIn, "[\"Goodbye\"]")
 				time.Sleep(100 * time.Millisecond)
 				bEndProg = true
-				conn.Close()
+				connIn.Close()
 				return
 			default:
-				sendResponse(conn, "[\"Error\"]")
+				sendResponse(connIn, "[\"Error\"]")
 				bErr = true
 			}
 		}

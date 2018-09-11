@@ -85,6 +85,8 @@ func init() {
 	mWidgs["bitmap"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C"}
 	mWidgs["line"] = map[string]string{"Vertical": "L"}
 	mWidgs["panel"] = map[string]string{"HStyle": "C"}
+	mWidgs["paneltop"] = map[string]string{"HStyle": "C"}
+	mWidgs["panelbot"] = map[string]string{"HStyle": "C"}
 	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
 }
 
