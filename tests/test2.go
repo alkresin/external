@@ -8,6 +8,7 @@ import (
 const (
 	CLR_LBLUE  = 16759929
 	CLR_LBLUE0 = 12164479
+	CLR_LBLUE2 = 16770002
 	CLR_LBLUE3 = 16772062
 	CLR_LBLUE4 = 16775920
 )
@@ -25,8 +26,10 @@ func main() {
 	egui.CreateStyle( &(egui.Style{Name: "st2", Colors: []int32{CLR_LBLUE}, BorderW: 3}) )
 	egui.CreateStyle( &(egui.Style{Name: "st3", Colors: []int32{CLR_LBLUE},
 		BorderW: 2, BorderClr: CLR_LBLUE0}) )
+	egui.CreateStyle( &(egui.Style{Name: "st4", Colors: []int32{CLR_LBLUE2,CLR_LBLUE3},
+		BorderW: 1, BorderClr: CLR_LBLUE}) )
 
-	pWindow := &(egui.Widget{X: 100, Y: 100, W: 400, H: 220, Title: "External"})
+	pWindow := &(egui.Widget{X: 100, Y: 100, W: 400, H: 280, Title: "External"})
 	egui.InitMainWindow(pWindow)
 
 	egui.Menu("")
@@ -42,11 +45,11 @@ func main() {
 	egui.EndMenu()
 	egui.EndMenu()
 
-	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "paneltop", X: 0, Y: 0, W: 56, H: 40,
+	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "paneltop", H: 40,
 		AProps: map[string]string{"HStyle":"st1"} }))
 	pOwn := pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 56, H: 40, Title: "Own1",
 		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
-	pOwn.SetCallBackProc("onclick", nil, "hwg_MsgInfo(\"Ok\")")
+	pOwn.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),2,Time(),.T.)")
 
 	pLabel = pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
 		X: 20, Y: 60, W: 180, H: 24, Title: "Test of a label",
@@ -61,6 +64,9 @@ func main() {
 
 	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 100, W: 100, H: 32, Title: "SetText"}))
 	egui.PLastWidget.SetCallBackProc("onclick", fsett1, "fsett1", "first parameter")
+
+	pWindow.AddWidget(&(egui.Widget{Type: "panelbot", H: 32,
+		AProps: map[string]string{"HStyle":"st4","AParts": egui.ArrInts(120,120,0)} }))
 
 	pWindow.Activate()
 

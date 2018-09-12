@@ -3,6 +3,7 @@ package external
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
 )
 
 const (
@@ -86,7 +87,7 @@ func init() {
 	mWidgs["line"] = map[string]string{"Vertical": "L"}
 	mWidgs["panel"] = map[string]string{"HStyle": "C"}
 	mWidgs["paneltop"] = map[string]string{"HStyle": "C"}
-	mWidgs["panelbot"] = map[string]string{"HStyle": "C"}
+	mWidgs["panelbot"] = map[string]string{"HStyle": "C", "AParts": "AC"}
 	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
 }
 
@@ -170,6 +171,14 @@ func ArrStrings(sParam ...string) string {
 	return "[" + s[1:] + "]"
 }
 
+func ArrInts(iParam ...int) string {
+	s := ""
+	for _, v := range iParam {
+		s += "," + strconv.Itoa( v )
+	}
+	return "[" + s[1:] + "]"
+}
+
 func ArrWidgs(wParam ...*Widget) string {
 	s := ""
 	for _, w := range wParam {
@@ -181,6 +190,13 @@ func ArrWidgs(wParam ...*Widget) string {
 func OpenMainForm(sForm string) bool {
 	var b bool
 	b = Sendout("[\"openformmain\",\"" + sForm + "\"]")
+	Wait()
+	return b
+}
+
+func OpenForm(sForm string) bool {
+	var b bool
+	b = Sendout("[\"openform\",\"" + sForm + "\"]")
 	Wait()
 	return b
 }
