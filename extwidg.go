@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"strings"
 )
 
 const (
@@ -101,7 +102,7 @@ func widgFullName(pWidg *Widget) string {
 	return sName
 }
 
-func Wnd(sName string) *Widget {
+func GetWnd(sName string) *Widget {
 	if sName == "main" {
 		return pMainWindow
 	} else if aDialogs != nil {
@@ -114,6 +115,35 @@ func Wnd(sName string) *Widget {
 	return nil
 }
 
+func GetWidg(sName string) *Widget {
+	npos := strings.Index(sName, ".")
+	if npos == -1 {
+		return GetWnd(sName)
+	}
+	sWnd := sName[:npos]
+	sName = sName[npos+1:]
+	if oWnd := GetWnd(sWnd); oWnd != nil {
+		npos = strings.Index(sName, ".")
+		if npos > -1 {
+			sWnd := sName[:npos]
+			sName = sName[npos+1:]
+			for _, o := range oWnd.aWidgets {
+				if o.Name == sWnd {
+					oWnd = o
+					break
+				}
+			}
+		}
+		if oWnd != nil {
+			for _, o := range oWnd.aWidgets {
+				if o.Name == sName {
+					return o
+				}
+			}
+		}
+	}
+	return nil
+}
 func setprops(pWidg *Widget, mwidg map[string]string) string {
 
 	sPar := ""
@@ -174,7 +204,7 @@ func ArrStrings(sParam ...string) string {
 func ArrInts(iParam ...int) string {
 	s := ""
 	for _, v := range iParam {
-		s += "," + strconv.Itoa( v )
+		s += "," + strconv.Itoa(v)
 	}
 	return "[" + s[1:] + "]"
 }

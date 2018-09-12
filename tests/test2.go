@@ -13,9 +13,6 @@ const (
 	CLR_LBLUE4 = 16775920
 )
 
-var pLabel *egui.Widget
-var pEdi1 *egui.Widget
-
 func main() {
 
 	if !egui.Init("port=3105") {
@@ -35,7 +32,7 @@ func main() {
 	egui.Menu("")
 	egui.Menu( "File" )
 	egui.AddMenuItem( "New",
-		func (p []string)string { pLabel.SetText(p[0]); return "" }, "fsett2", "Bye...1" )
+		func (p []string)string { egui.GetWidg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1" )
 	egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
 	egui.AddMenuSeparator()
 	egui.AddMenuItem( "Message box", fmbox1, "fmbox1" )
@@ -51,7 +48,7 @@ func main() {
 		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
 	pOwn.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),2,Time(),.T.)")
 
-	pLabel = pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
+	pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
 		X: 20, Y: 60, W: 180, H: 24, Title: "Test of a label",
 		AProps: map[string]string{"Transpa":"t"} }))
 
@@ -76,10 +73,10 @@ func main() {
 
 func fsett1(p []string)string {
 
+	pLabel := egui.GetWidg("main.l1")
+	fmt.Println( pLabel.GetText() )
 	pLabel.SetText( p[1] )
-	//b := egui.EvalFunc( "Return GetWidgetByName(\"main.l1\"):GetText()")
-	s := pLabel.GetText()
-	fmt.Println( s )
+
 	return ""
 }
 
@@ -88,11 +85,11 @@ func fsett3(p []string)string {
 	if p == nil {}
 
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
-	pDlg := &(egui.Widget{X: 300, Y: 200, W: 200, H: 370, Title: "Dialog Test", Font: pFont })
+	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 200, H: 370, Title: "Dialog Test", Font: pFont })
 	egui.InitDialog(pDlg)
 
 	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 20, W: 180, H: 24, Title: "Name:"}))
-	pEdi1 = pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi1", X: 20, Y: 44, W: 160, H: 24 }))
+	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi1", X: 20, Y: 44, W: 160, H: 24 }))
 	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 80, W: 180, H: 24, Title: "SurName:"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 104, W: 160, H: 24 }))
 	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 140, W: 180, H: 24, Title: "Профессия:"}))
@@ -110,7 +107,7 @@ func fsett3(p []string)string {
 
 func fsett4(p []string)string {
 	if p == nil {}
-	s := pEdi1.GetText()
+	s := egui.GetWidg("dlg.edi1").GetText()
 	fmt.Println( s )
 	egui.PLastWindow.Close()
 	return ""
