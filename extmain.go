@@ -1,3 +1,11 @@
+/*
+ *  External - GUI framework for Go language
+ *  External is a Go library to build GUI application, using external
+ *       standalone GUI server application: https://github.com/alkresin/guiserver
+ *
+ * Copyright 2018 Alexander S.Kresin <alex@kresin.ru>
+ * www - http://www.kresin.ru
+ */
 package external
 
 import (
