@@ -227,7 +227,6 @@ func OpenMainForm(sForm string) bool {
 func OpenForm(sForm string) bool {
 	var b bool
 	b = Sendout("[\"openform\",\"" + sForm + "\"]")
-	Wait()
 	return b
 }
 
@@ -236,16 +235,10 @@ func OpenReport(sForm string) bool {
 	b = Sendout("[\"openreport\",\"" + sForm + "\"]")
 	return b
 }
+
 func CreateFont(pFont *Font) *Font {
 
-	if pFont.Name == "" {
-		pFont.Name = fmt.Sprintf("f%d", iIdCount)
-		iIdCount++
-	}
-	if aFonts == nil {
-		aFonts = make([]*Font, 0, 16)
-	}
-	aFonts = append(aFonts, pFont)
+	pFont.newfont()
 	sParams := fmt.Sprintf("[\"crfont\",\"%s\",\"%s\",%d,%t,%t,%t,%t,%d]", pFont.Name, pFont.Family, pFont.Height,
 		pFont.Bold, pFont.Italic, pFont.Underline, pFont.Strikeout, pFont.Charset)
 	Sendout(sParams)
@@ -401,9 +394,10 @@ func SelectFont(sFunc string, fu func([]string) string, sName string) {
 		RegFunc(sFunc, fu)
 	} else {
 		sFunc = ""
-		sName = ""
 	}
-	sParams := fmt.Sprintf("[\"common\",\"cfont\",\"%s\",\"%s\"]", sFunc, sName)
+	pFont := &( Font{ Name: sName } )
+	pFont.newfont()
+	sParams := fmt.Sprintf("[\"common\",\"cfont\",\"%s\",\"%s\"]", sFunc, pFont.Name)
 	Sendout(sParams)
 }
 
@@ -411,6 +405,24 @@ func SetImagePath(sValue string) {
 
 	sParams := fmt.Sprintf("[\"setparam\",\"bmppath\",\"%s\"]", sValue)
 	Sendout(sParams)
+}
+
+func SetPath(sValue string) {
+
+	sParams := fmt.Sprintf("[\"setparam\",\"path\",\"%s\"]", sValue)
+	Sendout(sParams)
+}
+
+func (p *Font) newfont() *Font {
+	if p.Name == "" {
+		p.Name = fmt.Sprintf("f%d", iIdCount)
+		iIdCount++
+	}
+	if aFonts == nil {
+		aFonts = make([]*Font, 0, 16)
+	}
+	aFonts = append(aFonts, p)
+	return p
 }
 
 func (o *Widget) Activate() bool {
@@ -501,6 +513,7 @@ func (o *Widget) SetImage(sImage string) {
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"image\",\"%s\"]", sName, sImage)
 	Sendout(sParams)
 }
+
 func (o *Widget) GetText() string {
 	var sName = widgFullName(o)
 

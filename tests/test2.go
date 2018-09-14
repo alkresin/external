@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	egui "github.com/alkresin/external"
 )
 
@@ -36,6 +37,7 @@ func main() {
 	egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
 	egui.AddMenuSeparator()
 	egui.AddMenuItem( "Message box", fmbox1, "fmbox1" )
+	egui.AddMenuItem( "Select color", fsele_color, "fsele_color" )
 	egui.EndMenu()
 	egui.Menu( "Help" )
 	egui.AddMenuItem( "About", nil, "hwg_MsgInfo(\"Test\",\"About\")" )
@@ -44,9 +46,14 @@ func main() {
 
 	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "paneltop", H: 40,
 		AProps: map[string]string{"HStyle":"st1"} }))
-	pOwn := pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 56, H: 40, Title: "Own1",
+
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 56, H: 40, Title: "Date",
 		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
-	pOwn.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),2,Time(),.T.)")
+	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),1,Dtoc(Date()),.T.)")
+
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 56, Y: 0, W: 56, H: 40, Title: "Time",
+		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
+	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),2,Time(),.T.)")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
 		X: 20, Y: 60, W: 180, H: 24, Title: "Test of a label",
@@ -118,6 +125,17 @@ func fmbox1(p []string)string {
 		egui.MsgInfo( "Test1", "MsgBox", "fmbox1", fmbox1, "mm1" )
 	} else if p[0] == "mm1" {
 		egui.MsgInfo( "Test2", "MsgBox", "", nil, "" )
+	}
+	return ""
+}
+
+func fsele_color(p []string)string {
+	if len(p) == 0 {
+		egui.SelectColor( 0, "fsele_color", fsele_color, "mm1" )
+	} else {
+		fmt.Println( "color: ",p[1] )
+		iColor,_ := strconv.Atoi(p[1])
+		egui.GetWidg("main.l1").SetColor( int32(iColor),-1 )
 	}
 	return ""
 }
