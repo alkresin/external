@@ -16,7 +16,7 @@ const (
 
 func main() {
 
-	if !egui.Init("port=3105") {
+	if !egui.Init("port=3105\nlog") {
 		return
 	}
 
@@ -32,15 +32,20 @@ func main() {
 
 	egui.Menu("")
 	egui.Menu( "File" )
-	egui.AddMenuItem( "New",
+	egui.AddMenuItem( "Set text",
 		func (p []string)string { egui.GetWidg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1" )
 	egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
 	egui.AddMenuSeparator()
-	egui.AddMenuItem( "Message box", fmbox1, "fmbox1" )
+	egui.AddMenuItem( "Message boxes", fmbox1, "fmbox1" )
+	egui.AddMenuItem( "MsgGet box", fmbox2, "fmbox2" )
 	egui.AddMenuItem( "Select color", fsele_color, "fsele_color" )
+	egui.AddMenuItem( "Select font", fsele_font, "fsele_font" )
+	egui.AddMenuItem( "Select file", fsele_file, "fsele_file" )
+	egui.AddMenuSeparator()
+	egui.AddMenuItem( "Exit", nil, "hwg_EndWindow()" )
 	egui.EndMenu()
 	egui.Menu( "Help" )
-	egui.AddMenuItem( "About", nil, "hwg_MsgInfo(\"Test\",\"About\")" )
+	egui.AddMenuItem( "About", nil, "hwg_MsgInfo(hb_version()+chr(10)+chr(13)+hwg_version(),\"About\")" )
 	egui.EndMenu()
 	egui.EndMenu()
 
@@ -114,17 +119,31 @@ func fsett3(p []string)string {
 
 func fsett4(p []string)string {
 	if p == nil {}
-	s := egui.GetWidg("dlg.edi1").GetText()
-	fmt.Println( s )
+	s1 := egui.GetWidg("dlg.edi1").GetText()
+	s2 := egui.GetWidg("dlg.edi2").GetText()
+	egui.MsgInfo( s1 + "\r\n" + s2, "Result", "", nil, "" )
 	egui.PLastWindow.Close()
 	return ""
 }
 
 func fmbox1(p []string)string {
 	if len(p) == 0 {
-		egui.MsgInfo( "Test1", "MsgBox", "fmbox1", fmbox1, "mm1" )
+		egui.MsgYesNo( "Yes or No???", "MsgBox", "fmbox1", fmbox1, "mm1" )
 	} else if p[0] == "mm1" {
-		egui.MsgInfo( "Test2", "MsgBox", "", nil, "" )
+		if p[1] == "t" {
+			egui.MsgInfo( "Yes!", "Answer", "", nil, "" )
+		} else {
+			egui.MsgInfo( "No...", "Answer", "", nil, "" )
+		}
+	}
+	return ""
+}
+
+func fmbox2(p []string)string {
+	if len(p) == 0 {
+		egui.MsgGet( "Input something:", "MsgGet", 0, "fmbox2", fmbox2, "mm1" )
+	} else if p[0] == "mm1" {
+		egui.MsgInfo( p[1], "Answer", "", nil, "" )
 	}
 	return ""
 }
@@ -133,9 +152,36 @@ func fsele_color(p []string)string {
 	if len(p) == 0 {
 		egui.SelectColor( 0, "fsele_color", fsele_color, "mm1" )
 	} else {
-		fmt.Println( "color: ",p[1] )
 		iColor,_ := strconv.Atoi(p[1])
 		egui.GetWidg("main.l1").SetColor( int32(iColor),-1 )
+	}
+	return ""
+}
+
+func fsele_font(p []string)string {
+	if len(p) == 0 {
+		egui.SelectFont( "fsele_font", fsele_font, "" )
+	} else {
+		fmt.Println( "font id: ", p[0] )
+		if pFont := egui.GetFont( p[0] ); pFont != nil {
+			if len(p) < 8 {
+			} else {
+				fmt.Println( "font fam: ", p[1] )
+			}
+		}
+	}
+	return ""
+}
+
+func fsele_file(p []string)string {
+	if len(p) == 0 {
+		egui.SelectFile( "", "fsele_file", fsele_file, "mm1" )
+	} else {
+		if p[1] == "" {
+			egui.MsgInfo( "Nothing selected", "Result", "", nil, "" )
+		} else {
+			egui.MsgInfo( p[1], "File selected", "", nil, "" )
+		}
 	}
 	return ""
 }

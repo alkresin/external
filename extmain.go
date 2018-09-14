@@ -32,6 +32,7 @@ func Init(sOpt string) bool {
 	iPort := 3101
 	sServer := "guiserver.exe"
 	sIp := "127.0.0.1"
+	sLog := ""
 	if sOpt != "" {
 		var arr []string
 		sep := "\r\n"
@@ -48,12 +49,14 @@ func Init(sOpt string) bool {
 		}
 		for i := 0; i < len(arr); i++ {
 			s := strings.ToLower(arr[i])
-			if s[:9] == "guiserver" {
+			if len(s) > 9 && s[:9] == "guiserver" {
 				sServer = strings.TrimSpace(s[10:])
-			} else if s[:7] == "address" {
+			} else if len(s) > 8 && s[:7] == "address" {
 				sIp = strings.TrimSpace(s[8:])
-			} else if s[:4] == "port" {
+			} else if len(s) > 5 && s[:4] == "port" {
 				iPort, _ = strconv.Atoi(strings.TrimSpace(s[5:]))
+			} else if len(s) > 2 && s[:3] == "log" {
+				sLog = "-log+"
 			}
 		}
 	}
@@ -61,7 +64,7 @@ func Init(sOpt string) bool {
 	buf := make([]byte, 128)
 
 	if sServer != "" {
-		cmd := exec.Command(sServer, fmt.Sprintf("-p%d", iPort))
+		cmd := exec.Command(sServer, fmt.Sprintf("-p%d", iPort), sLog)
 		cmd.Start()
 	}
 	time.Sleep(100 * time.Millisecond)

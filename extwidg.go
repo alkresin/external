@@ -102,6 +102,17 @@ func widgFullName(pWidg *Widget) string {
 	return sName
 }
 
+func GetFont(sName string) *Font {
+	if aFonts != nil {
+		for _, o := range aFonts {
+			if o.Name == sName {
+				return o
+			}
+		}
+	}
+	return nil
+}
+
 func GetWnd(sName string) *Widget {
 	if sName == "main" {
 		return pMainWindow
@@ -144,6 +155,7 @@ func GetWidg(sName string) *Widget {
 	}
 	return nil
 }
+
 func setprops(pWidg *Widget, mwidg map[string]string) string {
 
 	sPar := ""
@@ -336,7 +348,8 @@ func MsgInfo(sMessage string, sTitle string, sFunc string, fu func([]string) str
 		sFunc = ""
 		sName = ""
 	}
-	sParams := fmt.Sprintf("[\"common\",\"minfo\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle)
+	b, _ := json.Marshal(sMessage)
+	sParams := fmt.Sprintf("[\"common\",\"minfo\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
 	Sendout(sParams)
 }
 
@@ -348,7 +361,8 @@ func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) str
 		sFunc = ""
 		sName = ""
 	}
-	sParams := fmt.Sprintf("[\"common\",\"mstop\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle)
+	b, _ := json.Marshal(sMessage)
+	sParams := fmt.Sprintf("[\"common\",\"mstop\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
 	Sendout(sParams)
 }
 
@@ -360,7 +374,21 @@ func MsgYesNo(sMessage string, sTitle string, sFunc string, fu func([]string) st
 		sFunc = ""
 		sName = ""
 	}
-	sParams := fmt.Sprintf("[\"common\",\"myesno\",\"%s\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sMessage, sTitle)
+	b, _ := json.Marshal(sMessage)
+	sParams := fmt.Sprintf("[\"common\",\"myesno\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
+	Sendout(sParams)
+}
+
+func MsgGet(sMessage string, sTitle string, iStyle int32, sFunc string, fu func([]string) string, sName string) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	b, _ := json.Marshal(sMessage)
+	sParams := fmt.Sprintf("[\"common\",\"mget\",\"%s\",\"%s\",%s,\"%s\",%d]", sFunc, sName, string(b), sTitle, iStyle)
 	Sendout(sParams)
 }
 
@@ -423,6 +451,18 @@ func (p *Font) newfont() *Font {
 	}
 	aFonts = append(aFonts, p)
 	return p
+}
+
+func (p *Font) FillFont( arr []string ) {
+	p.Family = arr[1]
+	i,_ := strconv.Atoi(arr[2])
+	p.Height = int16(i)
+	p.Bold = ( arr[3] == "t" )
+	p.Italic = ( arr[4] == "t" )
+	p.Underline = ( arr[5] == "t" )
+	p.Strikeout = ( arr[6] == "t" )
+	i,_ = strconv.Atoi(arr[7])
+	p.Charset = int16(i)
 }
 
 func (o *Widget) Activate() bool {
@@ -530,6 +570,14 @@ func (o *Widget) SetColor(tColor int32, bColor int32) {
 	var sName = widgFullName(o)
 
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"color\",[%d,%d]]", sName, tColor, bColor)
+	Sendout(sParams)
+}
+
+func (o *Widget) SetFont(pFont *Font) {
+
+	var sName = widgFullName(o)
+	o.Font = pFont
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"font\",\"%s\"]", sName, pFont.Name)
 	Sendout(sParams)
 }
 
