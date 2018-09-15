@@ -38,6 +38,7 @@ func main() {
 	egui.AddMenuSeparator()
 	egui.AddMenuItem( "Message boxes", fmbox1, "fmbox1" )
 	egui.AddMenuItem( "MsgGet box", fmbox2, "fmbox2" )
+	egui.AddMenuItem( "Choice", fmbox3, "fmbox3" )
 	egui.AddMenuItem( "Select color", fsele_color, "fsele_color" )
 	egui.AddMenuItem( "Select font", fsele_font, "fsele_font" )
 	egui.AddMenuItem( "Select file", fsele_file, "fsele_file" )
@@ -142,6 +143,16 @@ func fmbox1(p []string)string {
 func fmbox2(p []string)string {
 	if len(p) == 0 {
 		egui.MsgGet( "Input something:", "MsgGet", 0, "fmbox2", fmbox2, "mm1" )
+	} else if p[0] == "mm1" {
+		egui.MsgInfo( p[1], "Answer", "", nil, "" )
+	}
+	return ""
+}
+
+func fmbox3(p []string)string {
+	if len(p) == 0 {
+		arr := []string{ "Alex Petrov", "Serg Lama", "Jimmy Hendrix", "Dorian Gray", "Victor Peti" }
+		egui.Choice( arr, "Select from a list", "fmbox3", fmbox3, "mm1" )
 	} else if p[0] == "mm1" {
 		egui.MsgInfo( p[1], "Answer", "", nil, "" )
 	}

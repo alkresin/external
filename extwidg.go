@@ -392,6 +392,19 @@ func MsgGet(sMessage string, sTitle string, iStyle int32, sFunc string, fu func(
 	Sendout(sParams)
 }
 
+func Choice(arr []string, sTitle string, sFunc string, fu func([]string) string, sName string) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	b, _ := json.Marshal(arr)
+	sParams := fmt.Sprintf("[\"common\",\"mchoi\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle )
+	Sendout(sParams)
+}
+
 func SelectFile(sPath string, sFunc string, fu func([]string) string, sName string) {
 
 	if fu != nil && sFunc != "" {

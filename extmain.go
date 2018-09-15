@@ -105,7 +105,6 @@ func Init(sOpt string) bool {
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
 
-	//Sendout("[\"setbconn\"]")
 	return true
 
 }
@@ -120,28 +119,6 @@ func listen(iPort int) {
 
 	var bErr bool
 
-	/*
-		listener, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", iPort))
-		//listener, err := net.ListenTCP("tcp4", &net.TCPAddr{IP: net.IPv4(127,0,0,1), Port: iPort})
-		if err != nil {
-			WriteLog(sLogName, "Listen error\r\n")
-			return
-		}
-
-		conn, err := listener.Accept()
-		if err != nil {
-			WriteLog(sLogName, "Accept error\r\n")
-			return
-		}
-
-		//conn.SetKeepAlive( true )
-		//conn.SetNoDelay( true )
-
-		listener.Close()
-		sendResponse(conn, "Ok")
-	*/
-
-	//fmt.Println( ">  listen 4" )
 	buffer := make([]byte, 1024)
 	arr := make([]string, 5)
 	for {
