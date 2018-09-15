@@ -76,27 +76,27 @@ func Init(sOpt string) bool {
 		if err != nil {
 			time.Sleep(3000 * time.Millisecond)
 			connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
-			WriteLog(sLogName, fmt.Sprintln(sServer, sIp, iPort))
-			WriteLog(sLogName, fmt.Sprintln(err))
+			WriteLog(fmt.Sprintln(sServer, sIp, iPort))
+			WriteLog(fmt.Sprintln(err))
 			return false
 		}
 	}
 	_, err = connOut.Read(buf)
 	if err != nil {
-		WriteLog(sLogName, fmt.Sprintln(err))
+		WriteLog(fmt.Sprintln(err))
 		connOut.Close()
 		return false
 	}
 
 	connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
 	if err != nil {
-		WriteLog(sLogName, fmt.Sprintln(sServer, sIp, iPort+1))
-		WriteLog(sLogName, fmt.Sprintln(err))
+		WriteLog(fmt.Sprintln(sServer, sIp, iPort+1))
+		WriteLog(fmt.Sprintln(err))
 		return false
 	}
 	_, err = connIn.Read(buf)
 	if err != nil {
-		WriteLog(sLogName, fmt.Sprintln(err))
+		WriteLog(fmt.Sprintln(err))
 		connIn.Close()
 		return false
 	}
@@ -124,9 +124,11 @@ func listen(iPort int) {
 	for {
 
 		bErr = false
-		length, err := connIn.Read(buffer)
+		//length, err := connIn.Read(buffer)
+		length, err := read(connIn, &buffer)
+
 		if err != nil {
-			WriteLog(sLogName, "Read error\r\n")
+			//WriteLog("Read error\r\n")
 			return
 		}
 
@@ -137,7 +139,7 @@ func listen(iPort int) {
 		if !bErr {
 			err = json.Unmarshal(buffer[1:length-1], &arr)
 			if err != nil {
-				WriteLog(sLogName, "Unmarshal error\r\n")
+				WriteLog("Unmarshal error\r\n")
 				bErr = true
 			}
 		}
@@ -155,10 +157,10 @@ func listen(iPort int) {
 							ap = make([]string, 5)
 							err = json.Unmarshal([]byte(arr[2]), &ap)
 							if err != nil {
-								WriteLog(sLogName, fmt.Sprintf("runproc param Unmarshal error (%s)\r\n", arr[2]))
+								WriteLog(fmt.Sprintf("runproc param Unmarshal error (%s)\r\n", arr[2]))
 							}
 						}
-						//WriteLog(sLogName, fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
+						//WriteLog(fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
 						fnc(ap)
 					}
 				} else {
@@ -172,10 +174,10 @@ func listen(iPort int) {
 							ap = make([]string, 5)
 							err = json.Unmarshal([]byte(arr[2]), &ap)
 							if err != nil {
-								WriteLog(sLogName, fmt.Sprintf("runproc param Unmarshal error (%s)\r\n", arr[2]))
+								WriteLog(fmt.Sprintf("runproc param Unmarshal error (%s)\r\n", arr[2]))
 							}
 						}
-						//WriteLog(sLogName, fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
+						//WriteLog(fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
 						s := fnc(ap)
 						b, _ := json.Marshal(s)
 						sendResponse(connIn, "[\""+string(b)+"\"]")
@@ -208,9 +210,26 @@ func listen(iPort int) {
 			}
 		}
 		if bErr {
-			WriteLog(sLogName, fmt.Sprintf("Wrong message: %s]\r\n", string(buffer[:length])))
+			WriteLog(fmt.Sprintf("Wrong message: %s]\r\n", string(buffer[:length])))
 		}
 	}
+}
+
+func read(conn net.Conn, pBuff *[]byte) (int, error) {
+	*pBuff = (*pBuff)[:0]
+	tmp := make([]byte, 256)
+	for {
+		length, err := conn.Read(tmp)
+		if err != nil {
+			WriteLog("Read error\r\n")
+			return 0, err
+		}
+		*pBuff = append(*pBuff, tmp[:length]...)
+		if tmp[length-1] == '\n' {
+			break
+		}
+	}
+	return len(*pBuff), nil
 }
 
 func sendResponse(conn net.Conn, s string) {
@@ -235,17 +254,18 @@ func Sendout(s string) bool {
 	return true
 }
 
-func SendoutAndReturn(s string, length int) []byte {
+func SendoutAndReturn(s string) []byte {
 
 	var err error
-	buf := make([]byte, length)
+	buf := make([]byte, 1024)
 
 	_, err = connOut.Write([]byte("+" + s + "\n"))
 	if err != nil {
 		fmt.Println(err)
 		return []byte("")
 	}
-	length, err = connOut.Read(buf)
+	//length, err = connOut.Read(buf)
+	length, err := read(connOut, &buf)
 	if err != nil {
 		fmt.Println(err)
 		return []byte("")
@@ -253,9 +273,9 @@ func SendoutAndReturn(s string, length int) []byte {
 	return buf[:length-1]
 }
 
-func WriteLog(sName string, sText string) {
+func WriteLog(sText string) {
 
-	f, err := os.OpenFile(sName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(sLogName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		return
 	}

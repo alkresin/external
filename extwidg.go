@@ -194,7 +194,7 @@ func setprops(pWidg *Widget, mwidg map[string]string) string {
 					sPar += fmt.Sprintf(",\"%s\": %s", name, val)
 				}
 			} else {
-				WriteLog(sLogName, fmt.Sprintf("Error! \"%s\" does not defined for \"%s\"", name, pWidg.Type))
+				WriteLog(fmt.Sprintf("Error! \"%s\" does not defined for \"%s\"", name, pWidg.Type))
 				return ""
 			}
 		}
@@ -314,7 +314,7 @@ func EvalProc(s string) {
 func EvalFunc(s string) []byte {
 
 	b, _ := json.Marshal(s)
-	b = SendoutAndReturn("[\"evalcode\","+string(b)+",\"t\"]", 1024)
+	b = SendoutAndReturn("[\"evalcode\","+string(b)+",\"t\"]")
 	if b[0] == byte('+') && b[1] == byte('"') {
 		b = b[2 : len(b)-1]
 	}
@@ -330,7 +330,7 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 		sParams += "\"" + v + "\""
 	}
 	sParams += "]]"
-	b := SendoutAndReturn(sParams, 8192)
+	b := SendoutAndReturn(sParams)
 	arr := make([]string, len(aNames))
 	err := json.Unmarshal(b[1:len(b)-1], &arr)
 	if err != nil {
@@ -520,7 +520,7 @@ func (o *Widget) AddWidget(pWidg *Widget) *Widget {
 	pWidg.Parent = o
 	mwidg, bOk := mWidgs[pWidg.Type]
 	if !bOk {
-		WriteLog(sLogName, fmt.Sprintf("Error! \"%s\" does not defined", pWidg.Type))
+		WriteLog(fmt.Sprintf("Error! \"%s\" does not defined", pWidg.Type))
 		return nil
 	}
 	if pWidg.Name == "" {
@@ -571,7 +571,7 @@ func (o *Widget) GetText() string {
 	var sName = widgFullName(o)
 
 	sParams := fmt.Sprintf("[\"get\",\"%s\",\"text\"]", sName)
-	b := SendoutAndReturn(sParams, 1024)
+	b := SendoutAndReturn(sParams)
 	if b[0] == byte('+') && b[1] == byte('"') {
 		b = b[2 : len(b)-1]
 	}
