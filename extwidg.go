@@ -90,6 +90,7 @@ func init() {
 	mWidgs["paneltop"] = map[string]string{"HStyle": "C"}
 	mWidgs["panelbot"] = map[string]string{"HStyle": "C", "AParts": "AC"}
 	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
+	mWidgs["splitter"] = map[string]string{"Vertical": "L","From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC"}
 }
 
 func widgFullName(pWidg *Widget) string {
@@ -105,6 +106,17 @@ func widgFullName(pWidg *Widget) string {
 func GetFont(sName string) *Font {
 	if aFonts != nil {
 		for _, o := range aFonts {
+			if o.Name == sName {
+				return o
+			}
+		}
+	}
+	return nil
+}
+
+func GetStyle(sName string) *Style {
+	if aStyles != nil {
+		for _, o := range aStyles {
 			if o.Name == sName {
 				return o
 			}
