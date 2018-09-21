@@ -24,6 +24,8 @@ var bEndProg = false
 
 var connOut, connIn net.Conn
 var bConnExist = false
+var bPacket = false
+var sPacketBuf string
 
 func Init(sOpt string) bool {
 
@@ -239,17 +241,22 @@ func sendResponse(conn net.Conn, s string) {
 func Sendout(s string) bool {
 
 	var err error
-	buf := make([]byte, 128)
 
-	_, err = connOut.Write([]byte("+" + s + "\n"))
-	if err != nil {
-		fmt.Println(err)
-		return false
-	}
-	_, err = connOut.Read(buf)
-	if err != nil {
-		fmt.Println(err)
-		return false
+	if bPacket {
+		sPacketBuf += "," + s
+	} else {
+		_, err = connOut.Write([]byte("+" + s + "\n"))
+		if err != nil {
+			fmt.Println(err)
+			return false
+		}
+
+		buf := make([]byte, 128)
+		_, err = connOut.Read(buf)
+		if err != nil {
+			fmt.Println(err)
+			return false
+		}
 	}
 	return true
 }
@@ -271,6 +278,17 @@ func SendoutAndReturn(s string) []byte {
 		return []byte("")
 	}
 	return buf[:length-1]
+}
+
+func StartPacket() {
+	bPacket = true
+	sPacketBuf = "[\"packet\""
+}
+
+func EndPacket() {
+	bPacket = false
+	Sendout( sPacketBuf + "]" )
+	sPacketBuf = ""
 }
 
 func WriteLog(sText string) {

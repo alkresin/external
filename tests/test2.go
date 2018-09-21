@@ -97,6 +97,7 @@ func fsett1(p []string)string {
 func fsett3(p []string)string {
 	if p == nil {}
 
+	egui.StartPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
 	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 200, H: 370, Title: "Dialog Test", Font: pFont })
 	egui.InitDialog(pDlg)
@@ -115,6 +116,8 @@ func fsett3(p []string)string {
 	egui.PLastWidget.SetCallBackProc("onclick", fsett4, "fsett4")
 
 	pDlg.Activate()
+	egui.EndPacket()
+
 	return ""
 }
 

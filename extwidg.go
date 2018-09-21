@@ -91,6 +91,7 @@ func init() {
 	mWidgs["panelbot"] = map[string]string{"HStyle": "C", "AParts": "AC"}
 	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
 	mWidgs["splitter"] = map[string]string{"Vertical": "L","From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC"}
+	mWidgs["updown"] = map[string]string{"From": "N", "TO": "N"}
 }
 
 func widgFullName(pWidg *Widget) string {
