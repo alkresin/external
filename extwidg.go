@@ -345,7 +345,7 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 	sParams += "]]"
 	b := SendoutAndReturn(sParams)
 	arr := make([]string, len(aNames))
-	err := json.Unmarshal(b[1:len(b)-1], &arr)
+	err := json.Unmarshal(b[1:], &arr)
 	if err != nil {
 		return nil
 	} else {

@@ -31,23 +31,29 @@ func main() {
 	egui.InitMainWindow(pWindow)
 
 	egui.Menu("")
-	egui.Menu( "File" )
-	egui.AddMenuItem( "Set text",
-		func (p []string)string { egui.GetWidg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1" )
-	egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
-	egui.AddMenuSeparator()
-	egui.AddMenuItem( "Message boxes", fmbox1, "fmbox1" )
-	egui.AddMenuItem( "MsgGet box", fmbox2, "fmbox2" )
-	egui.AddMenuItem( "Choice", fmbox3, "fmbox3" )
-	egui.AddMenuItem( "Select color", fsele_color, "fsele_color" )
-	egui.AddMenuItem( "Select font", fsele_font, "fsele_font" )
-	egui.AddMenuItem( "Select file", fsele_file, "fsele_file" )
-	egui.AddMenuSeparator()
-	egui.AddMenuItem( "Exit", nil, "hwg_EndWindow()" )
-	egui.EndMenu()
-	egui.Menu( "Help" )
-	egui.AddMenuItem( "About", nil, "hwg_MsgInfo(hb_version()+chr(10)+chr(13)+hwg_version(),\"About\")" )
-	egui.EndMenu()
+	{
+		egui.Menu( "File" )
+		{
+			egui.AddMenuItem( "Set text",
+				func (p []string)string { egui.GetWidg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1" )
+			egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
+			egui.AddMenuSeparator()
+			egui.AddMenuItem( "Message boxes", fmbox1, "fmbox1" )
+			egui.AddMenuItem( "MsgGet box", fmbox2, "fmbox2" )
+			egui.AddMenuItem( "Choice", fmbox3, "fmbox3" )
+			egui.AddMenuItem( "Select color", fsele_color, "fsele_color" )
+			egui.AddMenuItem( "Select font", fsele_font, "fsele_font" )
+			egui.AddMenuItem( "Select file", fsele_file, "fsele_file" )
+			egui.AddMenuSeparator()
+			egui.AddMenuItem( "Exit", nil, "hwg_EndWindow()" )
+		}
+		egui.EndMenu()
+		egui.Menu( "Help" )
+		{
+			egui.AddMenuItem( "About", nil, "hwg_MsgInfo(hb_version()+chr(10)+chr(13)+hwg_version(),\"About\")" )
+		}
+		egui.EndMenu()
+	}
 	egui.EndMenu()
 
 	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "paneltop", H: 40,
@@ -61,18 +67,15 @@ func main() {
 		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
 	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),2,Time(),.T.)")
 
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 112, Y: 0, W: 56, H: 40, Title: "Get",
+		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
+	egui.PLastWidget.SetCallBackProc("onclick", fsett3, "fsett3")
+
 	pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
 		X: 20, Y: 60, W: 180, H: 24, Title: "Test of a label",
 		AProps: map[string]string{"Transpa":"t"} }))
 
-	pWindow.AddWidget(&(egui.Widget{Type: "label",
-		X: 20, Y: 90, W: 180, H: 24, Title: "Second", TColor: 255,
-		AProps: map[string]string{"Transpa":"t"} }))
-
-	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 56, W: 100, H: 32, Title: "Click"}))
-	egui.PLastWidget.SetCallBackProc("onclick", nil, "private sss:=\"Done\"\r\nhwg_MsgInfo(sss)")
-
-	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 100, W: 100, H: 32, Title: "SetText"}))
+	pWindow.AddWidget(&(egui.Widget{Type: "button", X: 200, Y: 56, W: 100, H: 32, Title: "SetText"}))
 	egui.PLastWidget.SetCallBackProc("onclick", fsett1, "fsett1", "first parameter")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "panelbot", H: 32,
@@ -99,20 +102,29 @@ func fsett3(p []string)string {
 
 	egui.StartPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
-	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 200, H: 370, Title: "Dialog Test", Font: pFont })
+	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 200, H: 440, Title: "Dialog Test", Font: pFont })
 	egui.InitDialog(pDlg)
 
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 20, W: 180, H: 24, Title: "Name:"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi1", X: 20, Y: 44, W: 160, H: 24 }))
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 80, W: 180, H: 24, Title: "SurName:"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 104, W: 160, H: 24 }))
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 140, W: 180, H: 24, Title: "Профессия:"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi3", X: 20, Y: 164, W: 160, H: 24 }))
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 10, W: 180, H: 24, Title: "Name:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi1", X: 20, Y: 32, W: 160, H: 24 }))
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 64, W: 180, H: 24, Title: "Surname:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 86, W: 160, H: 24 }))
 
-	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 200, W: 160, H: 24,
+	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 116, W: 160, H: 24,
 	      AProps: map[string]string{"AItems": egui.ArrStrings("first","second","third")} }))
 
-	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 50, Y: 330, W: 100, H: 32, Title: "Ok"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "group", X: 10, Y: 150, W: 180, H: 76, Title: "Check"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk1", X: 24, Y: 174, W: 150, H: 24, Title: "Married"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk2", X: 24, Y: 198, W: 150, H: 24, Title: "Has children"}))
+
+	pDlg.AddWidget(&(egui.Widget{Type: "radiogr", Name: "rg", X: 10, Y: 240, W: 180, H: 76, Title: "Radio"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 24, Y: 264, W: 150, H: 24, Title: "Male"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 24, Y: 288, W: 150, H: 24, Title: "Female"}))
+
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 332, W: 80, H: 24, Title: "Age:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "updown", Name: "upd1", X: 100, Y: 330, W: 60, H: 24 }))
+
+	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 50, Y: 390, W: 100, H: 32, Title: "Ok"}))
 	egui.PLastWidget.SetCallBackProc("onclick", fsett4, "fsett4")
 
 	pDlg.Activate()
@@ -123,9 +135,10 @@ func fsett3(p []string)string {
 
 func fsett4(p []string)string {
 	if p == nil {}
-	s1 := egui.GetWidg("dlg.edi1").GetText()
-	s2 := egui.GetWidg("dlg.edi2").GetText()
-	egui.MsgInfo( s1 + "\r\n" + s2, "Result", "", nil, "" )
+	arr := egui.GetValues( egui.GetWnd("dlg"), []string{ "edi1","edi2","comb","chk1","chk2","rg","upd1" } )
+	egui.MsgInfo( "Name: "+arr[0]+"\r\n" + "Surname: "+arr[1]+"\r\n" + "Combo: "+arr[2]+"\r\n" +
+		"Married: "+arr[3]+"\r\n" + "Has children: "+arr[4]+"\r\n" + "Sex: "+arr[5]+"\r\n" +
+		"Age: "+arr[6], "Result", "", nil, "" )
 	egui.PLastWindow.Close()
 	return ""
 }
