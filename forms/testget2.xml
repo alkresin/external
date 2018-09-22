@@ -93,8 +93,8 @@ Return .T.]]>
       <property name="Geometry">{100,285,100,22}</property>
       <property name="Name">[oSayT]</property>
       <property name="Caption">[]</property>
-      <property name="TextColor">16744448</property>
-      <property name="BackColor">8177244</property>
+      <property name="TextColor">10485760</property>
+      <property name="BackColor">16775920</property>
       <property name="Border">.T.</property>
       <property name="Justify">[Center]</property>
     </style>
