@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<part class="form">
+  <style>
+    <property name="Geometry">{255,213,598,179}</property>
+    <property name="Caption">[Example]</property>
+    <property name="FormType">[Main]</property>
+    <property name="lClipper">.F.</property>
+    <property name="lExitOnEnter">.F.</property>
+    <property name="lDebug">.F.</property>
+    <property name="Variables">{cFormPath,oForm1}</property>
+    <property name="FromStyle">[Popup]</property>
+    <property name="Icon">[]</property>
+    <property name="BackColor">-1</property>
+    <property name="NoModal">.F.</property>
+    <property name="SystemMenu">.T.</property>
+    <property name="Minimizebox">.T.</property>
+    <property name="Maximizebox">.T.</property>
+    <property name="AbsAlignent">.T.</property>
+    <property name="SizeBox">.T.</property>
+    <property name="Visible">.T.</property>
+    <property name="3DLook">.F.</property>
+    <property name="Clipsiblings">.F.</property>
+    <property name="Clipchildren">.F.</property>
+  </style>
+  <method name="onFormInit">
+    <![CDATA[Parameters oForm
+cFormPath := hb_fnameDir(oForm:cFormName)
+]]>
+  </method>
+  <part class="menu">
+    <style>
+      <property name="Geometry">{-1,-1,0,0}</property>
+      <property name="Name">[oMenu1]</property>
+      <property name="atree">
+        <item name="Test" id="32000">
+          <item name="Test1" id="32001">
+            <![CDATA[HFormTmpl():Read( cFormPath + "testget2.xml" ):Show()]]>
+          </item>
+          <item name="Proc call" id="32002">
+            <![CDATA[pGo("fmenu1",{Ltrim(Str(Seconds()))})]]>
+          </item>
+          <item name="Func call" id="32003">
+            <![CDATA[oLabel1:SetText( fGo("fmenu2") )]]>
+          </item>
+          <item name="-" id="32007"/>
+          <item name="Exit" id="32006">
+            <![CDATA[hwg_EndWindow()]]>
+          </item>
+        </item>
+        <item name="Help" id="32004">
+          <item name="About" id="32005">
+            <![CDATA[hwg_Shellabout("HwGUI forms example","")]]>
+          </item>
+        </item>
+      </property>
+    </style>
+  </part>
+  <part class="toolbar">
+    <style>
+      <property name="Geometry">{0,0,710,48}</property>
+      <property name="Name">[oToolbar1]</property>
+    </style>
+    <part class="ownerbutton">
+      <style>
+        <property name="Geometry">{2,3,48,42}</property>
+        <property name="Caption">[Exit]</property>
+        <property name="Flat">.T.</property>
+      </style>
+      <method name="onClick">
+        <![CDATA[oDlg:Close()
+]]>
+      </method>
+    </part>
+    <part class="ownerbutton">
+      <style>
+        <property name="Geometry">{51,3,75,42}</property>
+        <property name="Caption">[Test 1]</property>
+        <property name="Flat">.T.</property>
+      </style>
+      <method name="onClick">
+        <![CDATA[HFormTmpl():Read( cFormPath + "testget2.xml" ):Show()
+]]>
+      </method>
+    </part>
+  </part>
+  <part class="label">
+    <style>
+      <property name="Geometry">{32,62,296,22}</property>
+      <property name="Name">[oLabel1]</property>
+      <property name="Caption">[--]</property>
+      <property name="Transparent">.T.</property>
+    </style>
+  </part>
+  <part class="status">
+    <style>
+      <property name="Geometry">{0,157,598,22}</property>
+      <property name="Name">[oStatus1]</property>
+      <property name="aParts">{120,0}</property>
+    </style>
+    <method name="onInit">
+      <![CDATA[hwg_WriteStatus( oDlg,1,Dtoc(Date()),.T. )
+]]>
+    </method>
+  </part>
+</part>

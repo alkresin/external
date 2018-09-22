@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<part class="form">
+  <style>
+    <property name="Geometry">{300,14,300,340}</property>
+    <property name="Caption">[Get a value]</property>
+    <property name="Font">
+      <font name="MS Sans Serif" width="0" height="-13" weight="400" charset="204"/>
+    </property>
+    <property name="lClipper">.F.</property>
+    <property name="lExitOnEnter">.F.</property>
+    <property name="Variables">{oTimer}</property>
+  </style>
+  <method name="onFormInit">
+    <![CDATA[e1:= "Dialog from prg"
+e2:= Date()
+e3:= 10320.54
+e4:= "11222333444455"
+e5 := 10320.54
+hwg_SetDlgKey(,4,0x72, Codeblock( 'MsgInfo("Shift-F3")' ) )
+]]>
+  </method>
+  <method name="onDlgInit">
+    <![CDATA[oTimer := HTimer():New(oDlg,,1000,{||oSayT:SetText(Time() )} )]]>
+  </method>
+  <method name="onDlgExit">
+    <![CDATA[oTimer:End()
+hwg_Msginfo( e1 + chr(10) + chr(13) + Dtoc(e2) + chr(10) + chr(13) ;
+    + Str(e3) + chr(10) + chr(13) + e4 + chr(10) + chr(13) ;
+    + Str(e5) + chr(10) + chr(13), "Results:" )
+Return .T.]]>
+  </method>
+  <part class="label">
+    <style>
+      <property name="Geometry">{20,10,260,22}</property>
+      <property name="Name">[oLabel1]</property>
+      <property name="Caption">[Input something:]</property>
+    </style>
+  </part>
+  <part class="editbox">
+    <style>
+      <property name="Geometry">{20,35,260,26}</property>
+      <property name="cPicture">[XXXXXXXXXXXXXXX]</property>
+      <property name="varName">[e1]</property>
+    </style>
+  </part>
+  <part class="editbox">
+    <style>
+      <property name="Geometry">{20,65,260,26}</property>
+      <property name="varName">[e2]</property>
+    </style>
+  </part>
+  <part class="editbox">
+    <style>
+      <property name="Geometry">{20,95,260,26}</property>
+      <property name="varName">[e3]</property>
+    </style>
+  </part>
+  <part class="editbox">
+    <style>
+      <property name="Geometry">{20,125,260,26}</property>
+      <property name="cPicture">[@R 99.999.999/9999-99]</property>
+      <property name="varName">[e4]</property>
+    </style>
+  </part>
+  <part class="editbox">
+    <style>
+      <property name="Geometry">{20,155,260,26}</property>
+      <property name="cPicture">[@e 999,999,999.99]</property>
+      <property name="varName">[e5]</property>
+    </style>
+  </part>
+  <part class="button">
+    <style>
+      <property name="Geometry">{20,240,100,32}</property>
+      <property name="Caption">[Ok]</property>
+    </style>
+    <method name="onClick">
+      <![CDATA[hwg_EndDialog()]]>
+    </method>
+  </part>
+  <part class="button">
+    <style>
+      <property name="Geometry">{180,240,100,32}</property>
+      <property name="Caption">[Cancel]</property>
+    </style>
+    <method name="onClick">
+      <![CDATA[hwg_EndDialog()
+]]>
+    </method>
+  </part>
+  <part class="label">
+    <style>
+      <property name="Geometry">{100,285,100,22}</property>
+      <property name="Name">[oSayT]</property>
+      <property name="Caption">[]</property>
+      <property name="TextColor">16744448</property>
+      <property name="BackColor">8177244</property>
+      <property name="Border">.T.</property>
+      <property name="Justify">[Center]</property>
+    </style>
+  </part>
+</part>
