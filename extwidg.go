@@ -146,9 +146,8 @@ func GetWidg(sName string) *Widget {
 	}
 	sWnd := sName[:npos]
 	sName = sName[npos+1:]
-	if oWnd := GetWnd(sWnd); oWnd != nil {
-		npos = strings.Index(sName, ".")
-		if npos > -1 {
+	if oWnd := GetWnd(sWnd); oWnd != nil {	
+		for npos = strings.Index(sName, "."); npos > -1; npos = strings.Index(sName, ".") {
 			sWnd := sName[:npos]
 			sName = sName[npos+1:]
 			for _, o := range oWnd.aWidgets {
@@ -157,12 +156,13 @@ func GetWidg(sName string) *Widget {
 					break
 				}
 			}
+			if oWnd == nil {
+				return nil
+			}
 		}
-		if oWnd != nil {
-			for _, o := range oWnd.aWidgets {
-				if o.Name == sName {
-					return o
-				}
+		for _, o := range oWnd.aWidgets {
+			if o.Name == sName {
+				return o
 			}
 		}
 	}
