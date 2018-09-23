@@ -23,7 +23,7 @@ func main() {
 	}
 	egui.RegFunc("fmenu2", f)
 
-	egui.OpenMainForm("../forms/example.xml")
+	egui.OpenMainForm("forms/example.xml")
 
 	egui.Exit()
 

@@ -31,6 +31,6 @@ func openf(p []string)string {
 
 	if p == nil {
 	}
-	egui.OpenForm("../forms/testget2.xml")
+	egui.OpenForm("forms/testget2.xml")
 	return ""
 }
