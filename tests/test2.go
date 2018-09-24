@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	egui "github.com/alkresin/external"
 )
 
@@ -15,9 +16,22 @@ const (
 
 func main() {
 
-	if !egui.Init("port=3105\nlog") {
+	var sInit string
+
+	{
+		b, err := ioutil.ReadFile("test.ini")
+	    if err != nil {
+        	sInit = ""
+    	} else {
+	    	sInit = string(b)
+	    }
+    }
+
+	if !egui.Init(sInit) {
 		return
 	}
+
+	egui.SetImagePath( "images/" )
 
 	egui.CreateStyle( &(egui.Style{Name: "st1", Orient: 1, Colors: []int32{CLR_LBLUE,CLR_LBLUE3}}) )
 	egui.CreateStyle( &(egui.Style{Name: "st2", Colors: []int32{CLR_LBLUE}, BorderW: 3}) )
@@ -36,16 +50,24 @@ func main() {
 		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
 	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),1,Dtoc(Date()),.T.)")
 
-	pPanel = pWindow.AddWidget(&(egui.Widget{Type: "panel", X: 0, Y: 40, W: 200, H: 208 }))
-	egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
+	//pPanel = pWindow.AddWidget(&(egui.Widget{Type: "panel", X: 0, Y: 40, W: 200, H: 208 }))
+	//pPanel.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
+
+	pTree := pWindow.AddWidget(&(egui.Widget{Type: "tree", X: 0, Y: 40, W: 200, H: 208,
+		AProps: map[string]string{"AImages": egui.ArrStrings("cl_fl.bmp","op_fl.bmp")} }))
+	pTree.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
+
+	egui.InsertNode( pTree, "", "n1", "First", "", "", nil )
+	egui.InsertNode( pTree, "", "n2", "Second", "", "", nil )
+	egui.InsertNode( pTree, "n2", "n2a", "second-1", "", "", nil )
+	egui.InsertNode( pTree, "", "n3", "Third", "", "", nil )
 
 	pEdi := pWindow.AddWidget(&(egui.Widget{Type: "edit", Name: "edim", X: 204, Y: 40, W: 196, H: 180,
 		Winstyle: ES_MULTILINE }))
 	egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,x-o:nLeft,y-72)}")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "splitter", X: 200, Y: 40, W: 4, H: 208,
-		Anchor: egui.A_TOPABS+egui.A_BOTTOMABS,
-		AProps: map[string]string{"ALeft": egui.ArrWidgs(pPanel), "ARight": egui.ArrWidgs(pEdi)} }))
+		AProps: map[string]string{"ALeft": egui.ArrWidgs(pTree), "ARight": egui.ArrWidgs(pEdi)} }))
 	egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "panelbot", H: 32,

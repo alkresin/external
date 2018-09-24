@@ -90,9 +90,9 @@ func init() {
 	mWidgs["paneltop"] = map[string]string{"HStyle": "C"}
 	mWidgs["panelbot"] = map[string]string{"HStyle": "C", "AParts": "AC"}
 	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
-	mWidgs["splitter"] = map[string]string{"Vertical": "L","From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC"}
+	mWidgs["splitter"] = map[string]string{"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC"}
 	mWidgs["updown"] = map[string]string{"From": "N", "TO": "N"}
-	mWidgs["tree"] = map[string]string{"AImages": "AC","EditLabel": "L"}
+	mWidgs["tree"] = map[string]string{"AImages": "AC", "EditLabel": "L"}
 }
 
 func widgFullName(pWidg *Widget) string {
@@ -147,7 +147,7 @@ func GetWidg(sName string) *Widget {
 	}
 	sWnd := sName[:npos]
 	sName = sName[npos+1:]
-	if oWnd := GetWnd(sWnd); oWnd != nil {	
+	if oWnd := GetWnd(sWnd); oWnd != nil {
 		for npos = strings.Index(sName, "."); npos > -1; npos = strings.Index(sName, ".") {
 			sWnd := sName[:npos]
 			sName = sName[npos+1:]
@@ -328,7 +328,7 @@ func EvalProc(s string) {
 func EvalFunc(s string) []byte {
 
 	b, _ := json.Marshal(s)
-	b = SendoutAndReturn("[\"evalcode\","+string(b)+",\"t\"]")
+	b = SendoutAndReturn("[\"evalcode\"," + string(b) + ",\"t\"]")
 	if b[0] == byte('+') && b[1] == byte('"') {
 		b = b[2 : len(b)-1]
 	}
@@ -415,7 +415,7 @@ func Choice(arr []string, sTitle string, sFunc string, fu func([]string) string,
 		sName = ""
 	}
 	b, _ := json.Marshal(arr)
-	sParams := fmt.Sprintf("[\"common\",\"mchoi\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle )
+	sParams := fmt.Sprintf("[\"common\",\"mchoi\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
 	Sendout(sParams)
 }
 
@@ -450,9 +450,22 @@ func SelectFont(sFunc string, fu func([]string) string, sName string) {
 	} else {
 		sFunc = ""
 	}
-	pFont := &( Font{ Name: sName } )
+	pFont := &(Font{Name: sName})
 	pFont.newfont()
 	sParams := fmt.Sprintf("[\"common\",\"cfont\",\"%s\",\"%s\"]", sFunc, pFont.Name)
+	Sendout(sParams)
+}
+
+func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string, sNodePrev string, sNodeNext string, aImages []string) {
+
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"node\",[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",",
+		widgFullName(pTree), sNodeName, sNodeNew, sTitle, sNodePrev, sNodeNext)
+	if aImages == nil {
+		sParams += "null]]"
+	} else {
+		b,_ := json.Marshal(aImages)
+		sParams +=  string(b) + "]"
+	}
 	Sendout(sParams)
 }
 
@@ -480,15 +493,15 @@ func (p *Font) newfont() *Font {
 	return p
 }
 
-func (p *Font) FillFont( arr []string ) {
+func (p *Font) FillFont(arr []string) {
 	p.Family = arr[1]
-	i,_ := strconv.Atoi(arr[2])
+	i, _ := strconv.Atoi(arr[2])
 	p.Height = int16(i)
-	p.Bold = ( arr[3] == "t" )
-	p.Italic = ( arr[4] == "t" )
-	p.Underline = ( arr[5] == "t" )
-	p.Strikeout = ( arr[6] == "t" )
-	i,_ = strconv.Atoi(arr[7])
+	p.Bold = (arr[3] == "t")
+	p.Italic = (arr[4] == "t")
+	p.Underline = (arr[5] == "t")
+	p.Strikeout = (arr[6] == "t")
+	i, _ = strconv.Atoi(arr[7])
 	p.Charset = int16(i)
 }
 
