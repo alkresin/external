@@ -59,7 +59,7 @@ func main() {
 
 	egui.InsertNode( pTree, "", "n1", "First", "", "", nil )
 	egui.InsertNode( pTree, "", "n2", "Second", "", "", nil )
-	egui.InsertNode( pTree, "n2", "n2a", "second-1", "", "", nil )
+	egui.InsertNode( pTree, "n2", "n2a", "second-1", "", "", []string{"book.bmp"} )
 	egui.InsertNode( pTree, "", "n3", "Third", "", "", nil )
 
 	pEdi := pWindow.AddWidget(&(egui.Widget{Type: "edit", Name: "edim", X: 204, Y: 40, W: 196, H: 180,
