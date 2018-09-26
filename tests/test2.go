@@ -57,10 +57,10 @@ func main() {
 		AProps: map[string]string{"AImages": egui.ArrStrings("cl_fl.bmp","op_fl.bmp")} }))
 	pTree.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
 
-	egui.InsertNode( pTree, "", "n1", "First", "", "", nil )
-	egui.InsertNode( pTree, "", "n2", "Second", "", "", nil )
-	egui.InsertNode( pTree, "n2", "n2a", "second-1", "", "", []string{"book.bmp"} )
-	egui.InsertNode( pTree, "", "n3", "Third", "", "", nil )
+	egui.InsertNode( pTree, "", "n1", "First", "", nil, nil, "" )
+	egui.InsertNode( pTree, "", "n2", "Second", "", nil, nil, "" )
+	egui.InsertNode( pTree, "n2", "n2a", "second-1", "", []string{"book.bmp"}, nil, "hwg_msginfo(\"n2a\")" )
+	egui.InsertNode( pTree, "", "n3", "Third", "", nil, nil, "" )
 
 	pEdi := pWindow.AddWidget(&(egui.Widget{Type: "edit", Name: "edim", X: 204, Y: 40, W: 196, H: 180,
 		Winstyle: ES_MULTILINE }))

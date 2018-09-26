@@ -456,16 +456,31 @@ func SelectFont(sFunc string, fu func([]string) string, sName string) {
 	Sendout(sParams)
 }
 
-func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string, sNodePrev string, sNodeNext string, aImages []string) {
+func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
+		sNodeNext string, aImages []string, fu func([]string) string, sCode string) {
 
-	sParams := fmt.Sprintf("[\"set\",\"%s\",\"node\",[\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",",
-		widgFullName(pTree), sNodeName, sNodeNew, sTitle, sNodePrev, sNodeNext)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"node\",[\"%s\",\"%s\",\"%s\",\"%s\",",
+		widgFullName(pTree), sNodeName, sNodeNew, sTitle, sNodeNext)
+	if sCode != "" {
+		sName := widgFullName(pTree)
+		if fu != nil {
+			RegFunc(sCode, fu)
+			sCode = "pgo(\"" + sCode + "\",{\"" + sName + "\",\"" + sNodeNew + "\"})"
+		}
+		b, _ := json.Marshal(sCode)
+		sCode = string(b)
+	} else {
+		sCode = "null"
+	}
+
 	if aImages == nil {
-		sParams += "null]]"
+		sParams += "null"
 	} else {
 		b,_ := json.Marshal(aImages)
-		sParams +=  string(b) + "]"
+		sParams +=  string(b)
 	}
+	sParams += "," + sCode + "]"
+
 	Sendout(sParams)
 }
 
