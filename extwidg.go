@@ -93,6 +93,7 @@ func init() {
 	mWidgs["splitter"] = map[string]string{"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC"}
 	mWidgs["updown"] = map[string]string{"From": "N", "TO": "N"}
 	mWidgs["tree"] = map[string]string{"AImages": "AC", "EditLabel": "L"}
+	mWidgs["progress"] = map[string]string{"Maxpos": "N"}
 }
 
 func widgFullName(pWidg *Widget) string {
@@ -481,6 +482,20 @@ func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 	}
 	sParams += "," + sCode + "]"
 
+	Sendout(sParams)
+}
+
+func PBarStep(pPBar *Widget) {
+
+	var sName = widgFullName(pPBar)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"step\",1]", sName)
+	Sendout(sParams)
+}
+
+func PBarSet(pPBar *Widget, iPos int) {
+
+	var sName = widgFullName(pPBar)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"setval\",%d]", sName, iPos)
 	Sendout(sParams)
 }
 
