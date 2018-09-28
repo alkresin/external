@@ -92,9 +92,13 @@ func Init(sOpt string) bool {
 
 	connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
 	if err != nil {
-		WriteLog(fmt.Sprintln(sServer, sIp, iPort+1))
-		WriteLog(fmt.Sprintln(err))
-		return false
+		time.Sleep(1000 * time.Millisecond)
+		connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
+		if err != nil {
+			WriteLog(fmt.Sprintln(sServer, sIp, iPort+1))
+			WriteLog(fmt.Sprintln(err))
+			return false
+		}
 	}
 	_, err = connIn.Read(buf)
 	if err != nil {

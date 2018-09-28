@@ -94,6 +94,7 @@ func init() {
 	mWidgs["updown"] = map[string]string{"From": "N", "TO": "N"}
 	mWidgs["tree"] = map[string]string{"AImages": "AC", "EditLabel": "L"}
 	mWidgs["progress"] = map[string]string{"Maxpos": "N"}
+	mWidgs["tab"] = nil
 }
 
 func widgFullName(pWidg *Widget) string {
@@ -496,6 +497,27 @@ func PBarSet(pPBar *Widget, iPos int) {
 
 	var sName = widgFullName(pPBar)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"setval\",%d]", sName, iPos)
+	Sendout(sParams)
+}
+
+func RadioEnd(p *Widget, iSel int) {
+
+	var sName = widgFullName(p)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"radioend\",%d]", sName, iSel)
+	Sendout(sParams)
+}
+
+func TabPage(pTab *Widget, sCaption string) {
+
+	var sName = widgFullName(pTab)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"pagestart\",\"%s\"]", sName, sCaption)
+	Sendout(sParams)
+}
+
+func TabPageEnd(pTab *Widget) {
+
+	var sName = widgFullName(pTab)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"pageend\",1]", sName)
 	Sendout(sParams)
 }
 

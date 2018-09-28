@@ -37,6 +37,7 @@ func main() {
 			egui.AddMenuItem( "Set text",
 				func (p []string)string { egui.GetWidg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1" )
 			egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
+			egui.AddMenuItem( "Test Tab", ftab, "ftab" )
 			egui.AddMenuSeparator()
 			egui.AddMenuItem( "Message boxes", fmbox1, "fmbox1" )
 			egui.AddMenuItem( "MsgGet box", fmbox2, "fmbox2" )
@@ -117,9 +118,10 @@ func fsett3(p []string)string {
 	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk1", X: 24, Y: 174, W: 150, H: 24, Title: "Married"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk2", X: 24, Y: 198, W: 150, H: 24, Title: "Has children"}))
 
-	pDlg.AddWidget(&(egui.Widget{Type: "radiogr", Name: "rg", X: 10, Y: 240, W: 180, H: 76, Title: "Radio"}))
+	pGroup := pDlg.AddWidget(&(egui.Widget{Type: "radiogr", Name: "rg", X: 10, Y: 240, W: 180, H: 76, Title: "Radio"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 24, Y: 264, W: 150, H: 24, Title: "Male"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 24, Y: 288, W: 150, H: 24, Title: "Female"}))
+	egui.RadioEnd( pGroup,1 )
 
 	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 332, W: 80, H: 24, Title: "Age:"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "updown", Name: "upd1", X: 100, Y: 330, W: 60, H: 24 }))
@@ -142,6 +144,47 @@ func fsett4(p []string)string {
 	egui.PLastWindow.Close()
 	return ""
 }
+
+func ftab(p []string)string {
+	if p == nil {}
+
+	//egui.StartPacket()
+	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
+	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 200, H: 340, Title: "Tab", Font: pFont })
+	egui.InitDialog(pDlg)
+
+	pTab := pDlg.AddWidget(&(egui.Widget{Type: "tab", X: 10, Y: 10, W: 180, H: 280 }))
+
+	egui.TabPage( pTab, "First" )
+	pTab.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 30, W: 140, H: 24, Title: "Name:"}))
+	pTab.AddWidget(&(egui.Widget{Type: "edit", X: 20, Y: 52, W: 140, H: 24 }))
+	pTab.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 84, W: 140, H: 24, Title: "Surname:"}))
+	pTab.AddWidget(&(egui.Widget{Type: "edit", X: 20, Y: 106, W: 140, H: 24 }))
+	egui.TabPageEnd( pTab )
+
+	egui.TabPage( pTab, "Second" )
+	pTab.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 40, W: 140, H: 24, Title: "Age:"}))
+	pTab.AddWidget(&(egui.Widget{Type: "edit", X: 20, Y: 62, W: 140, H: 24 }))
+	pTab.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 94, W: 140, H: 24, Title: "Profession:"}))
+	pTab.AddWidget(&(egui.Widget{Type: "edit", X: 20, Y: 116, W: 140, H: 24 }))
+	egui.TabPageEnd( pTab )
+
+
+	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 60, Y: 300, W: 100, H: 32, Title: "Ok"}))
+	egui.PLastWidget.SetCallBackProc("onclick", ftabclose, "ftabclose")
+
+	pDlg.Activate()
+	//egui.EndPacket()
+
+	return ""
+}
+
+func ftabclose(p []string)string {
+	if p == nil {}
+	egui.PLastWindow.Close()
+	return ""
+}
+
 
 func fmbox1(p []string)string {
 	if len(p) == 0 {
