@@ -95,6 +95,7 @@ func init() {
 	mWidgs["tree"] = map[string]string{"AImages": "AC", "EditLabel": "L"}
 	mWidgs["progress"] = map[string]string{"Maxpos": "N"}
 	mWidgs["tab"] = nil
+	mWidgs["browse"] = map[string]string{"Append": "L", "Autoedit": "L"}
 }
 
 func widgFullName(pWidg *Widget) string {
@@ -459,7 +460,7 @@ func SelectFont(sFunc string, fu func([]string) string, sName string) {
 }
 
 func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
-		sNodeNext string, aImages []string, fu func([]string) string, sCode string) {
+	sNodeNext string, aImages []string, fu func([]string) string, sCode string) {
 
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"node\",[\"%s\",\"%s\",\"%s\",\"%s\",",
 		widgFullName(pTree), sNodeName, sNodeNew, sTitle, sNodeNext)
@@ -478,8 +479,8 @@ func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 	if aImages == nil {
 		sParams += "null"
 	} else {
-		b,_ := json.Marshal(aImages)
-		sParams +=  string(b)
+		b, _ := json.Marshal(aImages)
+		sParams += string(b)
 	}
 	sParams += "," + sCode + "]"
 
@@ -518,6 +519,14 @@ func TabPageEnd(pTab *Widget) {
 
 	var sName = widgFullName(pTab)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"pageend\",1]", sName)
+	Sendout(sParams)
+}
+
+func BrwSetArray(p *Widget, arr [][]string) {
+
+	var sName = widgFullName(p)
+	b, _ := json.Marshal(arr)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwarr\",%s]", sName, string(b))
 	Sendout(sParams)
 }
 
@@ -643,6 +652,14 @@ func (o *Widget) SetImage(sImage string) {
 
 	o.AProps["Image"] = sImage
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"image\",\"%s\"]", sName, sImage)
+	Sendout(sParams)
+}
+
+func (o *Widget) SetParam(sParam string, xParam interface{}) {
+
+	var sName = widgFullName(o)
+	b, _ := json.Marshal(xParam)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"xparam\",[\"%s\",%s]]", sName, sParam, string(b))
 	Sendout(sParams)
 }
 

@@ -38,6 +38,7 @@ func main() {
 				func (p []string)string { egui.GetWidg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1" )
 			egui.AddMenuItem( "Open dialog", fsett3, "fsett3" )
 			egui.AddMenuItem( "Test Tab", ftab, "ftab" )
+			egui.AddMenuItem( "Test browse", fbrowse, "fbrowse" )
 			egui.AddMenuSeparator()
 			egui.AddMenuItem( "Message boxes", fmbox1, "fmbox1" )
 			egui.AddMenuItem( "MsgGet box", fmbox2, "fmbox2" )
@@ -148,7 +149,7 @@ func fsett4(p []string)string {
 func ftab(p []string)string {
 	if p == nil {}
 
-	//egui.StartPacket()
+	egui.StartPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
 	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 200, H: 340, Title: "Tab", Font: pFont })
 	egui.InitDialog(pDlg)
@@ -169,6 +170,28 @@ func ftab(p []string)string {
 	pTab.AddWidget(&(egui.Widget{Type: "edit", X: 20, Y: 116, W: 140, H: 24 }))
 	egui.TabPageEnd( pTab )
 
+
+	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 60, Y: 300, W: 100, H: 32, Title: "Ok"}))
+	egui.PLastWidget.SetCallBackProc("onclick", ftabclose, "ftabclose")
+
+	pDlg.Activate()
+	egui.EndPacket()
+
+	return ""
+}
+
+func fbrowse(p []string)string {
+	if p == nil {}
+
+	var arr = [][]string{ {"Alex","17","1200"}, {"Victor","42","1600"}, {"John","31","1000"} }
+	//egui.StartPacket()
+	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
+	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 200, H: 340, Title: "browse", Font: pFont })
+	egui.InitDialog(pDlg)
+
+	pBrw := pDlg.AddWidget(&(egui.Widget{Type: "browse", X: 10, Y: 10, W: 180, H: 280 }))
+	pBrw.SetParam( "lDispHead", false )
+	egui.BrwSetArray( pBrw, arr )
 
 	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 60, Y: 300, W: 100, H: 32, Title: "Ok"}))
 	egui.PLastWidget.SetCallBackProc("onclick", ftabclose, "ftabclose")
