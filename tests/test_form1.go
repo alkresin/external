@@ -16,11 +16,7 @@ func main() {
 	}
 	egui.RegFunc("fmenu1", f)
 
-	f = func (p []string)string {
-		if p == nil {
-		}
-		return "Hi from Go!"
-	}
+	f = func ([]string)string {	return "Hi from Go!" }
 	egui.RegFunc("fmenu2", f)
 
 	egui.OpenMainForm("forms/example.xml")

@@ -99,8 +99,7 @@ func fsett1(p []string)string {
 }
 
 
-func fsett3(p []string)string {
-	if p == nil {}
+func fsett3([]string)string {
 
 	egui.StartPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
@@ -136,8 +135,7 @@ func fsett3(p []string)string {
 	return ""
 }
 
-func fsett4(p []string)string {
-	if p == nil {}
+func fsett4([]string)string {
 	arr := egui.GetValues( egui.GetWnd("dlg"), []string{ "edi1","edi2","comb","chk1","chk2","rg","upd1" } )
 	egui.MsgInfo( "Name: "+arr[0]+"\r\n" + "Surname: "+arr[1]+"\r\n" + "Combo: "+arr[2]+"\r\n" +
 		"Married: "+arr[3]+"\r\n" + "Has children: "+arr[4]+"\r\n" + "Sex: "+arr[5]+"\r\n" +
@@ -146,8 +144,7 @@ func fsett4(p []string)string {
 	return ""
 }
 
-func ftab(p []string)string {
-	if p == nil {}
+func ftab([]string)string {
 
 	egui.StartPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
@@ -180,8 +177,7 @@ func ftab(p []string)string {
 	return ""
 }
 
-func fbrowse(p []string)string {
-	if p == nil {}
+func fbrowse([]string)string {
 
 	var arr = [][]string{ {"Alex","17","1200"}, {"Victor","42","1600"}, {"John","31","1000"} }
 	//egui.StartPacket()
@@ -202,8 +198,7 @@ func fbrowse(p []string)string {
 	return ""
 }
 
-func ftabclose(p []string)string {
-	if p == nil {}
+func ftabclose([]string)string {
 	egui.PLastWindow.Close()
 	return ""
 }

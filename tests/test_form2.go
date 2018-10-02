@@ -27,10 +27,8 @@ func main() {
 	egui.Exit()
 }
 
-func openf(p []string)string {
+func openf([]string)string {
 
-	if p == nil {
-	}
 	egui.OpenForm("forms/testget2.xml")
 	return ""
 }
