@@ -252,20 +252,20 @@ func ArrWidgs(wParam ...*Widget) string {
 
 func OpenMainForm(sForm string) bool {
 	var b bool
-	b = Sendout("[\"openformmain\",\"" + sForm + "\"]")
-	Wait()
+	b = sendout("[\"openformmain\",\"" + sForm + "\"]")
+	wait()
 	return b
 }
 
 func OpenForm(sForm string) bool {
 	var b bool
-	b = Sendout("[\"openform\",\"" + sForm + "\"]")
+	b = sendout("[\"openform\",\"" + sForm + "\"]")
 	return b
 }
 
 func OpenReport(sForm string) bool {
 	var b bool
-	b = Sendout("[\"openreport\",\"" + sForm + "\"]")
+	b = sendout("[\"openreport\",\"" + sForm + "\"]")
 	return b
 }
 
@@ -274,7 +274,7 @@ func CreateFont(pFont *Font) *Font {
 	pFont.newfont()
 	sParams := fmt.Sprintf("[\"crfont\",\"%s\",\"%s\",%d,%t,%t,%t,%t,%d]", pFont.Name, pFont.Family, pFont.Height,
 		pFont.Bold, pFont.Italic, pFont.Underline, pFont.Strikeout, pFont.Charset)
-	Sendout(sParams)
+	sendout(sParams)
 	return pFont
 }
 
@@ -293,7 +293,7 @@ func CreateStyle(pStyle *Style) *Style {
 	sParams := fmt.Sprintf("[\"crstyle\",\"%s\",%s,%d,%s,%d,%d,\"%s\"]", pStyle.Name,
 		string(b1), pStyle.Orient, string(b2),
 		pStyle.BorderW, pStyle.BorderClr, pStyle.Bitmap)
-	Sendout(sParams)
+	sendout(sParams)
 	return pStyle
 }
 
@@ -305,7 +305,7 @@ func InitMainWindow(pWnd *Widget) bool {
 	sPar2 := setprops(pWnd, mWidgs["main"])
 	sParams := fmt.Sprintf("[\"crmainwnd\",[%d,%d,%d,%d,\"%s\"]%s]", pWnd.X, pWnd.Y, pWnd.W,
 		pWnd.H, pWnd.Title, sPar2)
-	return Sendout(sParams)
+	return sendout(sParams)
 }
 
 func InitDialog(pWnd *Widget) bool {
@@ -323,19 +323,19 @@ func InitDialog(pWnd *Widget) bool {
 	sPar2 := setprops(pWnd, mWidgs["dialog"])
 	sParams := fmt.Sprintf("[\"crdialog\",\"%s\",[%d,%d,%d,%d,\"%s\"]%s]", pWnd.Name, pWnd.X, pWnd.Y, pWnd.W,
 		pWnd.H, pWnd.Title, sPar2)
-	return Sendout(sParams)
+	return sendout(sParams)
 }
 
 func EvalProc(s string) {
 
 	b, _ := json.Marshal(s)
-	Sendout("[\"evalcode\"," + string(b) + "]")
+	sendout("[\"evalcode\"," + string(b) + "]")
 }
 
 func EvalFunc(s string) []byte {
 
 	b, _ := json.Marshal(s)
-	b = SendoutAndReturn("[\"evalcode\"," + string(b) + ",\"t\"]")
+	b = sendoutAndReturn("[\"evalcode\"," + string(b) + ",\"t\"]")
 	if b[0] == byte('+') && b[1] == byte('"') {
 		b = b[2 : len(b)-1]
 	}
@@ -351,7 +351,7 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 		sParams += "\"" + v + "\""
 	}
 	sParams += "]]"
-	b := SendoutAndReturn(sParams)
+	b := sendoutAndReturn(sParams)
 	arr := make([]string, len(aNames))
 	err := json.Unmarshal(b[1:], &arr)
 	if err != nil {
@@ -371,7 +371,7 @@ func MsgInfo(sMessage string, sTitle string, sFunc string, fu func([]string) str
 	}
 	b, _ := json.Marshal(sMessage)
 	sParams := fmt.Sprintf("[\"common\",\"minfo\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
@@ -384,7 +384,7 @@ func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) str
 	}
 	b, _ := json.Marshal(sMessage)
 	sParams := fmt.Sprintf("[\"common\",\"mstop\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func MsgYesNo(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
@@ -397,7 +397,7 @@ func MsgYesNo(sMessage string, sTitle string, sFunc string, fu func([]string) st
 	}
 	b, _ := json.Marshal(sMessage)
 	sParams := fmt.Sprintf("[\"common\",\"myesno\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func MsgGet(sMessage string, sTitle string, iStyle int32, sFunc string, fu func([]string) string, sName string) {
@@ -410,7 +410,7 @@ func MsgGet(sMessage string, sTitle string, iStyle int32, sFunc string, fu func(
 	}
 	b, _ := json.Marshal(sMessage)
 	sParams := fmt.Sprintf("[\"common\",\"mget\",\"%s\",\"%s\",%s,\"%s\",%d]", sFunc, sName, string(b), sTitle, iStyle)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func Choice(arr []string, sTitle string, sFunc string, fu func([]string) string, sName string) {
@@ -423,7 +423,7 @@ func Choice(arr []string, sTitle string, sFunc string, fu func([]string) string,
 	}
 	b, _ := json.Marshal(arr)
 	sParams := fmt.Sprintf("[\"common\",\"mchoi\",\"%s\",\"%s\",%s,\"%s\"]", sFunc, sName, string(b), sTitle)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func SelectFile(sPath string, sFunc string, fu func([]string) string, sName string) {
@@ -435,7 +435,7 @@ func SelectFile(sPath string, sFunc string, fu func([]string) string, sName stri
 		sName = ""
 	}
 	sParams := fmt.Sprintf("[\"common\",\"cfile\",\"%s\",\"%s\",\"%s\"]", sFunc, sName, sPath)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func SelectColor(iColor int32, sFunc string, fu func([]string) string, sName string) {
@@ -447,7 +447,7 @@ func SelectColor(iColor int32, sFunc string, fu func([]string) string, sName str
 		sName = ""
 	}
 	sParams := fmt.Sprintf("[\"common\",\"ccolor\",\"%s\",\"%s\",%d]", sFunc, sName, iColor)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func SelectFont(sFunc string, fu func([]string) string, sName string) {
@@ -460,7 +460,7 @@ func SelectFont(sFunc string, fu func([]string) string, sName string) {
 	pFont := &(Font{Name: sName})
 	pFont.newfont()
 	sParams := fmt.Sprintf("[\"common\",\"cfont\",\"%s\",\"%s\"]", sFunc, pFont.Name)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
@@ -488,42 +488,42 @@ func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 	}
 	sParams += "," + sCode + "]"
 
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func PBarStep(pPBar *Widget) {
 
 	var sName = widgFullName(pPBar)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"step\",1]", sName)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func PBarSet(pPBar *Widget, iPos int) {
 
 	var sName = widgFullName(pPBar)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"setval\",%d]", sName, iPos)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func RadioEnd(p *Widget, iSel int) {
 
 	var sName = widgFullName(p)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"radioend\",%d]", sName, iSel)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func TabPage(pTab *Widget, sCaption string) {
 
 	var sName = widgFullName(pTab)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"pagestart\",\"%s\"]", sName, sCaption)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func TabPageEnd(pTab *Widget) {
 
 	var sName = widgFullName(pTab)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"pageend\",1]", sName)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func BrwSetArray(p *Widget, arr [][]string) {
@@ -531,19 +531,19 @@ func BrwSetArray(p *Widget, arr [][]string) {
 	var sName = widgFullName(p)
 	b, _ := json.Marshal(arr)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwarr\",%s]", sName, string(b))
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func SetImagePath(sValue string) {
 
 	sParams := fmt.Sprintf("[\"setparam\",\"bmppath\",\"%s\"]", sValue)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func SetPath(sValue string) {
 
 	sParams := fmt.Sprintf("[\"setparam\",\"path\",\"%s\"]", sValue)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func (p *Font) newfont() *Font {
@@ -579,9 +579,9 @@ func (o *Widget) Activate() bool {
 	} else {
 		return false
 	}
-	b := Sendout("" + sParams)
+	b := sendout("" + sParams)
 	if o.Type == "main" {
-		Wait()
+		wait()
 	}
 	return b
 }
@@ -589,7 +589,7 @@ func (o *Widget) Activate() bool {
 func (o *Widget) Close() bool {
 	if o.Type == "main" || o.Type == "dialog" {
 		sParams := fmt.Sprintf("[\"close\",\"%s\"]", o.Name)
-		b := Sendout("" + sParams)
+		b := sendout("" + sParams)
 		return b
 	}
 	return false
@@ -624,7 +624,7 @@ func (o *Widget) AddWidget(pWidg *Widget) *Widget {
 	sParams := fmt.Sprintf("[\"addwidg\",\"%s\",\"%s\",[%d,%d,%d,%d,\"%s\"]%s]",
 		pWidg.Type, widgFullName(pWidg), pWidg.X, pWidg.Y, pWidg.W,
 		pWidg.H, pWidg.Title, sPar2)
-	Sendout(sParams)
+	sendout(sParams)
 	PLastWidget = pWidg
 	if o.aWidgets == nil {
 		o.aWidgets = make([]*Widget, 0, 16)
@@ -638,7 +638,7 @@ func (o *Widget) SetText(sText string) {
 	var sName = widgFullName(o)
 	o.Title = sText
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"text\",\"%s\"]", sName, sText)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func (o *Widget) SetImage(sImage string) {
@@ -656,7 +656,7 @@ func (o *Widget) SetImage(sImage string) {
 
 	o.AProps["Image"] = sImage
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"image\",\"%s\"]", sName, sImage)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func (o *Widget) SetParam(sParam string, xParam interface{}) {
@@ -664,14 +664,14 @@ func (o *Widget) SetParam(sParam string, xParam interface{}) {
 	var sName = widgFullName(o)
 	b, _ := json.Marshal(xParam)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"xparam\",[\"%s\",%s]]", sName, sParam, string(b))
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func (o *Widget) GetText() string {
 	var sName = widgFullName(o)
 
 	sParams := fmt.Sprintf("[\"get\",\"%s\",\"text\"]", sName)
-	b := SendoutAndReturn(sParams)
+	b := sendoutAndReturn(sParams)
 	if b[0] == byte('+') && b[1] == byte('"') {
 		b = b[2 : len(b)-1]
 	}
@@ -683,7 +683,7 @@ func (o *Widget) SetColor(tColor int32, bColor int32) {
 	var sName = widgFullName(o)
 
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"color\",[%d,%d]]", sName, tColor, bColor)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func (o *Widget) SetFont(pFont *Font) {
@@ -691,7 +691,7 @@ func (o *Widget) SetFont(pFont *Font) {
 	var sName = widgFullName(o)
 	o.Font = pFont
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"font\",\"%s\"]", sName, pFont.Name)
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func (o *Widget) SetCallBackProc(sbName string, fu func([]string) string, sCode string, params ...string) {
@@ -708,7 +708,7 @@ func (o *Widget) SetCallBackProc(sbName string, fu func([]string) string, sCode 
 	}
 	b, _ := json.Marshal(sCode)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"cb.%s\",%s]", sName, sbName, string(b))
-	Sendout(sParams)
+	sendout(sParams)
 }
 
 func (o *Widget) SetCallBackFunc(sbName string, fu func([]string) string, sCode string, params ...string) {
@@ -725,5 +725,5 @@ func (o *Widget) SetCallBackFunc(sbName string, fu func([]string) string, sCode 
 	}
 	b, _ := json.Marshal(sCode)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"cb.%s\",%s]", sName, sbName, string(b))
-	Sendout(sParams)
+	sendout(sParams)
 }

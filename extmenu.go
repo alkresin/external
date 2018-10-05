@@ -11,6 +11,7 @@ import (
 var sMenu = ""
 var iStackLen = 0
 
+// Menu starts a window's menu or submenu definition, sName is a menu title.
 func Menu(sName string) {
 
 	if sMenu == "" {
@@ -27,7 +28,7 @@ func Menu(sName string) {
 func EndMenu() {
 	sMenu += "]]"
 	if iStackLen == 0 {
-		Sendout(sMenu)
+		sendout(sMenu)
 		sMenu = ""
 	} else {
 		iStackLen--

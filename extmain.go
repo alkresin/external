@@ -245,7 +245,7 @@ func sendResponse(conn net.Conn, s string) {
 	conn.Write([]byte("+" + s + "\n"))
 }
 
-func Sendout(s string) bool {
+func sendout(s string) bool {
 
 	var err error
 
@@ -268,7 +268,7 @@ func Sendout(s string) bool {
 	return true
 }
 
-func SendoutAndReturn(s string) []byte {
+func sendoutAndReturn(s string) []byte {
 
 	var err error
 	buf := make([]byte, 1024)
@@ -287,17 +287,20 @@ func SendoutAndReturn(s string) []byte {
 	return buf[:length-1]
 }
 
+// StartPacket begins a set of functions, which will be send to Guiserver as one packet.
 func StartPacket() {
 	bPacket = true
 	sPacketBuf = "[\"packet\""
 }
 
+// EndPacket completes a set of functions, which will be send to Guiserver as one packet.
 func EndPacket() {
 	bPacket = false
-	Sendout( sPacketBuf + "]" )
+	sendout( sPacketBuf + "]" )
 	sPacketBuf = ""
 }
 
+// WriteLog writes the sText to a log file egui.log.
 func WriteLog(sText string) {
 
 	f, err := os.OpenFile(sLogName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
@@ -310,6 +313,9 @@ func WriteLog(sText string) {
 
 }
 
+// RegFunc adds the fu func to a map of functions,
+// sName argument is a function identifier - a key of this map.
+// You may need to call this function in case of using HWGui's xml forms.
 func RegFunc(sName string, fu func([]string) string) {
 
 	if mfu == nil {
@@ -318,7 +324,7 @@ func RegFunc(sName string, fu func([]string) string) {
 	mfu[sName] = fu
 }
 
-func Wait() {
+func wait() {
 	for !bEndProg {
 		time.Sleep(20 * time.Millisecond)
 	}
