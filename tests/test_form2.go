@@ -1,3 +1,7 @@
+// Copyright 2018 Alexander S.Kresin <alex@kresin.ru>, http://www.kresin.ru
+// Use of this source code is governed by a GNU general public
+// license that can be found in the LICENSE file.
+
 package main
 
 import egui "github.com/alkresin/external"

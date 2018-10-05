@@ -1,11 +1,10 @@
-/*
-   External - GUI framework for Go language.
-   External is a Go library to build GUI application, using external
-        standalone GUI server application: https://github.com/alkresin/guiserver.
- 
-  Copyright 2018 Alexander S.Kresin <alex@kresin.ru>
-  www - http://www.kresin.ru
- */
+// Copyright 2018 Alexander S.Kresin <alex@kresin.ru>, http://www.kresin.ru
+// Use of this source code is governed by a GNU general public
+// license that can be found in the LICENSE file.
+//
+// Package external is a GUI framework for Go language.
+// External is a Go library to build GUI application, using a
+// standalone GUI server application: https://github.com/alkresin/guiserver.
 package external
 
 import (
@@ -27,6 +26,9 @@ var bConnExist = false
 var bPacket = false
 var sPacketBuf string
 
+// Init runs, if needed, the Guiserver application, and connects to it.
+// It returns true, if the connection is successful, and false in other case.
+// The sOpt argument specifies connection details.
 func Init(sOpt string) bool {
 
 	var err error
@@ -115,6 +117,7 @@ func Init(sOpt string) bool {
 
 }
 
+// Exit closes the connection to Guiserver.
 func Exit() {
 	if bConnExist {
 		connOut.Close()
