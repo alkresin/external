@@ -105,7 +105,7 @@ func fsett1(p []string)string {
 
 func fsett3([]string)string {
 
-	egui.StartPacket()
+	egui.BeginPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
 	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 200, H: 440, Title: "Dialog Test", Font: pFont })
 	egui.InitDialog(pDlg)
@@ -150,7 +150,7 @@ func fsett4([]string)string {
 
 func ftab([]string)string {
 
-	egui.StartPacket()
+	egui.BeginPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
 	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 200, H: 340, Title: "Tab", Font: pFont })
 	egui.InitDialog(pDlg)
@@ -184,7 +184,7 @@ func ftab([]string)string {
 func fbrowse([]string)string {
 
 	var arr = [][]string{ {"Alex","17","1200"}, {"Victor","42","1600"}, {"John","31","1000"} }
-	//egui.StartPacket()
+	//egui.BeginPacket()
 	pFont := egui.CreateFont( &(egui.Font{Name: "f1", Family: "Georgia", Height: 16}) )
 	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 200, H: 340, Title: "browse", Font: pFont })
 	egui.InitDialog(pDlg)

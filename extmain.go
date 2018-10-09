@@ -287,8 +287,8 @@ func sendoutAndReturn(s string) []byte {
 	return buf[:length-1]
 }
 
-// StartPacket begins a set of functions, which will be send to Guiserver as one packet.
-func StartPacket() {
+// BeginPacket begins a set of functions, which will be send to Guiserver as one packet.
+func BeginPacket() {
 	bPacket = true
 	sPacketBuf = "[\"packet\""
 }
