@@ -296,7 +296,7 @@ func BeginPacket() {
 // EndPacket completes a set of functions, which will be send to Guiserver as one packet.
 func EndPacket() {
 	bPacket = false
-	sendout( sPacketBuf + "]" )
+	sendout(sPacketBuf + "]")
 	sPacketBuf = ""
 }
 

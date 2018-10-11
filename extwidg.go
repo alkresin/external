@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// A set of constants of the anchor values
 const (
 	A_TOPLEFT   = -1  // Anchors control to the top and left borders of the container and does not change the distance between the top and left borders. (Default)
 	A_TOPABS    = 1   // Anchors control to top border of container and does not change the distance between the top border.
@@ -25,6 +26,7 @@ const (
 	A_VERTFIX   = 512 // Anchors center of control relative to top and bottom borders but remains fixed in size.
 )
 
+// The Font structure prepares data to create a new font
 type Font struct {
 	Family    string
 	Name      string
@@ -36,6 +38,7 @@ type Font struct {
 	Charset   int16
 }
 
+// The Style structure prepares data to create a new style
 type Style struct {
 	Name      string
 	Orient    int16
@@ -46,6 +49,7 @@ type Style struct {
 	Bitmap    string
 }
 
+// The Widget structure prepares data to create a new widget or window
 type Widget struct {
 	Parent   *Widget
 	Type     string
