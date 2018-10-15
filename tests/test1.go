@@ -1,5 +1,5 @@
 // Copyright 2018 Alexander S.Kresin <alex@kresin.ru>, http://www.kresin.ru
-// Use of this source code is governed by a GNU general public
+// Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
 package main
