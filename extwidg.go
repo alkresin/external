@@ -530,6 +530,7 @@ func TabPageEnd(pTab *Widget) {
 	sendout(sParams)
 }
 
+// BrwSetArray sets a two-dimensional slice to be represented in a browse widget p.
 func BrwSetArray(p *Widget, arr [][]string) {
 
 	var sName = widgFullName(p)
@@ -538,12 +539,27 @@ func BrwSetArray(p *Widget, arr [][]string) {
 	sendout(sParams)
 }
 
+// BrwSetColumn defines options for a column with number ic of a browse widget p.
+// The options are:
+//   sHead string - a column title;
+//   iAlignHead int - the alignment of a column title ( 0 - left, 1 - center, 2 - right );
+//   iAlignData int - the alignment of a column data ( 0 - left, 1 - center, 2 - right );
+//   bEditable bool - is the data in a column editable.
+func BrwSetColumn(p *Widget, ic int, sHead string, iAlignHead int, iAlignData int, bEditable bool) {
+	var sName = widgFullName(p)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcol\",[%d,\"%s\",%d,%d,%t]]", sName, ic, sHead, iAlignHead, iAlignData, bEditable)
+	sendout(sParams)
+}
+
+// SetImagePath sets a directory where GuiServer should look for image files.
 func SetImagePath(sValue string) {
 
 	sParams := fmt.Sprintf("[\"setparam\",\"bmppath\",\"%s\"]", sValue)
 	sendout(sParams)
 }
 
+// SetPath sets a directory where GuiServer should write files
+// and look for files to read.
 func SetPath(sValue string) {
 
 	sParams := fmt.Sprintf("[\"setparam\",\"path\",\"%s\"]", sValue)
@@ -666,8 +682,22 @@ func (o *Widget) SetImage(sImage string) {
 func (o *Widget) SetParam(sParam string, xParam interface{}) {
 
 	var sName = widgFullName(o)
-	b, _ := json.Marshal(xParam)
-	sParams := fmt.Sprintf("[\"set\",\"%s\",\"xparam\",[\"%s\",%s]]", sName, sParam, string(b))
+	var sParValue string
+	var bObj = true
+
+	switch v := xParam.(type) {
+	case *Font:
+		sParValue = "\"" + v.Name + "\""
+	case *Style:
+		sParValue = "\"" + v.Name + "\""
+	case *Widget:
+		sParValue = "\"" + v.Name + "\""
+	default:
+		b, _ := json.Marshal(xParam)
+		sParValue = string(b)
+		bObj = false
+	}
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"xparam\",[\"%s\",%s,%t]]", sName, sParam, sParValue, bObj)
 	sendout(sParams)
 }
 
