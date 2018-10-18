@@ -66,15 +66,15 @@ func main() {
 		AProps: map[string]string{"HStyle": "st1"}}))
 
 	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 56, H: 40, Title: "Date",
-		AProps: map[string]string{"HStyles": egui.ArrStrings("st1", "st2", "st3")}}))
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
 	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),1,Dtoc(Date()),.T.)")
 
 	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 56, Y: 0, W: 56, H: 40, Title: "Time",
-		AProps: map[string]string{"HStyles": egui.ArrStrings("st1", "st2", "st3")}}))
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
 	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),2,Time(),.T.)")
 
 	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 112, Y: 0, W: 56, H: 40, Title: "Get",
-		AProps: map[string]string{"HStyles": egui.ArrStrings("st1", "st2", "st3")}}))
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
 	egui.PLastWidget.SetCallBackProc("onclick", fsett3, "fsett3")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
@@ -85,7 +85,7 @@ func main() {
 	egui.PLastWidget.SetCallBackProc("onclick", fsett1, "fsett1", "first parameter")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "panelbot", H: 32,
-		AProps: map[string]string{"HStyle": "st4", "AParts": egui.ArrInts(120, 120, 0)}}))
+		AProps: map[string]string{"HStyle": "st4", "AParts": egui.ToString(120, 120, 0)}}))
 
 	pWindow.Activate()
 
@@ -115,7 +115,7 @@ func fsett3([]string) string {
 	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 86, W: 160, H: 24}))
 
 	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 116, W: 160, H: 24,
-		AProps: map[string]string{"AItems": egui.ArrStrings("first", "second", "third")}}))
+		AProps: map[string]string{"AItems": egui.ToString("first", "second", "third")}}))
 
 	pDlg.AddWidget(&(egui.Widget{Type: "group", X: 10, Y: 150, W: 180, H: 76, Title: "Check"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk1", X: 24, Y: 174, W: 150, H: 24, Title: "Married"}))

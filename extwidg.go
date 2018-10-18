@@ -116,6 +116,7 @@ func widgFullName(pWidg *Widget) string {
 	return sName
 }
 
+// Returns a pointer to a Font structure with a Name member equal to sName argument.
 func GetFont(sName string) *Font {
 	if aFonts != nil {
 		for _, o := range aFonts {
@@ -127,6 +128,7 @@ func GetFont(sName string) *Font {
 	return nil
 }
 
+// Returns a pointer to a Style structure with a Name member equal to sName argument.
 func GetStyle(sName string) *Style {
 	if aStyles != nil {
 		for _, o := range aStyles {
@@ -138,6 +140,7 @@ func GetStyle(sName string) *Style {
 	return nil
 }
 
+// Returns a pointer to a Widget structure (a window or a dialog) with a Name member equal to sName argument.
 func GetWnd(sName string) *Widget {
 	if sName == "main" {
 		return pMainWindow
@@ -151,6 +154,8 @@ func GetWnd(sName string) *Widget {
 	return nil
 }
 
+// Returns a pointer to a Widget structure (a widget) with a Name member corresponding to sName argument.
+// The sName must be compound name, containing a names of all parent widgets and windows, defined by dots.
 func GetWidg(sName string) *Widget {
 	npos := strings.Index(sName, ".")
 	if npos == -1 {
@@ -230,30 +235,26 @@ func setprops(pWidg *Widget, mwidg map[string]string) string {
 	return sPar
 }
 
-func ArrStrings(sParam ...string) string {
-	s := ""
-	for _, v := range sParam {
-		s += ",\"" + v + "\""
+// Converts function arguments to a json string
+func ToString(xParam ...interface{}) string {
+
+	for i, x := range xParam {
+		switch v := x.(type) {
+		case *Font:
+			xParam[i] = v.Name
+		case *Style:
+			xParam[i] = v.Name
+		case *Widget:
+			xParam[i] = v.Name
+		}
 	}
-	return "[" + s[1:] + "]"
+	
+	b, _ := json.Marshal(xParam)
+	return string(b)
 }
 
-func ArrInts(iParam ...int) string {
-	s := ""
-	for _, v := range iParam {
-		s += "," + strconv.Itoa(v)
-	}
-	return "[" + s[1:] + "]"
-}
-
-func ArrWidgs(wParam ...*Widget) string {
-	s := ""
-	for _, w := range wParam {
-		s += ",\"" + w.Name + "\""
-	}
-	return "[" + s[1:] + "]"
-}
-
+// Reads a main window description from a xml file, prepared by HwGUI's Designer,
+// initialises and activates this window with all its widgets
 func OpenMainForm(sForm string) bool {
 	var b bool
 	b = sendout("[\"openformmain\",\"" + sForm + "\"]")
@@ -261,18 +262,23 @@ func OpenMainForm(sForm string) bool {
 	return b
 }
 
+// Reads a dialog window description from a xml file, prepared by HwGUI's Designer,
+// initialises and activates this dialog with all its widgets
 func OpenForm(sForm string) bool {
 	var b bool
 	b = sendout("[\"openform\",\"" + sForm + "\"]")
 	return b
 }
 
+// Reads a report description from a xml file, prepared by HwGUI's Designer
+// and prints this report
 func OpenReport(sForm string) bool {
 	var b bool
 	b = sendout("[\"openreport\",\"" + sForm + "\"]")
 	return b
 }
 
+// Creates a font with parameters, defined in a structure, pointed by pFont argument.
 func CreateFont(pFont *Font) *Font {
 
 	pFont.newfont()
@@ -282,6 +288,7 @@ func CreateFont(pFont *Font) *Font {
 	return pFont
 }
 
+// Creates a style with parameters, defined in a structure, pointed by pStyle argument.
 func CreateStyle(pStyle *Style) *Style {
 
 	if pStyle.Name == "" {
@@ -301,6 +308,8 @@ func CreateStyle(pStyle *Style) *Style {
 	return pStyle
 }
 
+// Initialises a main window with parameters, defined in a structure, pointed by pWnd argument.
+// To show this window on a screen it is necessary to use Activate() method.
 func InitMainWindow(pWnd *Widget) bool {
 	pMainWindow = pWnd
 	PLastWindow = pWnd
@@ -312,6 +321,8 @@ func InitMainWindow(pWnd *Widget) bool {
 	return sendout(sParams)
 }
 
+// Initialises a dialog window with parameters, defined in a structure, pointed by pWnd argument.
+// To show this window on a screen it is necessary to use Activate() method.
 func InitDialog(pWnd *Widget) bool {
 	PLastWindow = pWnd
 	pWnd.Type = "dialog"

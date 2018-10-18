@@ -51,14 +51,14 @@ func main() {
 		AProps: map[string]string{"HStyle":"st1"} }))
 
 	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 56, H: 40, Title: "Date",
-		AProps: map[string]string{"HStyles": egui.ArrStrings("st1","st2","st3")}}))
+		AProps: map[string]string{"HStyles": egui.ToString("st1","st2","st3")}}))
 	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),1,Dtoc(Date()),.T.)")
 
 	//pPanel = pWindow.AddWidget(&(egui.Widget{Type: "panel", X: 0, Y: 40, W: 200, H: 208 }))
 	//pPanel.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
 
 	pTree := pWindow.AddWidget(&(egui.Widget{Type: "tree", X: 0, Y: 40, W: 200, H: 208,
-		AProps: map[string]string{"AImages": egui.ArrStrings("cl_fl.bmp","op_fl.bmp")} }))
+		AProps: map[string]string{"AImages": egui.ToString("cl_fl.bmp","op_fl.bmp")} }))
 	pTree.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
 
 	egui.InsertNode( pTree, "", "n1", "First", "", nil, nil, "" )
@@ -71,11 +71,11 @@ func main() {
 	egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,x-o:nLeft,y-72)}")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "splitter", X: 200, Y: 40, W: 4, H: 208,
-		AProps: map[string]string{"ALeft": egui.ArrWidgs(pTree), "ARight": egui.ArrWidgs(pEdi)} }))
+		AProps: map[string]string{"ALeft": egui.ToString(pTree), "ARight": egui.ToString(pEdi)} }))
 	egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "panelbot", H: 32,
-		AProps: map[string]string{"HStyle":"st4","AParts": egui.ArrInts(120,120,0)} }))
+		AProps: map[string]string{"HStyle":"st4","AParts": egui.ToString(120,120,0)} }))
 
 	pWindow.Activate()
 
