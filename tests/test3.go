@@ -15,6 +15,11 @@ import (
 	egui "github.com/alkresin/external"
 )
 
+const (
+	CLR_LGRAY1  = 15658734
+	CLR_LGRAY2  = 14540253
+)
+
 var width, height = 720, 720
 
 func main() {
@@ -34,7 +39,7 @@ func main() {
 		return
 	}
 
-	pWindow := &(egui.Widget{X: 100, Y: 100, W: 800, H: 800, Title: "Test3"})
+	pWindow := &(egui.Widget{X: 100, Y: 100, W: 748, H: 800, Title: "Test3", BColor: 1})
 	egui.InitMainWindow(pWindow)
 
 	egui.Menu("")
@@ -47,10 +52,12 @@ func main() {
 	}
 	egui.EndMenu()
 
-	pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
-		X: 10, Y: 10, W: 180, H: 24, Title: ""}))
+	//pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
+	//	X: 10, Y: 10, W: 180, H: 24, Title: ""}))
 
-	pWindow.AddWidget(&(egui.Widget{Type: "bitmap", Name: "img", X: 10, Y: 40, W: 720, H: 720 }))
+	pWindow.AddWidget(&(egui.Widget{Type: "bitmap", Name: "img", X: 10, Y: 10, W: 720,
+		H: 720, BColor: CLR_LGRAY2 }))
+	//	Anchor: egui.A_TOPABS+egui.A_LEFTABS+egui.A_BOTTOMABS+egui.A_RIGHTABS }))
 	//egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,x-o:nLeft,y-72)}")
 
 	pWindow.Activate()
@@ -102,9 +109,9 @@ func draw( fu func(z complex128) color.Color) {
 
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 	for py := 0; py < height; py++ {
-		y := float64(py)/height*(ymax-ymin) + ymin
+		y := float64(py)/float64(height)*(ymax-ymin) + ymin
 		for px := 0; px < width; px++ {
-			x := float64(px)/width*(xmax-xmin) + xmin
+			x := float64(px)/float64(width)*(xmax-xmin) + xmin
 			z := complex(x, y)
 			// Image point (px, py) represents complex value z.
 			img.Set(px, py, fu(z))
