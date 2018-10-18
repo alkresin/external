@@ -105,14 +105,17 @@ func fsett1(p []string) string {
 func fsett3([]string) string {
 
 	egui.BeginPacket()
+	egui.SetDateFormat("DD.MM.YYYY")
 	pFont := egui.CreateFont(&(egui.Font{Name: "f1", Family: "Georgia", Height: 16}))
 	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 200, H: 440, Title: "Dialog Test", Font: pFont})
 	egui.InitDialog(pDlg)
 
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 10, W: 180, H: 24, Title: "Name:"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi1", X: 20, Y: 32, W: 160, H: 24}))
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 64, W: 180, H: 24, Title: "Surname:"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 86, W: 160, H: 24}))
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 10, W: 180, H: 24, Title: "Identifier:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi1", X: 20, Y: 32, W: 160, H: 24,
+		AProps: map[string]string{"Picture": "@!R /XXX:XXX/"}}))
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 64, W: 180, H: 24, Title: "Date:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 86, W: 120, H: 24,
+		Title: "20181018", AProps: map[string]string{"Picture": "D@D"}}))
 
 	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 116, W: 160, H: 24,
 		AProps: map[string]string{"AItems": egui.ToString("first", "second", "third")}}))
@@ -140,7 +143,7 @@ func fsett3([]string) string {
 
 func fsett4([]string) string {
 	arr := egui.GetValues(egui.GetWnd("dlg"), []string{"edi1", "edi2", "comb", "chk1", "chk2", "rg", "upd1"})
-	egui.MsgInfo("Name: "+arr[0]+"\r\n"+"Surname: "+arr[1]+"\r\n"+"Combo: "+arr[2]+"\r\n"+
+	egui.MsgInfo("Id: "+arr[0]+"\r\n"+"Date: "+arr[1]+"\r\n"+"Combo: "+arr[2]+"\r\n"+
 		"Married: "+arr[3]+"\r\n"+"Has children: "+arr[4]+"\r\n"+"Sex: "+arr[5]+"\r\n"+
 		"Age: "+arr[6], "Result", "", nil, "")
 	egui.PLastWindow.Close()

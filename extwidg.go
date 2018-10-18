@@ -248,7 +248,7 @@ func ToString(xParam ...interface{}) string {
 			xParam[i] = v.Name
 		}
 	}
-	
+
 	b, _ := json.Marshal(xParam)
 	return string(b)
 }
@@ -527,6 +527,7 @@ func RadioEnd(p *Widget, iSel int) {
 	sendout(sParams)
 }
 
+// TabPage initialises a new page of a tab widget.
 func TabPage(pTab *Widget, sCaption string) {
 
 	var sName = widgFullName(pTab)
@@ -534,6 +535,7 @@ func TabPage(pTab *Widget, sCaption string) {
 	sendout(sParams)
 }
 
+// TabPageEnd completes a description of a page of a tab widget.
 func TabPageEnd(pTab *Widget) {
 
 	var sName = widgFullName(pTab)
@@ -574,6 +576,14 @@ func SetImagePath(sValue string) {
 func SetPath(sValue string) {
 
 	sParams := fmt.Sprintf("[\"setparam\",\"path\",\"%s\"]", sValue)
+	sendout(sParams)
+}
+
+// SetDateFormat sets a date display format,
+// for example, "DD.MM.YYYY"
+func SetDateFormat(sValue string) {
+
+	sParams := fmt.Sprintf("[\"setparam\",\"datef\",\"%s\"]", sValue)
 	sendout(sParams)
 }
 
