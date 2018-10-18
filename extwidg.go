@@ -695,6 +695,9 @@ func (o *Widget) SetImage(sImage string) {
 		return
 	}
 
+	if o.AProps == nil {
+		o.AProps = make(map[string]string)
+	}
 	o.AProps["Image"] = sImage
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"image\",\"%s\"]", sName, sImage)
 	sendout(sParams)
