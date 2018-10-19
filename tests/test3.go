@@ -16,11 +16,17 @@ import (
 )
 
 const (
+	CLR_LBLUE  = 16759929
+	CLR_LBLUE0 = 12164479
+	CLR_LBLUE2 = 16770002
+	CLR_LBLUE3 = 16772062
+	CLR_LBLUE4 = 16775920
+
 	CLR_LGRAY1  = 15658734
 	CLR_LGRAY2  = 14540253
 )
 
-var width, height = 720, 720
+var width, height = 680, 680
 
 func main() {
 
@@ -39,24 +45,40 @@ func main() {
 		return
 	}
 
-	pWindow := &(egui.Widget{X: 100, Y: 100, W: 748, H: 800, Title: "Test3", BColor: 1})
+	egui.CreateStyle(&(egui.Style{Name: "st1", Orient: 1, Colors: []int32{CLR_LBLUE, CLR_LBLUE3}}))
+	egui.CreateStyle(&(egui.Style{Name: "st2", Colors: []int32{CLR_LBLUE}, BorderW: 3}))
+	egui.CreateStyle(&(egui.Style{Name: "st3", Colors: []int32{CLR_LBLUE},
+		BorderW: 2, BorderClr: CLR_LBLUE0}))
+	pFont := egui.CreateFont(&(egui.Font{Name: "f1", Family: "Georgia", Height: -14}))
+
+	pWindow := &(egui.Widget{X: 100, Y: 100, W: 716, H: 764, Title: "Test3", BColor: 1, Font: pFont})
 	egui.InitMainWindow(pWindow)
 
-	egui.Menu("")
-	{
-		egui.AddMenuItem("Exit", nil, "hwg_EndWindow()")
-		egui.AddMenuItem("Mandelbrot", fu1, "fu1")
-		egui.AddMenuItem("Acos", fu2, "fu2")
-		egui.AddMenuItem("Sqrt", fu3, "fu3")
-		egui.AddMenuItem("Newton", fu4, "fu4")
-	}
-	egui.EndMenu()
+	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "paneltop", H: 32,
+		AProps: map[string]string{"HStyle": "st1"}}))
 
-	//pWindow.AddWidget(&(egui.Widget{Type: "label", Name: "l1",
-	//	X: 10, Y: 10, W: 180, H: 24, Title: ""}))
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 60, H: 32, Title: "Exit",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_EndWindow()")
 
-	pWindow.AddWidget(&(egui.Widget{Type: "bitmap", Name: "img", X: 10, Y: 10, W: 720,
-		H: 720, BColor: CLR_LGRAY2 }))
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 60, Y: 0, W: 60, H: 32, Title: "M-brot",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "1")
+
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 120, Y: 0, W: 60, H: 32, Title: "Acos",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "2")
+
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 180, Y: 0, W: 60, H: 32, Title: "Sqrt",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "3")
+
+	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 240, Y: 0, W: 60, H: 32, Title: "Newton",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "4")
+
+	pWindow.AddWidget(&(egui.Widget{Type: "bitmap", Name: "img", X: 10, Y: 36, W: 680,
+		H: 680, BColor: CLR_LGRAY2 }))
 	//	Anchor: egui.A_TOPABS+egui.A_LEFTABS+egui.A_BOTTOMABS+egui.A_RIGHTABS }))
 	//egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,x-o:nLeft,y-72)}")
 
@@ -66,38 +88,23 @@ func main() {
 
 }
 
-func fu1([]string) string {
+func fu1(p []string) string {
 
-	draw(mandelbrot)
-	
 	pImg := egui.GetWidg("main.img")
-	pImg.SetImage( "a1.jpg" )
-	return ""
-}
+    egui.EvalProc("HWindow():GetMain():Move(,,716,764)")
+	pImg.SetImage( "" )
 
-func fu2([]string) string {
-
-	draw(acos)
+    switch p[1] {
+    case "1":
+		draw(mandelbrot)
+    case "2":
+    	draw(acos)
+    case "3":
+    	draw(sqrt)
+    case "4":
+    	draw(newton)
+    }
 	
-	pImg := egui.GetWidg("main.img")
-	pImg.SetImage( "a1.jpg" )
-	return ""
-}
-
-func fu3([]string) string {
-
-	draw(sqrt)
-	
-	pImg := egui.GetWidg("main.img")
-	pImg.SetImage( "a1.jpg" )
-	return ""
-}
-
-func fu4([]string) string {
-
-	draw(newton)
-	
-	pImg := egui.GetWidg("main.img")
 	pImg.SetImage( "a1.jpg" )
 	return ""
 }
