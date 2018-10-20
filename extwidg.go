@@ -49,6 +49,12 @@ type Style struct {
 	Bitmap    string
 }
 
+// The Printer structure prepares data to initialize a printer
+type Printer struct {
+	Name     string
+	sPrinter string
+}
+
 // The Widget structure prepares data to create a new widget or window
 type Widget struct {
 	Parent   *Widget
@@ -306,6 +312,73 @@ func CreateStyle(pStyle *Style) *Style {
 		pStyle.BorderW, pStyle.BorderClr, pStyle.Bitmap)
 	sendout(sParams)
 	return pStyle
+}
+
+// Creates a style with parameters, defined in a structure, pointed by pStyle argument.
+func InitPrinter(pPrinter *Printer) *Printer {
+
+	if pPrinter.Name == "" {
+		pPrinter.Name = fmt.Sprintf("p%d", iIdCount)
+		iIdCount++
+	}
+	sParams := fmt.Sprintf("[\"print\",\"init\",%s,[\"%s\"]]", pPrinter.Name, pPrinter.sPrinter)
+	sendout(sParams)
+	return pPrinter
+}
+
+func (p *Printer) Say(iTop, iLeft, iRight, iBottom int32, sText string, iOpt int32) {
+
+	sParams := fmt.Sprintf("[\"print\",\"box\",\"%s\",[%d,%d,%d,%d,\"%s\",%d]]",
+		p.Name, iTop, iLeft, iRight, iBottom, sText, iOpt)
+	sendout(sParams)
+}
+
+func (p *Printer) Line(iTop, iLeft, iRight, iBottom int32) {
+
+	sParams := fmt.Sprintf("[\"print\",\"line\",\"%s\",[%d,%d,%d,%d]]", p.Name, iTop, iLeft, iRight, iBottom)
+	sendout(sParams)
+}
+
+func (p *Printer) Box(iTop, iLeft, iRight, iBottom int32) {
+
+	sParams := fmt.Sprintf("[\"print\",\"box\",\"%s\",[%d,%d,%d,%d]]", p.Name, iTop, iLeft, iRight, iBottom)
+	sendout(sParams)
+}
+
+func (p *Printer) StartDoc(bPreview bool) {
+
+	sParams := fmt.Sprintf("[\"print\",\"startdoc\",\"%s\",[%t]]", p.Name, bPreview)
+	sendout(sParams)
+}
+
+func (p *Printer) EndDoc() {
+
+	sParams := fmt.Sprintf("[\"print\",\"enddoc\",\"%s\",[]]", p.Name)
+	sendout(sParams)
+}
+
+func (p *Printer) StartPage() {
+
+	sParams := fmt.Sprintf("[\"print\",\"startpage\",\"%s\",[]]", p.Name)
+	sendout(sParams)
+}
+
+func (p *Printer) EndPage() {
+
+	sParams := fmt.Sprintf("[\"print\",\"endpage\",\"%s\",[]]", p.Name)
+	sendout(sParams)
+}
+
+func (p *Printer) Preview() {
+
+	sParams := fmt.Sprintf("[\"print\",\"preview\",\"%s\",[]]", p.Name)
+	sendout(sParams)
+}
+
+func (p *Printer) End() {
+
+	sParams := fmt.Sprintf("[\"print\",\"end\",\"%s\",[]]", p.Name)
+	sendout(sParams)
 }
 
 // Initialises a main window with parameters, defined in a structure, pointed by pWnd argument.
