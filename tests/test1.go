@@ -39,7 +39,7 @@ func main() {
 		egui.Menu("File")
 		{
 			egui.AddMenuItem("Set text",
-				func(p []string) string { egui.GetWidg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1")
+				func(p []string) string { egui.Widg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1")
 			egui.AddMenuItem("Open dialog", fsett3, "fsett3")
 			egui.AddMenuItem("Test Tab", ftab, "ftab")
 			egui.AddMenuItem("Test browse", fbrowse, "fbrowse")
@@ -95,7 +95,7 @@ func main() {
 
 func fsett1(p []string) string {
 
-	pLabel := egui.GetWidg("main.l1")
+	pLabel := egui.Widg("main.l1")
 	fmt.Println(pLabel.GetText())
 	pLabel.SetText(p[1])
 
@@ -142,7 +142,7 @@ func fsett3([]string) string {
 }
 
 func fsett4([]string) string {
-	arr := egui.GetValues(egui.GetWnd("dlg"), []string{"edi1", "edi2", "comb", "chk1", "chk2", "rg", "upd1"})
+	arr := egui.GetValues(egui.Wnd("dlg"), []string{"edi1", "edi2", "comb", "chk1", "chk2", "rg", "upd1"})
 	egui.MsgInfo("Id: "+arr[0]+"\r\n"+"Date: "+arr[1]+"\r\n"+"Combo: "+arr[2]+"\r\n"+
 		"Married: "+arr[3]+"\r\n"+"Has children: "+arr[4]+"\r\n"+"Sex: "+arr[5]+"\r\n"+
 		"Age: "+arr[6], "Result", "", nil, "")
@@ -248,7 +248,7 @@ func fsele_color(p []string) string {
 		egui.SelectColor(0, "fsele_color", fsele_color, "mm1")
 	} else {
 		iColor, _ := strconv.Atoi(p[1])
-		egui.GetWidg("main.l1").SetColor(int32(iColor), -1)
+		egui.Widg("main.l1").SetColor(int32(iColor), -1)
 	}
 	return ""
 }

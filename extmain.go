@@ -200,7 +200,7 @@ func listen(iPort int) {
 			case "exit":
 				sendResponse(connIn, "[\"Ok\"]")
 				if len(arr) > 1 {
-					oW := GetWnd(arr[1])
+					oW := Wnd(arr[1])
 					if oW != nil {
 						oW.Delete()
 					}

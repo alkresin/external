@@ -140,8 +140,8 @@ func GetStyle(sName string) *Style {
 	return nil
 }
 
-// Returns a pointer to a Widget structure (a window or a dialog) with a Name member equal to sName argument.
-func GetWnd(sName string) *Widget {
+// Wnd returns a pointer to a Widget structure (a window or a dialog) with a Name member equal to sName argument.
+func Wnd(sName string) *Widget {
 	if sName == "main" {
 		return pMainWindow
 	} else if aDialogs != nil {
@@ -154,16 +154,16 @@ func GetWnd(sName string) *Widget {
 	return nil
 }
 
-// Returns a pointer to a Widget structure (a widget) with a Name member corresponding to sName argument.
+// Widg returns a pointer to a Widget structure (a widget) with a Name member corresponding to sName argument.
 // The sName must be compound name, containing a names of all parent widgets and windows, defined by dots.
-func GetWidg(sName string) *Widget {
+func Widg(sName string) *Widget {
 	npos := strings.Index(sName, ".")
 	if npos == -1 {
-		return GetWnd(sName)
+		return Wnd(sName)
 	}
 	sWnd := sName[:npos]
 	sName = sName[npos+1:]
-	if oWnd := GetWnd(sWnd); oWnd != nil {
+	if oWnd := Wnd(sWnd); oWnd != nil {
 		for npos = strings.Index(sName, "."); npos > -1; npos = strings.Index(sName, ".") {
 			sWnd := sName[:npos]
 			sName = sName[npos+1:]
@@ -783,5 +783,21 @@ func (o *Widget) SetCallBackFunc(sbName string, fu func([]string) string, sCode 
 	}
 	b, _ := json.Marshal(sCode)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"cb.%s\",%s]", sName, sbName, string(b))
+	sendout(sParams)
+}
+
+func (o *Widget) Move(iLeft, iTop, iWidth, iHeight int32) {
+
+	var sName = widgFullName(o)
+
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"move\",[%d,%d,%d,%d]]", sName, iLeft, iTop, iWidth, iHeight)
+	sendout(sParams)
+}
+
+func (o *Widget) Enable(bEnable bool) {
+
+	var sName = widgFullName(o)
+
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"enable\",%t]", sName, bEnable)
 	sendout(sParams)
 }

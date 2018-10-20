@@ -90,8 +90,8 @@ func main() {
 
 func fu1(p []string) string {
 
-	pImg := egui.GetWidg("main.img")
-    egui.EvalProc("HWindow():GetMain():Move(,,716,764)")
+    egui.PLastWindow.Move( -1,-1,716,764 )
+	pImg := egui.Widg("main.img")
 	pImg.SetImage( "" )
 
     switch p[1] {
