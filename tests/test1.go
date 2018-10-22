@@ -51,6 +51,8 @@ func main() {
 			egui.AddMenuItem("Select font", fsele_font, "fsele_font")
 			egui.AddMenuItem("Select file", fsele_file, "fsele_file")
 			egui.AddMenuSeparator()
+			egui.AddMenuItem("Printing", fprint, "fprint")
+			egui.AddMenuSeparator()
 			egui.AddMenuItem("Exit", nil, "hwg_EndWindow()")
 		}
 		egui.EndMenu()
@@ -277,6 +279,29 @@ func fsele_file(p []string) string {
 		} else {
 			egui.MsgInfo(p[1], "File selected", "", nil, "")
 		}
+	}
+	return ""
+}
+
+func fprint(p []string) string {
+	if len(p) == 0 {
+		egui.InitPrinter(&(egui.Printer{SPrinter: "...", BPreview: true}), "fprint", fprint, "mm1" )
+	} else {
+		pPrinter := egui.PLastPrinter
+		pFont := pPrinter.AddFont( &(egui.Font{Family: "Times New Roman", Height: 10}) )
+		pPrinter.StartPage()
+		pPrinter.SetFont( pFont )
+		pPrinter.Box( 5,5,200,282 )
+		pPrinter.Say( 50,10,165,26,"Printing first sample !",egui.DT_CENTER )
+		pPrinter.Line( 45,30,170,30 )
+		pPrinter.Line( 45,5,45,30 )
+		pPrinter.Line( 170,5,170,30 )
+		pPrinter.Say( 50,120,150,132,"----------",egui.DT_CENTER )
+		pPrinter.Box( 50,134,160,146 )
+		pPrinter.Say( 50,135,160,146,"End Of Report", egui.DT_CENTER )
+		pPrinter.EndPage()
+		pPrinter.End()
+
 	}
 	return ""
 }

@@ -26,6 +26,20 @@ const (
 	A_VERTFIX   = 512 // Anchors center of control relative to top and bottom borders but remains fixed in size.
 )
 
+const (
+	DT_LEFT     = 0
+	DT_CENTER   = 1
+	DT_RIGHT    = 2
+)
+
+// A set of constants of the printer paper types
+const (
+	DMPAPER_A3  =  8  // A3 297 x 420 mm
+	DMPAPER_A4  =  9  // A4 210 x 297 mm
+	DMPAPER_A5  = 11  // A5 148 x 210 mm
+	DMPAPER_A6  = 70  // A6 105 x 148 mm
+)
+
 // The Font structure prepares data to create a new font
 type Font struct {
 	Family    string
@@ -52,7 +66,10 @@ type Style struct {
 // The Printer structure prepares data to initialize a printer
 type Printer struct {
 	Name     string
-	sPrinter string
+	SPrinter string
+	BPreview   bool
+	IFormType   int
+	BLandscape bool
 }
 
 // The Widget structure prepares data to create a new widget or window
@@ -84,6 +101,7 @@ var iIdCount int32
 
 var PLastWindow *Widget
 var PLastWidget *Widget
+var PLastPrinter *Printer
 
 var mWidgs = make(map[string]map[string]string)
 
@@ -287,7 +305,7 @@ func OpenReport(sForm string) bool {
 // Creates a font with parameters, defined in a structure, pointed by pFont argument.
 func CreateFont(pFont *Font) *Font {
 
-	pFont.newfont()
+	pFont.new()
 	sParams := fmt.Sprintf("[\"crfont\",\"%s\",\"%s\",%d,%t,%t,%t,%t,%d]", pFont.Name, pFont.Family, pFont.Height,
 		pFont.Bold, pFont.Italic, pFont.Underline, pFont.Strikeout, pFont.Charset)
 	sendout(sParams)
@@ -315,21 +333,43 @@ func CreateStyle(pStyle *Style) *Style {
 }
 
 // Creates a style with parameters, defined in a structure, pointed by pStyle argument.
-func InitPrinter(pPrinter *Printer) *Printer {
+func InitPrinter(pPrinter *Printer, sFunc string, fu func([]string) string, sName string) *Printer {
 
 	if pPrinter.Name == "" {
 		pPrinter.Name = fmt.Sprintf("p%d", iIdCount)
 		iIdCount++
 	}
-	sParams := fmt.Sprintf("[\"print\",\"init\",%s,[\"%s\"]]", pPrinter.Name, pPrinter.sPrinter)
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"prninit\",\"%s\",[\"%s\",%t,%d,%t],\"%s\",\"%s\"]", pPrinter.Name,
+		pPrinter.SPrinter, pPrinter.BPreview, pPrinter.IFormType, pPrinter.BLandscape, sFunc, sName )
 	sendout(sParams)
+	PLastPrinter = pPrinter
 	return pPrinter
+}
+
+func (p *Printer) AddFont(pFont *Font) *Font {
+	pFont.new()
+	sParams := fmt.Sprintf("[\"print\",\"fontadd\",\"%s\",[\"%s\",\"%s\",%d,%t,%t,%t,%d]]", p.Name,
+		pFont.Name, pFont.Family, pFont.Height,
+		pFont.Bold, pFont.Italic, pFont.Underline, pFont.Charset)
+	sendout(sParams)
+	return pFont
+}
+
+func (p *Printer) SetFont(pFont *Font) {
+	sParams := fmt.Sprintf("[\"print\",\"fontset\",\"%s\",[\"%s\"]]", p.Name, pFont.Name)
+	sendout(sParams)
 }
 
 func (p *Printer) Say(iTop, iLeft, iRight, iBottom int32, sText string, iOpt int32) {
 
-	sParams := fmt.Sprintf("[\"print\",\"box\",\"%s\",[%d,%d,%d,%d,\"%s\",%d]]",
-		p.Name, iTop, iLeft, iRight, iBottom, sText, iOpt)
+	sParams := fmt.Sprintf("[\"print\",\"text\",\"%s\",[\"%s\",%d,%d,%d,%d,%d]]",
+		p.Name, sText, iTop, iLeft, iRight, iBottom, iOpt)
 	sendout(sParams)
 }
 
@@ -345,18 +385,6 @@ func (p *Printer) Box(iTop, iLeft, iRight, iBottom int32) {
 	sendout(sParams)
 }
 
-func (p *Printer) StartDoc(bPreview bool) {
-
-	sParams := fmt.Sprintf("[\"print\",\"startdoc\",\"%s\",[%t]]", p.Name, bPreview)
-	sendout(sParams)
-}
-
-func (p *Printer) EndDoc() {
-
-	sParams := fmt.Sprintf("[\"print\",\"enddoc\",\"%s\",[]]", p.Name)
-	sendout(sParams)
-}
-
 func (p *Printer) StartPage() {
 
 	sParams := fmt.Sprintf("[\"print\",\"startpage\",\"%s\",[]]", p.Name)
@@ -366,12 +394,6 @@ func (p *Printer) StartPage() {
 func (p *Printer) EndPage() {
 
 	sParams := fmt.Sprintf("[\"print\",\"endpage\",\"%s\",[]]", p.Name)
-	sendout(sParams)
-}
-
-func (p *Printer) Preview() {
-
-	sParams := fmt.Sprintf("[\"print\",\"preview\",\"%s\",[]]", p.Name)
 	sendout(sParams)
 }
 
@@ -546,7 +568,7 @@ func SelectFont(sFunc string, fu func([]string) string, sName string) {
 		sFunc = ""
 	}
 	pFont := &(Font{Name: sName})
-	pFont.newfont()
+	pFont.new()
 	sParams := fmt.Sprintf("[\"common\",\"cfont\",\"%s\",\"%s\"]", sFunc, pFont.Name)
 	sendout(sParams)
 }
@@ -660,7 +682,7 @@ func SetDateFormat(sValue string) {
 	sendout(sParams)
 }
 
-func (p *Font) newfont() *Font {
+func (p *Font) new() *Font {
 	if p.Name == "" {
 		p.Name = fmt.Sprintf("f%d", iIdCount)
 		iIdCount++
