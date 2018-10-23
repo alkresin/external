@@ -27,17 +27,17 @@ const (
 )
 
 const (
-	DT_LEFT     = 0
-	DT_CENTER   = 1
-	DT_RIGHT    = 2
+	DT_LEFT   = 0
+	DT_CENTER = 1
+	DT_RIGHT  = 2
 )
 
 // A set of constants of the printer paper types
 const (
-	DMPAPER_A3  =  8  // A3 297 x 420 mm
-	DMPAPER_A4  =  9  // A4 210 x 297 mm
-	DMPAPER_A5  = 11  // A5 148 x 210 mm
-	DMPAPER_A6  = 70  // A6 105 x 148 mm
+	DMPAPER_A3 = 8  // A3 297 x 420 mm
+	DMPAPER_A4 = 9  // A4 210 x 297 mm
+	DMPAPER_A5 = 11 // A5 148 x 210 mm
+	DMPAPER_A6 = 70 // A6 105 x 148 mm
 )
 
 // The Font structure prepares data to create a new font
@@ -65,10 +65,10 @@ type Style struct {
 
 // The Printer structure prepares data to initialize a printer
 type Printer struct {
-	Name     string
-	SPrinter string
+	Name       string
+	SPrinter   string
 	BPreview   bool
-	IFormType   int
+	IFormType  int
 	BLandscape bool
 }
 
@@ -346,7 +346,7 @@ func InitPrinter(pPrinter *Printer, sFunc string, fu func([]string) string, sNam
 		sName = ""
 	}
 	sParams := fmt.Sprintf("[\"prninit\",\"%s\",[\"%s\",%t,%d,%t],\"%s\",\"%s\"]", pPrinter.Name,
-		pPrinter.SPrinter, pPrinter.BPreview, pPrinter.IFormType, pPrinter.BLandscape, sFunc, sName )
+		pPrinter.SPrinter, pPrinter.BPreview, pPrinter.IFormType, pPrinter.BLandscape, sFunc, sName)
 	sendout(sParams)
 	PLastPrinter = pPrinter
 	return pPrinter

@@ -6,13 +6,13 @@
 package main
 
 import (
-	"io/ioutil"
+	egui "github.com/alkresin/external"
 	"image"
 	"image/color"
 	"image/jpeg"
+	"io/ioutil"
 	"math/cmplx"
 	"os"
-	egui "github.com/alkresin/external"
 )
 
 const (
@@ -22,8 +22,8 @@ const (
 	CLR_LBLUE3 = 16772062
 	CLR_LBLUE4 = 16775920
 
-	CLR_LGRAY1  = 15658734
-	CLR_LGRAY2  = 14540253
+	CLR_LGRAY1 = 15658734
+	CLR_LGRAY2 = 14540253
 )
 
 var width, height = 680, 680
@@ -34,12 +34,12 @@ func main() {
 
 	{
 		b, err := ioutil.ReadFile("test.ini")
-	    if err != nil {
-        	sInit = ""
-    	} else {
-	    	sInit = string(b)
-	    }
-    }
+		if err != nil {
+			sInit = ""
+		} else {
+			sInit = string(b)
+		}
+	}
 
 	if !egui.Init(sInit) {
 		return
@@ -78,7 +78,7 @@ func main() {
 	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "4")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "bitmap", Name: "img", X: 10, Y: 36, W: 680,
-		H: 680, BColor: CLR_LGRAY2 }))
+		H: 680, BColor: CLR_LGRAY2}))
 	//	Anchor: egui.A_TOPABS+egui.A_LEFTABS+egui.A_BOTTOMABS+egui.A_RIGHTABS }))
 	//egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,x-o:nLeft,y-72)}")
 
@@ -90,26 +90,26 @@ func main() {
 
 func fu1(p []string) string {
 
-    egui.PLastWindow.Move( -1,-1,716,764 )
+	egui.PLastWindow.Move(-1, -1, 716, 764)
 	pImg := egui.Widg("main.img")
-	pImg.SetImage( "" )
+	pImg.SetImage("")
 
-    switch p[1] {
-    case "1":
+	switch p[1] {
+	case "1":
 		draw(mandelbrot)
-    case "2":
-    	draw(acos)
-    case "3":
-    	draw(sqrt)
-    case "4":
-    	draw(newton)
-    }
-	
-	pImg.SetImage( "a1.jpg" )
+	case "2":
+		draw(acos)
+	case "3":
+		draw(sqrt)
+	case "4":
+		draw(newton)
+	}
+
+	pImg.SetImage("a1.jpg")
 	return ""
 }
 
-func draw( fu func(z complex128) color.Color) {
+func draw(fu func(z complex128) color.Color) {
 	const (
 		xmin, ymin, xmax, ymax = -2, -2, +2, +2
 	)

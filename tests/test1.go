@@ -109,32 +109,32 @@ func fsett3([]string) string {
 	egui.BeginPacket()
 	egui.SetDateFormat("DD.MM.YYYY")
 	pFont := egui.CreateFont(&(egui.Font{Name: "f1", Family: "Georgia", Height: 16}))
-	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 200, H: 440, Title: "Dialog Test", Font: pFont})
+	pDlg := &(egui.Widget{Name: "dlg", X: 300, Y: 200, W: 400, H: 260, Title: "Dialog Test", Font: pFont})
 	egui.InitDialog(pDlg)
 
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 10, W: 180, H: 24, Title: "Identifier:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 10, W: 160, H: 24, Title: "Identifier:"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi1", X: 20, Y: 32, W: 160, H: 24,
 		AProps: map[string]string{"Picture": "@!R /XXX:XXX/"}}))
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 64, W: 180, H: 24, Title: "Date:"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 20, Y: 86, W: 120, H: 24,
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 220, Y: 10, W: 160, H: 24, Title: "Date:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 220, Y: 32, W: 120, H: 24,
 		Title: "20181018", AProps: map[string]string{"Picture": "D@D"}}))
 
-	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 116, W: 160, H: 24,
+	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 68, W: 160, H: 24,
 		AProps: map[string]string{"AItems": egui.ToString("first", "second", "third")}}))
 
-	pDlg.AddWidget(&(egui.Widget{Type: "group", X: 10, Y: 150, W: 180, H: 76, Title: "Check"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk1", X: 24, Y: 174, W: 150, H: 24, Title: "Married"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk2", X: 24, Y: 198, W: 150, H: 24, Title: "Has children"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 220, Y: 68, W: 80, H: 24, Title: "Age:"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "updown", Name: "upd1", X: 280, Y: 68, W: 60, H: 24}))
 
-	pGroup := pDlg.AddWidget(&(egui.Widget{Type: "radiogr", Name: "rg", X: 10, Y: 240, W: 180, H: 76, Title: "Radio"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 24, Y: 264, W: 150, H: 24, Title: "Male"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 24, Y: 288, W: 150, H: 24, Title: "Female"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "group", X: 10, Y: 110, W: 180, H: 76, Title: "Check"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk1", X: 24, Y: 124, W: 150, H: 24, Title: "Married"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "check", Name: "chk2", X: 24, Y: 148, W: 150, H: 24, Title: "Has children"}))
+
+	pGroup := pDlg.AddWidget(&(egui.Widget{Type: "radiogr", Name: "rg", X: 200, Y: 110, W: 180, H: 76, Title: "Radio"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 224, Y: 124, W: 150, H: 24, Title: "Male"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "radio", X: 224, Y: 148, W: 150, H: 24, Title: "Female"}))
 	egui.RadioEnd(pGroup, 1)
 
-	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 20, Y: 332, W: 80, H: 24, Title: "Age:"}))
-	pDlg.AddWidget(&(egui.Widget{Type: "updown", Name: "upd1", X: 100, Y: 330, W: 60, H: 24}))
-
-	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 50, Y: 390, W: 100, H: 32, Title: "Ok"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 150, Y: 220, W: 100, H: 32, Title: "Ok"}))
 	egui.PLastWidget.SetCallBackProc("onclick", fsett4, "fsett4")
 
 	pDlg.Activate()
@@ -189,17 +189,17 @@ func fbrowse([]string) string {
 	var arr = [][]string{{"Alex", "17", "1200"}, {"Victor", "42", "1600"}, {"John", "31", "1000"}}
 	//egui.BeginPacket()
 	pFont := egui.CreateFont(&(egui.Font{Name: "f1", Family: "Georgia", Height: 16}))
-	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 280, H: 340, Title: "browse", Font: pFont})
+	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 280, H: 250, Title: "browse", Font: pFont})
 	egui.InitDialog(pDlg)
 
-	pBrw := pDlg.AddWidget(&(egui.Widget{Type: "browse", X: 10, Y: 10, W: 260, H: 280}))
+	pBrw := pDlg.AddWidget(&(egui.Widget{Type: "browse", X: 10, Y: 10, W: 260, H: 180}))
 	pBrw.SetParam("oStyleHead", egui.GetStyle("st1"))
 	egui.BrwSetArray(pBrw, arr)
 	egui.BrwSetColumn(pBrw, 1, "Name", 1, 0, false)
 	egui.BrwSetColumn(pBrw, 2, "Age", 1, 0, false)
 	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, false)
 
-	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 60, Y: 300, W: 100, H: 32, Title: "Ok"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 60, Y: 210, W: 100, H: 32, Title: "Ok"}))
 	egui.PLastWidget.SetCallBackProc("onclick", ftabclose, "ftabclose")
 
 	pDlg.Activate()
@@ -285,20 +285,20 @@ func fsele_file(p []string) string {
 
 func fprint(p []string) string {
 	if len(p) == 0 {
-		egui.InitPrinter(&(egui.Printer{SPrinter: "...", BPreview: true}), "fprint", fprint, "mm1" )
+		egui.InitPrinter(&(egui.Printer{SPrinter: "...", BPreview: true}), "fprint", fprint, "mm1")
 	} else {
 		pPrinter := egui.PLastPrinter
-		pFont := pPrinter.AddFont( &(egui.Font{Family: "Times New Roman", Height: 10}) )
+		pFont := pPrinter.AddFont(&(egui.Font{Family: "Times New Roman", Height: 10}))
 		pPrinter.StartPage()
-		pPrinter.SetFont( pFont )
-		pPrinter.Box( 5,5,200,282 )
-		pPrinter.Say( 50,10,165,26,"Printing first sample !",egui.DT_CENTER )
-		pPrinter.Line( 45,30,170,30 )
-		pPrinter.Line( 45,5,45,30 )
-		pPrinter.Line( 170,5,170,30 )
-		pPrinter.Say( 50,120,150,132,"----------",egui.DT_CENTER )
-		pPrinter.Box( 50,134,160,146 )
-		pPrinter.Say( 50,135,160,146,"End Of Report", egui.DT_CENTER )
+		pPrinter.SetFont(pFont)
+		pPrinter.Box(5, 5, 200, 282)
+		pPrinter.Say(50, 10, 165, 26, "Printing first sample !", egui.DT_CENTER)
+		pPrinter.Line(45, 30, 170, 30)
+		pPrinter.Line(45, 5, 45, 30)
+		pPrinter.Line(170, 5, 170, 30)
+		pPrinter.Say(50, 120, 150, 132, "----------", egui.DT_CENTER)
+		pPrinter.Box(50, 134, 160, 146)
+		pPrinter.Say(50, 135, 160, 146, "End Of Report", egui.DT_CENTER)
 		pPrinter.EndPage()
 		pPrinter.End()
 
