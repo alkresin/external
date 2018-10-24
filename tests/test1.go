@@ -6,8 +6,9 @@ package main
 
 import (
 	"fmt"
-	egui "github.com/alkresin/external"
 	"strconv"
+	"time"
+	egui "github.com/alkresin/external"
 )
 
 const (
@@ -117,7 +118,7 @@ func fsett3([]string) string {
 		AProps: map[string]string{"Picture": "@!R /XXX:XXX/"}}))
 	pDlg.AddWidget(&(egui.Widget{Type: "label", X: 220, Y: 10, W: 160, H: 24, Title: "Date:"}))
 	pDlg.AddWidget(&(egui.Widget{Type: "edit", Name: "edi2", X: 220, Y: 32, W: 120, H: 24,
-		Title: "20181018", AProps: map[string]string{"Picture": "D@D"}}))
+		Title: time.Now().Format("20060102"), AProps: map[string]string{"Picture": "D@D"}}))
 
 	pDlg.AddWidget(&(egui.Widget{Type: "combo", Name: "comb", X: 20, Y: 68, W: 160, H: 24,
 		AProps: map[string]string{"AItems": egui.ToString("first", "second", "third")}}))

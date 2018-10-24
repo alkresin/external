@@ -28,7 +28,11 @@ var sPacketBuf string
 
 // Init runs, if needed, the Guiserver application, and connects to it.
 // It returns true, if the connection is successful, and false in other case.
-// The sOpt argument specifies connection details.
+// The sOpt argument specifies connection details. It may contain following strings:
+// guiserver=<full path to GuiServer executable>
+// ip=<ip address of a computer, where GuiServer runs>
+// port=<tcp/ip port number>
+// log (switch on logging)
 func Init(sOpt string) bool {
 
 	var err error
@@ -287,13 +291,14 @@ func sendoutAndReturn(s string) []byte {
 	return buf[:length-1]
 }
 
-// BeginPacket begins a set of functions, which will be send to Guiserver as one packet.
+// BeginPacket begins a sequence of functions, which creates or modifies GUI elements,
+// for to join messages to Guiserver to one packet.
 func BeginPacket() {
 	bPacket = true
 	sPacketBuf = "[\"packet\""
 }
 
-// EndPacket completes a set of functions, which will be send to Guiserver as one packet.
+// EndPacket completes a sequence of functions, started by BeginPacket
 func EndPacket() {
 	bPacket = false
 	sendout(sPacketBuf + "]")

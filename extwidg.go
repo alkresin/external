@@ -26,6 +26,7 @@ const (
 	A_VERTFIX   = 512 // Anchors center of control relative to top and bottom borders but remains fixed in size.
 )
 
+// A set of constants of alignment options
 const (
 	DT_LEFT   = 0
 	DT_CENTER = 1
@@ -259,7 +260,7 @@ func setprops(pWidg *Widget, mwidg map[string]string) string {
 	return sPar
 }
 
-// Converts function arguments to a json string
+// ToString converts function arguments to a json string
 func ToString(xParam ...interface{}) string {
 
 	for i, x := range xParam {
@@ -277,7 +278,7 @@ func ToString(xParam ...interface{}) string {
 	return string(b)
 }
 
-// Reads a main window description from a xml file, prepared by HwGUI's Designer,
+// OpenMainForm reads a main window description from a xml file, prepared by HwGUI's Designer,
 // initialises and activates this window with all its widgets
 func OpenMainForm(sForm string) bool {
 	var b bool
@@ -286,7 +287,7 @@ func OpenMainForm(sForm string) bool {
 	return b
 }
 
-// Reads a dialog window description from a xml file, prepared by HwGUI's Designer,
+// OpenForm reads a dialog window description from a xml file, prepared by HwGUI's Designer,
 // initialises and activates this dialog with all its widgets
 func OpenForm(sForm string) bool {
 	var b bool
@@ -294,7 +295,7 @@ func OpenForm(sForm string) bool {
 	return b
 }
 
-// Reads a report description from a xml file, prepared by HwGUI's Designer
+// OpenReport reads a report description from a xml file, prepared by HwGUI's Designer
 // and prints this report
 func OpenReport(sForm string) bool {
 	var b bool
@@ -302,7 +303,7 @@ func OpenReport(sForm string) bool {
 	return b
 }
 
-// Creates a font with parameters, defined in a structure, pointed by pFont argument.
+// CreateFont creates a font with parameters, defined in a structure, pointed by pFont argument.
 func CreateFont(pFont *Font) *Font {
 
 	pFont.new()
@@ -312,7 +313,7 @@ func CreateFont(pFont *Font) *Font {
 	return pFont
 }
 
-// Creates a style with parameters, defined in a structure, pointed by pStyle argument.
+// CreateStyle ñreates a style with parameters, defined in a structure, pointed by pStyle argument.
 func CreateStyle(pStyle *Style) *Style {
 
 	if pStyle.Name == "" {
@@ -332,8 +333,10 @@ func CreateStyle(pStyle *Style) *Style {
 	return pStyle
 }
 
-// Creates a style with parameters, defined in a structure, pointed by pStyle argument.
-func InitPrinter(pPrinter *Printer, sFunc string, fu func([]string) string, sName string) *Printer {
+// InitPrinter initializes a printer, the name of a printer is passed in SPrinter member of
+// a pPrinter structure. If it is an empty string, the default printer will be used, if it is
+// defined as "...", printer setup dialog will be opened.
+func InitPrinter(pPrinter *Printer, sFunc string, fu func([]string) string, sMark string) *Printer {
 
 	if pPrinter.Name == "" {
 		pPrinter.Name = fmt.Sprintf("p%d", iIdCount)
@@ -343,15 +346,16 @@ func InitPrinter(pPrinter *Printer, sFunc string, fu func([]string) string, sNam
 		RegFunc(sFunc, fu)
 	} else {
 		sFunc = ""
-		sName = ""
+		sMark = ""
 	}
 	sParams := fmt.Sprintf("[\"prninit\",\"%s\",[\"%s\",%t,%d,%t],\"%s\",\"%s\"]", pPrinter.Name,
-		pPrinter.SPrinter, pPrinter.BPreview, pPrinter.IFormType, pPrinter.BLandscape, sFunc, sName)
+		pPrinter.SPrinter, pPrinter.BPreview, pPrinter.IFormType, pPrinter.BLandscape, sFunc, sMark)
 	sendout(sParams)
 	PLastPrinter = pPrinter
 	return pPrinter
 }
 
+// AddFont method adds a font, described in Font structure, to the printer.
 func (p *Printer) AddFont(pFont *Font) *Font {
 	pFont.new()
 	sParams := fmt.Sprintf("[\"print\",\"fontadd\",\"%s\",[\"%s\",\"%s\",%d,%t,%t,%t,%d]]", p.Name,
@@ -361,11 +365,14 @@ func (p *Printer) AddFont(pFont *Font) *Font {
 	return pFont
 }
 
+// SetFont method sets a font, previously added with AddFont, as current while printing
 func (p *Printer) SetFont(pFont *Font) {
 	sParams := fmt.Sprintf("[\"print\",\"fontset\",\"%s\",[\"%s\"]]", p.Name, pFont.Name)
 	sendout(sParams)
 }
 
+// Say method prints s text string sText in a rectangle with iTop, iLeft, iRight, iBottom
+// coordinates, iOpt defines an alignment.
 func (p *Printer) Say(iTop, iLeft, iRight, iBottom int32, sText string, iOpt int32) {
 
 	sParams := fmt.Sprintf("[\"print\",\"text\",\"%s\",[\"%s\",%d,%d,%d,%d,%d]]",
@@ -373,30 +380,35 @@ func (p *Printer) Say(iTop, iLeft, iRight, iBottom int32, sText string, iOpt int
 	sendout(sParams)
 }
 
+// Line methods prints a line from iTop, iLeft to iRight, iBottom
 func (p *Printer) Line(iTop, iLeft, iRight, iBottom int32) {
 
 	sParams := fmt.Sprintf("[\"print\",\"line\",\"%s\",[%d,%d,%d,%d]]", p.Name, iTop, iLeft, iRight, iBottom)
 	sendout(sParams)
 }
 
+// Box method prints a rectangle with iTop, iLeft, iRight, iBottom coordinates
 func (p *Printer) Box(iTop, iLeft, iRight, iBottom int32) {
 
 	sParams := fmt.Sprintf("[\"print\",\"box\",\"%s\",[%d,%d,%d,%d]]", p.Name, iTop, iLeft, iRight, iBottom)
 	sendout(sParams)
 }
 
+// StartPage method begins a new page printed
 func (p *Printer) StartPage() {
 
 	sParams := fmt.Sprintf("[\"print\",\"startpage\",\"%s\",[]]", p.Name)
 	sendout(sParams)
 }
 
+// StartPage method ends a page printed
 func (p *Printer) EndPage() {
 
 	sParams := fmt.Sprintf("[\"print\",\"endpage\",\"%s\",[]]", p.Name)
 	sendout(sParams)
 }
 
+// End method closes a printer
 func (p *Printer) End() {
 
 	sParams := fmt.Sprintf("[\"print\",\"end\",\"%s\",[]]", p.Name)
@@ -436,12 +448,16 @@ func InitDialog(pWnd *Widget) bool {
 	return sendout(sParams)
 }
 
+// EvalProc sends a code fragment, written on Harbour to a GuiServer to execute
+// and does not return a result.
 func EvalProc(s string) {
 
 	b, _ := json.Marshal(s)
 	sendout("[\"evalcode\"," + string(b) + "]")
 }
 
+// EvalFunc sends a code fragment, written on Harbour to a GuiServer to execute
+// and returns a result.
 func EvalFunc(s string) []byte {
 
 	b, _ := json.Marshal(s)
