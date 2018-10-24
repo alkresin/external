@@ -313,7 +313,7 @@ func CreateFont(pFont *Font) *Font {
 	return pFont
 }
 
-// CreateStyle ñreates a style with parameters, defined in a structure, pointed by pStyle argument.
+// CreateStyle creates a style with parameters, defined in a structure, pointed by pStyle argument.
 func CreateStyle(pStyle *Style) *Style {
 
 	if pStyle.Name == "" {
@@ -468,6 +468,8 @@ func EvalFunc(s string) []byte {
 	return b
 }
 
+// GetValues returns list of values from widgets of a pWnd window (main or a dialog),
+// listed by names in aNames slice.
 func GetValues(pWnd *Widget, aNames []string) []string {
 	sParams := "[\"getvalues\",\"" + pWnd.Name + "\",["
 	for i, v := range aNames {
@@ -487,6 +489,8 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 	}
 }
 
+// MsgInfo creates a standard nessagebox
+// sTitle - box title, sMessage - text in a box
 func MsgInfo(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -500,6 +504,8 @@ func MsgInfo(sMessage string, sTitle string, sFunc string, fu func([]string) str
 	sendout(sParams)
 }
 
+// MsgStop creates a standard nessagebox
+// sTitle - box title, sMessage - text in a box
 func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -513,6 +519,8 @@ func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) str
 	sendout(sParams)
 }
 
+// MsgYesNo creates a standard nessagebox
+// sTitle - box title, sMessage - text in a box
 func MsgYesNo(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
 
 	if fu != nil && sFunc != "" {

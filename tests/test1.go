@@ -6,9 +6,9 @@ package main
 
 import (
 	"fmt"
+	egui "github.com/alkresin/external"
 	"strconv"
 	"time"
-	egui "github.com/alkresin/external"
 )
 
 const (
@@ -39,24 +39,34 @@ func main() {
 	{
 		egui.Menu("File")
 		{
-			egui.AddMenuItem("Set text",
+			egui.AddMenuItem("Set text to label",
 				func(p []string) string { egui.Widg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1")
-			egui.AddMenuItem("Open dialog", fsett3, "fsett3")
-			egui.AddMenuItem("Test Tab", ftab, "ftab")
-			egui.AddMenuItem("Test browse", fbrowse, "fbrowse")
-			egui.AddMenuSeparator()
-			egui.AddMenuItem("Message boxes", fmbox1, "fmbox1")
-			egui.AddMenuItem("MsgGet box", fmbox2, "fmbox2")
-			egui.AddMenuItem("Choice", fmbox3, "fmbox3")
-			egui.AddMenuItem("Select color", fsele_color, "fsele_color")
-			egui.AddMenuItem("Select font", fsele_font, "fsele_font")
-			egui.AddMenuItem("Select file", fsele_file, "fsele_file")
 			egui.AddMenuSeparator()
 			egui.AddMenuItem("Printing", fprint, "fprint")
 			egui.AddMenuSeparator()
 			egui.AddMenuItem("Exit", nil, "hwg_EndWindow()")
 		}
 		egui.EndMenu()
+
+		egui.Menu("Dialogs")
+		{
+			egui.AddMenuItem("Open dialog", fsett3, "fsett3")
+			egui.AddMenuItem("Test Tab", ftab, "ftab")
+			egui.AddMenuItem("Test browse", fbrowse, "fbrowse")
+		}
+		egui.EndMenu()
+
+		egui.Menu("Standard dialogs")
+		{
+			egui.AddMenuItem("Message boxes", fmbox1, "fmbox1")
+			egui.AddMenuItem("MsgGet box", fmbox2, "fmbox2")
+			egui.AddMenuItem("Choice", fmbox3, "fmbox3")
+			egui.AddMenuItem("Select color", fsele_color, "fsele_color")
+			egui.AddMenuItem("Select font", fsele_font, "fsele_font")
+			egui.AddMenuItem("Select file", fsele_file, "fsele_file")
+		}
+		egui.EndMenu()
+
 		egui.Menu("Help")
 		{
 			egui.AddMenuItem("About", nil, "hwg_MsgInfo(hb_version()+chr(10)+chr(13)+hwg_version(),\"About\")")
@@ -188,7 +198,8 @@ func ftab([]string) string {
 func fbrowse([]string) string {
 
 	var arr = [][]string{{"Alex", "17", "1200"}, {"Victor", "42", "1600"}, {"John", "31", "1000"}}
-	//egui.BeginPacket()
+
+	egui.BeginPacket()
 	pFont := egui.CreateFont(&(egui.Font{Name: "f1", Family: "Georgia", Height: 16}))
 	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 280, H: 250, Title: "browse", Font: pFont})
 	egui.InitDialog(pDlg)
@@ -200,11 +211,11 @@ func fbrowse([]string) string {
 	egui.BrwSetColumn(pBrw, 2, "Age", 1, 0, false)
 	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, false)
 
-	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 60, Y: 210, W: 100, H: 32, Title: "Ok"}))
+	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 90, Y: 210, W: 100, H: 32, Title: "Ok"}))
 	egui.PLastWidget.SetCallBackProc("onclick", ftabclose, "ftabclose")
 
 	pDlg.Activate()
-	//egui.EndPacket()
+	egui.EndPacket()
 
 	return ""
 }
