@@ -19,6 +19,8 @@ const (
 	CLR_LBLUE4 = 16775920
 )
 
+var arr = [][]string{{"Alex", "17", "1200"}, {"Victor", "42", "1600"}, {"John", "31", "1000"}}
+
 func main() {
 
 	if !egui.Init("port=3105\nlog") {
@@ -156,6 +158,7 @@ func fsett3([]string) string {
 
 func fsett4([]string) string {
 	arr := egui.GetValues(egui.Wnd("dlg"), []string{"edi1", "edi2", "comb", "chk1", "chk2", "rg", "upd1"})
+
 	egui.MsgInfo("Id: "+arr[0]+"\r\n"+"Date: "+arr[1]+"\r\n"+"Combo: "+arr[2]+"\r\n"+
 		"Married: "+arr[3]+"\r\n"+"Has children: "+arr[4]+"\r\n"+"Sex: "+arr[5]+"\r\n"+
 		"Age: "+arr[6], "Result", "", nil, "")
@@ -195,24 +198,27 @@ func ftab([]string) string {
 	return ""
 }
 
-func fbrowse([]string) string {
+func ftabclose([]string) string {
+	egui.PLastWindow.Close()
+	return ""
+}
 
-	var arr = [][]string{{"Alex", "17", "1200"}, {"Victor", "42", "1600"}, {"John", "31", "1000"}}
+func fbrowse([]string) string {
 
 	egui.BeginPacket()
 	pFont := egui.CreateFont(&(egui.Font{Name: "f1", Family: "Georgia", Height: 16}))
-	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 280, H: 250, Title: "browse", Font: pFont})
+	pDlg := &(egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 280, H: 220, Title: "browse", Font: pFont})
 	egui.InitDialog(pDlg)
 
-	pBrw := pDlg.AddWidget(&(egui.Widget{Type: "browse", X: 10, Y: 10, W: 260, H: 180}))
+	pBrw := pDlg.AddWidget(&(egui.Widget{Type: "browse", Name: "brw", X: 10, Y: 10, W: 260, H: 150}))
 	pBrw.SetParam("oStyleHead", egui.GetStyle("st1"))
-	egui.BrwSetArray(pBrw, arr)
+	egui.BrwSetArray(pBrw, &arr)
 	egui.BrwSetColumn(pBrw, 1, "Name", 1, 0, false)
 	egui.BrwSetColumn(pBrw, 2, "Age", 1, 0, false)
-	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, false)
+	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, true)
 
-	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 90, Y: 210, W: 100, H: 32, Title: "Ok"}))
-	egui.PLastWidget.SetCallBackProc("onclick", ftabclose, "ftabclose")
+	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 90, Y: 180, W: 100, H: 32, Title: "Ok"}))
+	egui.PLastWidget.SetCallBackProc("onclick", fbrwclose, "fbrwclose")
 
 	pDlg.Activate()
 	egui.EndPacket()
@@ -220,7 +226,21 @@ func fbrowse([]string) string {
 	return ""
 }
 
-func ftabclose([]string) string {
+func fbrwclose([]string) string {
+
+	arrNew := egui.BrwGetArray(egui.Widg("dlg2.brw"))
+
+	s := ""
+	for i, a := range arrNew {
+		if a[2] != arr[i][2] {
+			s += a[0] + " => " + a[2] + "\r\n"
+		}
+	}
+
+	if s != "" {
+		egui.MsgInfo(s, "Changes", "", nil, "")
+	}
+
 	egui.PLastWindow.Close()
 	return ""
 }

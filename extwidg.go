@@ -663,12 +663,29 @@ func TabPageEnd(pTab *Widget) {
 }
 
 // BrwSetArray sets a two-dimensional slice to be represented in a browse widget p.
-func BrwSetArray(p *Widget, arr [][]string) {
+func BrwSetArray(p *Widget, arr *[][]string) {
 
 	var sName = widgFullName(p)
-	b, _ := json.Marshal(arr)
+	b, _ := json.Marshal(*arr)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwarr\",%s]", sName, string(b))
 	sendout(sParams)
+}
+
+// BrwGetArray returns a two-dimensional slice from a browse widget p.
+func BrwGetArray(p *Widget) [][]string {
+
+	var sName = widgFullName(p)
+	var arr [][]string
+
+	sParams := fmt.Sprintf("[\"get\",\"%s\",\"brwarr\"]", sName)
+	b := sendoutAndReturn(sParams)
+
+	err := json.Unmarshal(b[1:], &arr)
+	if err != nil {
+		return nil
+	} else {
+		return arr
+	}
 }
 
 // BrwSetColumn defines options for a column with number ic of a browse widget p.
