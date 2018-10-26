@@ -767,6 +767,9 @@ func (o *Widget) Close() bool {
 	if o.Type == "main" || o.Type == "dialog" {
 		sParams := fmt.Sprintf("[\"close\",\"%s\"]", o.Name)
 		b := sendout("" + sParams)
+		if o.Type == "dialog" {
+			o.Delete()
+		}
 		return b
 	}
 	return false

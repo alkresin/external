@@ -159,10 +159,11 @@ func fsett3([]string) string {
 func fsett4([]string) string {
 	arr := egui.GetValues(egui.Wnd("dlg"), []string{"edi1", "edi2", "comb", "chk1", "chk2", "rg", "upd1"})
 
+	egui.PLastWindow.Close()
 	egui.MsgInfo("Id: "+arr[0]+"\r\n"+"Date: "+arr[1]+"\r\n"+"Combo: "+arr[2]+"\r\n"+
 		"Married: "+arr[3]+"\r\n"+"Has children: "+arr[4]+"\r\n"+"Sex: "+arr[5]+"\r\n"+
 		"Age: "+arr[6], "Result", "", nil, "")
-	egui.PLastWindow.Close()
+
 	return ""
 }
 
@@ -230,6 +231,7 @@ func fbrwclose([]string) string {
 
 	arrNew := egui.BrwGetArray(egui.Widg("dlg2.brw"))
 
+	egui.PLastWindow.Close()
 	s := ""
 	for i, a := range arrNew {
 		if a[2] != arr[i][2] {
@@ -241,7 +243,6 @@ func fbrwclose([]string) string {
 		egui.MsgInfo(s, "Changes", "", nil, "")
 	}
 
-	egui.PLastWindow.Close()
 	return ""
 }
 
