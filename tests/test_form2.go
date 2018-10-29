@@ -8,7 +8,7 @@ import egui "github.com/alkresin/external"
 
 func main() {
 
-	if !egui.Init("") {
+	if egui.Init("") != 0 {
 		return
 	}
 

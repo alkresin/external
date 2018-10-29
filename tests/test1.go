@@ -6,9 +6,10 @@ package main
 
 import (
 	"fmt"
-	egui "github.com/alkresin/external"
+	"io/ioutil"
 	"strconv"
 	"time"
+	egui "github.com/alkresin/external"
 )
 
 const (
@@ -23,7 +24,18 @@ var arr = [][]string{{"Alex", "17", "1200"}, {"Victor", "42", "1600"}, {"John", 
 
 func main() {
 
-	if !egui.Init("port=3105\nlog") {
+	var sInit string
+
+	{
+		b, err := ioutil.ReadFile("test.ini")
+	    if err != nil {
+        	sInit = ""
+    	} else {
+	    	sInit = string(b)
+	    }
+    }
+
+	if egui.Init(sInit) != 0 {
 		return
 	}
 

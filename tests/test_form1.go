@@ -10,7 +10,7 @@ import (
 
 func main() {
 
-	if !egui.Init("") {
+	if egui.Init("") != 0 {
 		return
 	}
 

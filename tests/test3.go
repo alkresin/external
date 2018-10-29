@@ -41,7 +41,7 @@ func main() {
 		}
 	}
 
-	if !egui.Init(sInit) {
+	if egui.Init(sInit) != 0 {
 		return
 	}
 

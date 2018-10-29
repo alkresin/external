@@ -18,6 +18,11 @@ import (
 	"time"
 )
 
+const (
+	VerProto = "1.1"
+	Version  = "1.1"
+)
+
 var sLogName = "egui.log"
 var bEndProg = false
 
@@ -27,13 +32,14 @@ var bPacket = false
 var sPacketBuf string
 
 // Init runs, if needed, the Guiserver application, and connects to it.
-// It returns true, if the connection is successful, and false in other case.
+// It returns 0, if the connection is successful, 1 - in other case,
+// 2 -if a protocol version of a GuiServer isn't equal to a local protocol.
 // The sOpt argument specifies connection details. It may contain following strings:
 // guiserver=<full path to GuiServer executable>
 // ip=<ip address of a computer, where GuiServer runs>
 // port=<tcp/ip port number>
 // log (switch on logging)
-func Init(sOpt string) bool {
+func Init(sOpt string) int {
 
 	var err error
 
@@ -86,15 +92,17 @@ func Init(sOpt string) bool {
 			connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
 			WriteLog(fmt.Sprintln(sServer, sIp, iPort))
 			WriteLog(fmt.Sprintln(err))
-			return false
+			return 1
 		}
 	}
-	_, err = connOut.Read(buf)
+	iBufLen, err := connOut.Read(buf)
 	if err != nil {
 		WriteLog(fmt.Sprintln(err))
 		connOut.Close()
-		return false
+		return 1
 	}
+	sVer := string(buf[:iBufLen-1])
+	sVer = sVer[(strings.Index(sVer,"/")+1):]
 
 	connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
 	if err != nil {
@@ -103,21 +111,28 @@ func Init(sOpt string) bool {
 		if err != nil {
 			WriteLog(fmt.Sprintln(sServer, sIp, iPort+1))
 			WriteLog(fmt.Sprintln(err))
-			return false
+			return 1
 		}
 	}
 	_, err = connIn.Read(buf)
 	if err != nil {
 		WriteLog(fmt.Sprintln(err))
 		connIn.Close()
-		return false
+		return 1
+	}
+
+	if sVer != VerProto {
+		WriteLog("\r\nProtocol version mismatched. Need " + VerProto + ", received " + sVer )
+		connIn.Close()
+		connOut.Close()
+		return 2
 	}
 
 	bConnExist = true
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
 
-	return true
+	return 0
 
 }
 
