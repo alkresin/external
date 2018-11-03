@@ -128,7 +128,9 @@ func init() {
 	mWidgs["tree"] = map[string]string{"AImages": "AC", "EditLabel": "L"}
 	mWidgs["progress"] = map[string]string{"Maxpos": "N"}
 	mWidgs["tab"] = nil
-	mWidgs["browse"] = map[string]string{"Append": "L", "Autoedit": "L"}
+	mWidgs["browse"] = map[string]string{"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"}
+	mWidgs["cedit"] = map[string]string{"NoVScroll": "L", "NoBorder": "L"}
+	mWidgs["monthcal"] = map[string]string{"NoToday": "L", "NoTodayCirc": "L" , "WeekNumb": "L"}
 }
 
 func widgFullName(pWidg *Widget) string {
@@ -817,7 +819,8 @@ func (o *Widget) SetText(sText string) {
 
 	var sName = widgFullName(o)
 	o.Title = sText
-	sParams := fmt.Sprintf("[\"set\",\"%s\",\"text\",\"%s\"]", sName, sText)
+	b, _ := json.Marshal(sText)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"text\",%s]", sName, string(b))
 	sendout(sParams)
 }
 
