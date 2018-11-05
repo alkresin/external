@@ -70,7 +70,11 @@ func Init(sOpt string) int {
 			} else if len(s) > 5 && s[:4] == "port" {
 				iPort, _ = strconv.Atoi(strings.TrimSpace(s[5:]))
 			} else if len(s) > 2 && s[:3] == "log" {
-				sLog = "-log+"
+				if s[4:5] == "1" {
+					sLog = "-log1"
+				} else if s[4:5] == "2" {
+					sLog = "-log2"
+				}
 			}
 		}
 	}
@@ -102,7 +106,7 @@ func Init(sOpt string) int {
 		return 1
 	}
 	sVer := string(buf[:iBufLen-1])
-	sVer = sVer[(strings.Index(sVer,"/")+1):]
+	sVer = sVer[(strings.Index(sVer, "/") + 1):]
 
 	connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
 	if err != nil {
@@ -122,7 +126,7 @@ func Init(sOpt string) int {
 	}
 
 	if sVer != VerProto {
-		WriteLog("\r\nProtocol version mismatched. Need " + VerProto + ", received " + sVer )
+		WriteLog("\r\nProtocol version mismatched. Need " + VerProto + ", received " + sVer)
 		connIn.Close()
 		connOut.Close()
 		return 2

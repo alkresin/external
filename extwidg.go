@@ -41,6 +41,14 @@ const (
 	DMPAPER_A6 = 70 // A6 105 x 148 mm
 )
 
+// A set of constants of the code editor highliter
+const (
+	HILI_KEYW  =  1
+	HILI_FUNC  =  2
+	HILI_QUOTE =  3
+	HILI_COMM  =  4
+)
+
 // The Font structure prepares data to create a new font
 type Font struct {
 	Family    string
@@ -62,6 +70,11 @@ type Style struct {
 	BorderW   int8
 	BorderClr int32
 	Bitmap    string
+}
+
+// The Highlight structure serves to create a highlight rules for a code editor
+type Highlight struct {
+	Name      string
 }
 
 // The Printer structure prepares data to initialize a printer
@@ -107,7 +120,7 @@ var PLastPrinter *Printer
 var mWidgs = make(map[string]map[string]string)
 
 func init() {
-	mWidgs["main"] = nil
+	mWidgs["main"] = map[string]string{"Icon": "C"}
 	mWidgs["dialog"] = nil
 	mWidgs["label"] = map[string]string{"Transpa": "L"}
 	mWidgs["edit"] = map[string]string{"Picture": "C"}
@@ -130,7 +143,7 @@ func init() {
 	mWidgs["tab"] = nil
 	mWidgs["browse"] = map[string]string{"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"}
 	mWidgs["cedit"] = map[string]string{"NoVScroll": "L", "NoBorder": "L"}
-	mWidgs["monthcal"] = map[string]string{"NoToday": "L", "NoTodayCirc": "L" , "WeekNumb": "L"}
+	mWidgs["monthcal"] = map[string]string{"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"}
 }
 
 func widgFullName(pWidg *Widget) string {
@@ -333,6 +346,35 @@ func CreateStyle(pStyle *Style) *Style {
 		pStyle.BorderW, pStyle.BorderClr, pStyle.Bitmap)
 	sendout(sParams)
 	return pStyle
+}
+
+// CreateHighliter creates a highlight rules for a code editor
+func CreateHighliter(sName string, sCommands string, sFuncs string,
+	sSingleLineComm string, sMultiLineComm string, bCase bool) *Highlight {
+
+	sParams := fmt.Sprintf("[\"highl\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%t]", sName,
+		sCommands, sFuncs, sSingleLineComm, sMultiLineComm, bCase)
+	sendout(sParams)
+	return &(Highlight{ Name: sName })
+}
+
+func SetHighliter(pEdit *Widget, p *Highlight) {
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"hili\",\"%s\"]",
+		widgFullName(pEdit), p.Name)
+	sendout(sParams)
+}
+
+// SetHili defines highlighting options for a code editor: a font, text color and background color
+func SetHiliOpt(pEdit *Widget, iGroup int, pFont *Font, tColor int32, bColor int32) {
+	var sFontName string
+	if pFont == nil {
+		sFontName = ""
+	} else {
+		sFontName = pFont.Name
+	}
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"hiliopt\",[%d,\"%s\",%d,%d]]",
+		widgFullName(pEdit), iGroup, sFontName, tColor, bColor)
+	sendout(sParams)
 }
 
 // InitPrinter initializes a printer, the name of a printer is passed in SPrinter member of
@@ -858,6 +900,8 @@ func (o *Widget) SetParam(sParam string, xParam interface{}) {
 		sParValue = "\"" + v.Name + "\""
 	case *Widget:
 		sParValue = "\"" + v.Name + "\""
+	case *Highlight:
+		sParValue = "\"" + v.Name + "\""
 	default:
 		b, _ := json.Marshal(xParam)
 		sParValue = string(b)
@@ -868,14 +912,20 @@ func (o *Widget) SetParam(sParam string, xParam interface{}) {
 }
 
 func (o *Widget) GetText() string {
+	var sRes string
 	var sName = widgFullName(o)
 
 	sParams := fmt.Sprintf("[\"get\",\"%s\",\"text\"]", sName)
 	b := sendoutAndReturn(sParams)
-	if b[0] == byte('+') && b[1] == byte('"') {
-		b = b[2 : len(b)-1]
+	if b[0] == byte('+') {
+		b = b[1:len(b)]
 	}
-	return string(b)
+	err := json.Unmarshal(b, &sRes)
+	if err != nil {
+		return ""
+	}
+
+	return sRes
 }
 
 func (o *Widget) SetColor(tColor int32, bColor int32) {
