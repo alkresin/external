@@ -53,7 +53,7 @@ const (
 type Font struct {
 	Family    string
 	Name      string
-	Height    int16
+	Height    int
 	Bold      bool
 	Italic    bool
 	Underline bool
@@ -359,8 +359,14 @@ func CreateHighliter(sName string, sCommands string, sFuncs string,
 }
 
 func SetHighliter(pEdit *Widget, p *Highlight) {
+	var sHiliName string
+	if p == nil {
+		sHiliName = ""
+	} else {
+		sHiliName = p.Name
+	}
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"hili\",\"%s\"]",
-		widgFullName(pEdit), p.Name)
+		widgFullName(pEdit), sHiliName)
 	sendout(sParams)
 }
 
@@ -664,7 +670,7 @@ func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 		b, _ := json.Marshal(aImages)
 		sParams += string(b)
 	}
-	sParams += "," + sCode + "]"
+	sParams += "," + sCode + "]]"
 
 	sendout(sParams)
 }
@@ -782,7 +788,7 @@ func (p *Font) new() *Font {
 func (p *Font) FillFont(arr []string) {
 	p.Family = arr[1]
 	i, _ := strconv.Atoi(arr[2])
-	p.Height = int16(i)
+	p.Height = int(i)
 	p.Bold = (arr[3] == "t")
 	p.Italic = (arr[4] == "t")
 	p.Underline = (arr[5] == "t")
