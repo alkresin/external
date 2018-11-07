@@ -44,7 +44,7 @@ func Init(sOpt string) int {
 	var err error
 
 	iPort := 3101
-	sServer := "guiserver.exe"
+	sServer := "guiserver"
 	sIp := "127.0.0.1"
 	sLog := ""
 	if sOpt != "" {
