@@ -11,8 +11,8 @@ import (
 var sMenu = ""
 var iStackLen = 0
 
-// Menu starts a window's menu or submenu definition, sName is a menu title.
-func Menu(sName string) {
+// Menu starts a window's menu or submenu definition, sTitle is a menu title.
+func Menu(sTitle string) {
 
 	if sMenu == "" {
 		sMenu = "[\"menu\",["
@@ -20,9 +20,28 @@ func Menu(sName string) {
 		if sMenu[len(sMenu)-1] != '[' {
 			sMenu += ","
 		}
-		sMenu += "[\"" + sName + "\",["
+		sMenu += "[\"" + sTitle + "\",["
 		iStackLen++
 	}
+}
+
+// MenuContext starts a context menu, sName is a menu identifier
+func MenuContext(sName string) {
+
+	if sMenu == "" {
+		sMenu = "[\"menucontext\",\"create\",\"" + sName + "\",["
+	}
+}
+
+// Show context menu on the screen
+func ShowMenuContext(sName string, pWnd *Widget) {
+	var sWndName string
+	if pWnd == nil {
+		sWndName = ""
+	} else {
+		sWndName = pWnd.Name
+	}
+	sendout("[\"menucontext\",\"show\",\"" + sName + "\",\"" + sWndName + "\"]")
 }
 
 // EndMenu completes a window's menu or submenu definition

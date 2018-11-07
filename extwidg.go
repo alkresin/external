@@ -43,10 +43,10 @@ const (
 
 // A set of constants of the code editor highliter
 const (
-	HILI_KEYW  =  1
-	HILI_FUNC  =  2
-	HILI_QUOTE =  3
-	HILI_COMM  =  4
+	HILI_KEYW  = 1
+	HILI_FUNC  = 2
+	HILI_QUOTE = 3
+	HILI_COMM  = 4
 )
 
 // The Font structure prepares data to create a new font
@@ -74,7 +74,7 @@ type Style struct {
 
 // The Highlight structure serves to create a highlight rules for a code editor
 type Highlight struct {
-	Name      string
+	Name string
 }
 
 // The Printer structure prepares data to initialize a printer
@@ -355,7 +355,7 @@ func CreateHighliter(sName string, sCommands string, sFuncs string,
 	sParams := fmt.Sprintf("[\"highl\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",%t]", sName,
 		sCommands, sFuncs, sSingleLineComm, sMultiLineComm, bCase)
 	sendout(sParams)
-	return &(Highlight{ Name: sName })
+	return &(Highlight{Name: sName})
 }
 
 func SetHighliter(pEdit *Widget, p *Highlight) {
@@ -537,6 +537,20 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 	} else {
 		return arr
 	}
+}
+
+func GetVersion(i int) string {
+
+	var sRes string
+	b := sendoutAndReturn("[\"getver\"," + strconv.Itoa(i) + "]")
+	if b[0] == byte('+') {
+		b = b[1:len(b)]
+	}
+	err := json.Unmarshal(b, &sRes)
+	if err != nil {
+		return ""
+	}
+	return sRes
 }
 
 // MsgInfo creates a standard nessagebox
