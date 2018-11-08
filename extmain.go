@@ -275,6 +275,11 @@ func sendout(s string) bool {
 	if bPacket {
 		sPacketBuf += "," + s
 	} else {
+		if !bConnExist {
+			WriteLog( "sendout: No connection established.\r\n" )
+			return false
+		}
+
 		_, err = connOut.Write([]byte("+" + s + "\n"))
 		if err != nil {
 			fmt.Println(err)
@@ -295,6 +300,11 @@ func sendoutAndReturn(s string) []byte {
 
 	var err error
 	buf := make([]byte, 1024)
+
+	if !bConnExist {
+		WriteLog( "sendoutAndReturn: No connection established.\r\n" )
+		return []byte("")
+	}
 
 	_, err = connOut.Write([]byte("+" + s + "\n"))
 	if err != nil {

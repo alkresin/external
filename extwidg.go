@@ -703,6 +703,18 @@ func PBarSet(pPBar *Widget, iPos int) {
 	sendout(sParams)
 }
 
+func InitTray(sIcon string, sMenuName string, sTooltip string) {
+
+	sParams := fmt.Sprintf("[\"tray\",\"init\",\"%s\",\"%s\",\"%s\"]", sIcon, sMenuName, sTooltip)
+	sendout(sParams)
+}
+
+func ModifyTrayIcon(sIcon string) {
+
+	sParams := fmt.Sprintf("[\"tray\",\"icon\",\"%s\"]", sIcon)
+	sendout(sParams)
+}
+
 func RadioEnd(p *Widget, iSel int) {
 
 	var sName = widgFullName(p)
