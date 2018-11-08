@@ -5,6 +5,7 @@
 package external
 
 import (
+	"strconv"
 	"encoding/json"
 )
 
@@ -57,12 +58,13 @@ func EndMenu() {
 
 // AddMenuItem adds a new item to the Window's menu or submenu,
 // sName argument is a title of the item,
+// id - menu item identifier; if 0 - it is created automatically
 // fu - a function in the program, which must be called, when this menu item is selected,
 // sCode - the identifier (name) of this function.
 // If the fu value is nil, sCode contains the Harbour's code, which must be executed by
 // the GuiServer when this menu item is selected.
 // params - arguments for the fu function.
-func AddMenuItem(sName string, fu func([]string) string, sCode string, params ...string) {
+func AddMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string) {
 	if fu != nil {
 		RegFunc(sCode, fu)
 		sCode = "pgo(\"" + sCode + "\",{"
@@ -78,7 +80,7 @@ func AddMenuItem(sName string, fu func([]string) string, sCode string, params ..
 	if sMenu[len(sMenu)-1] != '[' {
 		sMenu += ","
 	}
-	sMenu += "[\"" + sName + "\"," + string(b) + "]"
+	sMenu += "[\"" + sName + "\"," + string(b) + "," + strconv.Itoa(id) + "]"
 }
 
 // AddMenuSeparator adds a separator to the Window's menu or submenu,

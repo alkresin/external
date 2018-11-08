@@ -53,37 +53,37 @@ func main() {
 	{
 		egui.Menu("File")
 		{
-			egui.AddMenuItem("Set text to label",
+			egui.AddMenuItem("Set text to label", 0,
 				func(p []string) string { egui.Widg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1")
 			egui.AddMenuSeparator()
-			egui.AddMenuItem("Printing", fprint, "fprint")
+			egui.AddMenuItem("Printing", 0, fprint, "fprint")
 			egui.AddMenuSeparator()
-			egui.AddMenuItem("Exit", nil, "hwg_EndWindow()")
+			egui.AddMenuItem("Exit", 0, nil, "hwg_EndWindow()")
 		}
 		egui.EndMenu()
 
 		egui.Menu("Dialogs")
 		{
-			egui.AddMenuItem("Open dialog", fsett3, "fsett3")
-			egui.AddMenuItem("Test Tab", ftab, "ftab")
-			egui.AddMenuItem("Test browse", fbrowse, "fbrowse")
+			egui.AddMenuItem("Open dialog", 0, fsett3, "fsett3")
+			egui.AddMenuItem("Test Tab", 0, ftab, "ftab")
+			egui.AddMenuItem("Test browse", 0, fbrowse, "fbrowse")
 		}
 		egui.EndMenu()
 
 		egui.Menu("Standard dialogs")
 		{
-			egui.AddMenuItem("Message boxes", fmbox1, "fmbox1")
-			egui.AddMenuItem("MsgGet box", fmbox2, "fmbox2")
-			egui.AddMenuItem("Choice", fmbox3, "fmbox3")
-			egui.AddMenuItem("Select color", fsele_color, "fsele_color")
-			egui.AddMenuItem("Select font", fsele_font, "fsele_font")
-			egui.AddMenuItem("Select file", fsele_file, "fsele_file")
+			egui.AddMenuItem("Message boxes", 0, fmbox1, "fmbox1")
+			egui.AddMenuItem("MsgGet box", 0, fmbox2, "fmbox2")
+			egui.AddMenuItem("Choice", 0, fmbox3, "fmbox3")
+			egui.AddMenuItem("Select color", 0, fsele_color, "fsele_color")
+			egui.AddMenuItem("Select font", 0, fsele_font, "fsele_font")
+			egui.AddMenuItem("Select file", 0, fsele_file, "fsele_file")
 		}
 		egui.EndMenu()
 
 		egui.Menu("Help")
 		{
-			egui.AddMenuItem("About", nil, "hwg_MsgInfo(hb_version()+chr(10)+chr(13)+hwg_version(),\"About\")")
+			egui.AddMenuItem("About", 0, nil, "hwg_MsgInfo(hb_version()+chr(10)+chr(13)+hwg_version(),\"About\")")
 		}
 		egui.EndMenu()
 	}
