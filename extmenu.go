@@ -56,15 +56,7 @@ func EndMenu() {
 	}
 }
 
-// AddMenuItem adds a new item to the Window's menu or submenu,
-// sName argument is a title of the item,
-// id - menu item identifier; if 0 - it is created automatically
-// fu - a function in the program, which must be called, when this menu item is selected,
-// sCode - the identifier (name) of this function.
-// If the fu value is nil, sCode contains the Harbour's code, which must be executed by
-// the GuiServer when this menu item is selected.
-// params - arguments for the fu function.
-func AddMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string) {
+func getscode(fu func([]string) string, sCode string, params ...string) string {
 	if fu != nil {
 		RegFunc(sCode, fu)
 		sCode = "pgo(\"" + sCode + "\",{"
@@ -77,10 +69,31 @@ func AddMenuItem(sName string, id int, fu func([]string) string, sCode string, p
 		sCode += "})"
 	}
 	b, _ := json.Marshal(sCode)
+	return string(b)
+}
+
+// AddMenuItem adds a new item to the Window's menu or submenu,
+// sName argument is a title of the item,
+// id - menu item identifier; if 0 - it is created automatically
+// fu - a function in the program, which must be called, when this menu item is selected,
+// sCode - the identifier (name) of this function.
+// If the fu value is nil, sCode contains the Harbour's code, which must be executed by
+// the GuiServer when this menu item is selected.
+// params - arguments for the fu function.
+func AddMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string) {
+	
 	if sMenu[len(sMenu)-1] != '[' {
 		sMenu += ","
 	}
-	sMenu += "[\"" + sName + "\"," + string(b) + "," + strconv.Itoa(id) + "]"
+	sMenu += "[\"" + sName + "\"," + getscode(fu, sCode, params...) + "," + strconv.Itoa(id) + "]"
+}
+
+func AddCheckMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string) {
+	
+	if sMenu[len(sMenu)-1] != '[' {
+		sMenu += ","
+	}
+	sMenu += "[\"" + sName + "\"," + getscode(fu, sCode, params...) + "," + strconv.Itoa(id) + ",true]"
 }
 
 // AddMenuSeparator adds a separator to the Window's menu or submenu,
@@ -89,4 +102,16 @@ func AddMenuSeparator() {
 		sMenu += ","
 	}
 	sMenu += "[\"-\"]"
+}
+
+func MenuItemEnable(sWndName string, sMenuName string, iItem int, bValue bool) {
+
+	sendout("[\"menu\",\"enable\",\"" + sWndName + "\",\"" + sMenuName + "\"," +
+		strconv.Itoa(iItem) + "," + strconv.FormatBool(bValue) + "]")
+}
+
+func MenuItemCheck(sWndName string, sMenuName string, iItem int, bValue bool) {
+
+	sendout("[\"menu\",\"check\",\"" + sWndName + "\",\"" + sMenuName + "\"," +
+		strconv.Itoa(iItem) + "," + strconv.FormatBool(bValue) + "]")
 }
