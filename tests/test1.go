@@ -174,7 +174,7 @@ func fsett4([]string) string {
 	egui.PLastWindow.Close()
 	egui.MsgInfo("Id: "+arr[0]+"\r\n"+"Date: "+arr[1]+"\r\n"+"Combo: "+arr[2]+"\r\n"+
 		"Married: "+arr[3]+"\r\n"+"Has children: "+arr[4]+"\r\n"+"Sex: "+arr[5]+"\r\n"+
-		"Age: "+arr[6], "Result", "", nil, "")
+		"Age: "+arr[6], "Result", nil, "", "")
 
 	return ""
 }
@@ -252,7 +252,7 @@ func fbrwclose([]string) string {
 	}
 
 	if s != "" {
-		egui.MsgInfo(s, "Changes", "", nil, "")
+		egui.MsgInfo(s, "Changes", nil, "", "")
 	}
 
 	return ""
@@ -260,12 +260,12 @@ func fbrwclose([]string) string {
 
 func fmbox1(p []string) string {
 	if len(p) == 0 {
-		egui.MsgYesNo("Yes or No???", "MsgBox", "fmbox1", fmbox1, "mm1")
+		egui.MsgYesNo("Yes or No???", "MsgBox", fmbox1, "fmbox1", "mm1")
 	} else if p[0] == "mm1" {
 		if p[1] == "t" {
-			egui.MsgInfo("Yes!", "Answer", "", nil, "")
+			egui.MsgInfo("Yes!", "Answer", nil, "", "")
 		} else {
-			egui.MsgInfo("No...", "Answer", "", nil, "")
+			egui.MsgInfo("No...", "Answer", nil, "", "")
 		}
 	}
 	return ""
@@ -273,9 +273,9 @@ func fmbox1(p []string) string {
 
 func fmbox2(p []string) string {
 	if len(p) == 0 {
-		egui.MsgGet("Input something:", "MsgGet", 0, "fmbox2", fmbox2, "mm1")
+		egui.MsgGet("Input something:", "MsgGet", 0, fmbox2, "fmbox2", "mm1")
 	} else if p[0] == "mm1" {
-		egui.MsgInfo(p[1], "Answer", "", nil, "")
+		egui.MsgInfo(p[1], "Answer", nil, "", "")
 	}
 	return ""
 }
@@ -283,16 +283,16 @@ func fmbox2(p []string) string {
 func fmbox3(p []string) string {
 	if len(p) == 0 {
 		arr := []string{"Alex Petrov", "Serg Lama", "Jimmy Hendrix", "Dorian Gray", "Victor Peti"}
-		egui.Choice(arr, "Select from a list", "fmbox3", fmbox3, "mm1")
+		egui.Choice(arr, "Select from a list", fmbox3, "fmbox3", "mm1")
 	} else if p[0] == "mm1" {
-		egui.MsgInfo(p[1], "Answer", "", nil, "")
+		egui.MsgInfo(p[1], "Answer", nil, "", "")
 	}
 	return ""
 }
 
 func fsele_color(p []string) string {
 	if len(p) == 0 {
-		egui.SelectColor(0, "fsele_color", fsele_color, "mm1")
+		egui.SelectColor(0, fsele_color, "fsele_color", "mm1")
 	} else {
 		iColor, _ := strconv.Atoi(p[1])
 		egui.Widg("main.l1").SetColor(int32(iColor), -1)
@@ -302,7 +302,7 @@ func fsele_color(p []string) string {
 
 func fsele_font(p []string) string {
 	if len(p) == 0 {
-		egui.SelectFont("fsele_font", fsele_font, "")
+		egui.SelectFont(fsele_font, "fsele_font", "")
 	} else {
 		fmt.Println("font id: ", p[0])
 		if pFont := egui.GetFont(p[0]); pFont != nil {
@@ -317,12 +317,12 @@ func fsele_font(p []string) string {
 
 func fsele_file(p []string) string {
 	if len(p) == 0 {
-		egui.SelectFile("", "fsele_file", fsele_file, "mm1")
+		egui.SelectFile("", fsele_file, "fsele_file", "mm1")
 	} else {
 		if p[1] == "" {
-			egui.MsgInfo("Nothing selected", "Result", "", nil, "")
+			egui.MsgInfo("Nothing selected", "Result", nil, "", "")
 		} else {
-			egui.MsgInfo(p[1], "File selected", "", nil, "")
+			egui.MsgInfo(p[1], "File selected", nil, "", "")
 		}
 	}
 	return ""

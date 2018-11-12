@@ -555,7 +555,7 @@ func GetVersion(i int) string {
 
 // MsgInfo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-func MsgInfo(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
+func MsgInfo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -570,7 +570,7 @@ func MsgInfo(sMessage string, sTitle string, sFunc string, fu func([]string) str
 
 // MsgStop creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
+func MsgStop(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -585,7 +585,7 @@ func MsgStop(sMessage string, sTitle string, sFunc string, fu func([]string) str
 
 // MsgYesNo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-func MsgYesNo(sMessage string, sTitle string, sFunc string, fu func([]string) string, sName string) {
+func MsgYesNo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -598,7 +598,7 @@ func MsgYesNo(sMessage string, sTitle string, sFunc string, fu func([]string) st
 	sendout(sParams)
 }
 
-func MsgGet(sMessage string, sTitle string, iStyle int32, sFunc string, fu func([]string) string, sName string) {
+func MsgGet(sMessage string, sTitle string, iStyle int32, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -611,7 +611,7 @@ func MsgGet(sMessage string, sTitle string, iStyle int32, sFunc string, fu func(
 	sendout(sParams)
 }
 
-func Choice(arr []string, sTitle string, sFunc string, fu func([]string) string, sName string) {
+func Choice(arr []string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -624,7 +624,7 @@ func Choice(arr []string, sTitle string, sFunc string, fu func([]string) string,
 	sendout(sParams)
 }
 
-func SelectFile(sPath string, sFunc string, fu func([]string) string, sName string) {
+func SelectFile(sPath string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -636,7 +636,7 @@ func SelectFile(sPath string, sFunc string, fu func([]string) string, sName stri
 	sendout(sParams)
 }
 
-func SelectColor(iColor int32, sFunc string, fu func([]string) string, sName string) {
+func SelectColor(iColor int32, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
@@ -648,7 +648,7 @@ func SelectColor(iColor int32, sFunc string, fu func([]string) string, sName str
 	sendout(sParams)
 }
 
-func SelectFont(sFunc string, fu func([]string) string, sName string) {
+func SelectFont(fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
 		RegFunc(sFunc, fu)
