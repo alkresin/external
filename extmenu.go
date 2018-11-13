@@ -59,12 +59,9 @@ func EndMenu() {
 func getscode(fu func([]string) string, sCode string, params ...string) string {
 	if fu != nil {
 		RegFunc(sCode, fu)
-		sCode = "pgo(\"" + sCode + "\",{"
-		for i, v := range params {
-			if i > 0 {
-				sCode += ","
-			}
-			sCode += "\"" + v + "\""
+		sCode = "pgo(\"" + sCode + "\",{\"menu\""
+		for _, v := range params {
+			sCode += ",\"" + v + "\""
 		}
 		sCode += "})"
 	}

@@ -54,7 +54,7 @@ func main() {
 		egui.Menu("File")
 		{
 			egui.AddMenuItem("Set text to label", 0,
-				func(p []string) string { egui.Widg("main.l1").SetText(p[0]); return "" }, "fsett2", "Bye...1")
+				func(p []string) string { egui.Widg("main.l1").SetText(p[1]); return "" }, "fsett2", "Bye...1")
 			egui.AddMenuSeparator()
 			egui.AddMenuItem("Printing", 0, fprint, "fprint")
 			egui.AddMenuSeparator()
@@ -259,7 +259,7 @@ func fbrwclose([]string) string {
 }
 
 func fmbox1(p []string) string {
-	if len(p) == 0 {
+	if p[0] == "menu" {
 		egui.MsgYesNo("Yes or No???", "MsgBox", fmbox1, "fmbox1", "mm1")
 	} else if p[0] == "mm1" {
 		if p[1] == "t" {
@@ -272,7 +272,7 @@ func fmbox1(p []string) string {
 }
 
 func fmbox2(p []string) string {
-	if len(p) == 0 {
+	if p[0] == "menu" {
 		egui.MsgGet("Input something:", "MsgGet", 0, fmbox2, "fmbox2", "mm1")
 	} else if p[0] == "mm1" {
 		egui.MsgInfo(p[1], "Answer", nil, "", "")
@@ -281,7 +281,7 @@ func fmbox2(p []string) string {
 }
 
 func fmbox3(p []string) string {
-	if len(p) == 0 {
+	if p[0] == "menu" {
 		arr := []string{"Alex Petrov", "Serg Lama", "Jimmy Hendrix", "Dorian Gray", "Victor Peti"}
 		egui.Choice(arr, "Select from a list", fmbox3, "fmbox3", "mm1")
 	} else if p[0] == "mm1" {
@@ -291,7 +291,7 @@ func fmbox3(p []string) string {
 }
 
 func fsele_color(p []string) string {
-	if len(p) == 0 {
+	if p[0] == "menu" {
 		egui.SelectColor(0, fsele_color, "fsele_color", "mm1")
 	} else {
 		iColor, _ := strconv.Atoi(p[1])
@@ -301,7 +301,7 @@ func fsele_color(p []string) string {
 }
 
 func fsele_font(p []string) string {
-	if len(p) == 0 {
+	if p[0] == "menu" {
 		egui.SelectFont(fsele_font, "fsele_font", "")
 	} else {
 		fmt.Println("font id: ", p[0])
@@ -316,7 +316,7 @@ func fsele_font(p []string) string {
 }
 
 func fsele_file(p []string) string {
-	if len(p) == 0 {
+	if p[0] == "menu" {
 		egui.SelectFile("", fsele_file, "fsele_file", "mm1")
 	} else {
 		if p[1] == "" {
@@ -329,7 +329,7 @@ func fsele_file(p []string) string {
 }
 
 func fprint(p []string) string {
-	if len(p) == 0 {
+	if p[0] == "menu" {
 		egui.InitPrinter(&(egui.Printer{SPrinter: "...", BPreview: true}), "fprint", fprint, "mm1")
 	} else {
 		pPrinter := egui.PLastPrinter
