@@ -25,11 +25,13 @@ const (
 
 var sLogName = "egui.log"
 var bEndProg = false
+var bWait = false
 
 var connOut, connIn net.Conn
 var bConnExist = false
 var bPacket = false
 var sPacketBuf string
+var aRunProc [][]string
 
 // Init runs, if needed, the Guiserver application, and connects to it.
 // It returns 0, if the connection is successful, 1 - in other case,
@@ -183,17 +185,10 @@ func listen(iPort int) {
 			case "runproc":
 				sendResponse(connIn, "[\"Ok\"]")
 				if len(arr) > 1 {
-					if fnc, bExist := mfu[arr[1]]; bExist {
-						var ap []string
-						if len(arr) > 2 {
-							ap = make([]string, 5)
-							err = json.Unmarshal([]byte(arr[2]), &ap)
-							if err != nil {
-								WriteLog(fmt.Sprintf("runproc param Unmarshal error (%s)\r\n", arr[2]))
-							}
-						}
-						//WriteLog(fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
-						fnc(ap)
+					if bWait {
+						aRunProc = append(aRunProc,arr)
+					} else {
+						runproc(arr)
 					}
 				} else {
 					bErr = true
@@ -212,7 +207,7 @@ func listen(iPort int) {
 						//WriteLog(fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
 						s := fnc(ap)
 						b, _ := json.Marshal(s)
-						sendResponse(connIn, "[\""+string(b)+"\"]")
+						sendResponse(connIn, string(b))
 					} else {
 						sendResponse(connIn, "[\"Err\"]")
 					}
@@ -358,8 +353,31 @@ func RegFunc(sName string, fu func([]string) string) {
 	mfu[sName] = fu
 }
 
+func runproc( arr []string ) {
+	if fnc, bExist := mfu[arr[1]]; bExist {
+		var ap []string
+		if len(arr) > 2 {
+			ap = make([]string, 5)
+			err := json.Unmarshal([]byte(arr[2]), &ap)
+			if err != nil {
+				WriteLog(fmt.Sprintf("runproc param Unmarshal error (%s)\r\n", arr[2]))
+			}
+		}
+		//WriteLog(fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
+		fnc(ap)
+	}
+}
+
 func wait() {
+	bWait = true
 	for !bEndProg {
+		for len(aRunProc) > 0 {
+			arr := aRunProc[0]
+			//WriteLog( arr[0]+" "+arr[1]+" "+arr[2]+"\r\n" )
+			aRunProc = append(aRunProc[:0], aRunProc[1:]...)
+			runproc(arr)
+		}
 		time.Sleep(20 * time.Millisecond)
 	}
+	bWait = false
 }
