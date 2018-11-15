@@ -26,11 +26,18 @@ const (
 	A_VERTFIX   = 512 // Anchors center of control relative to top and bottom borders but remains fixed in size.
 )
 
-// A set of constants of alignment options
+// A set of constants of Winstyle values
 const (
 	DT_LEFT   = 0
 	DT_CENTER = 1
 	DT_RIGHT  = 2
+
+	ES_PASSWORD  = 32
+	ES_MULTILINE = 4
+	ES_READONLY  = 2048
+
+	WM_HSCROLL   = 276
+	WM_VSCROLL   = 277
 )
 
 // A set of constants of the printer paper types

@@ -15,7 +15,6 @@ const (
 	CLR_LBLUE2 = 16770002
 	CLR_LBLUE3 = 16772062
 	CLR_LBLUE4 = 16775920
-	ES_MULTILINE = 4
 )
 
 func main() {
@@ -67,7 +66,7 @@ func main() {
 	egui.InsertNode( pTree, "", "n3", "Third", "", nil, nil, "" )
 
 	pEdi := pWindow.AddWidget(&(egui.Widget{Type: "edit", Name: "edim", X: 204, Y: 40, W: 196, H: 180,
-		Winstyle: ES_MULTILINE }))
+		Winstyle: egui.ES_MULTILINE }))
 	egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,x-o:nLeft,y-72)}")
 
 	pWindow.AddWidget(&(egui.Widget{Type: "splitter", X: 200, Y: 40, W: 4, H: 208,
