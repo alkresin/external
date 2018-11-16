@@ -36,8 +36,8 @@ const (
 	ES_MULTILINE = 4
 	ES_READONLY  = 2048
 
-	WM_HSCROLL   = 276
-	WM_VSCROLL   = 277
+	WS_HSCROLL   = 2097152
+	WS_VSCROLL   = 1048576
 )
 
 // A set of constants of the printer paper types
