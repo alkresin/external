@@ -777,10 +777,37 @@ func BrwGetArray(p *Widget) [][]string {
 //   iAlignHead int - the alignment of a column title ( 0 - left, 1 - center, 2 - right );
 //   iAlignData int - the alignment of a column data ( 0 - left, 1 - center, 2 - right );
 //   bEditable bool - is the data in a column editable.
-func BrwSetColumn(p *Widget, ic int, sHead string, iAlignHead int, iAlignData int, bEditable bool) {
+//   iLength - column width in characters;
+func BrwSetColumn(p *Widget, ic int, sHead string, iAlignHead int, iAlignData int,
+		bEditable bool, iLength int) {
 	var sName = widgFullName(p)
-	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcol\",[%d,\"%s\",%d,%d,%t]]", sName, ic, sHead, iAlignHead, iAlignData, bEditable)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcol\",[%d,\"%s\",%d,%d,%t,%d]]",
+		sName, ic, sHead, iAlignHead, iAlignData, bEditable, iLength)
 	sendout(sParams)
+}
+
+// SetVar sets a variable value
+func SetVar(sVarName string, sValue string) {
+
+	sParams := fmt.Sprintf("[\"setvar\",\"%s\",\"%s\"]", sVarName, sValue)
+	sendout(sParams)
+}
+
+// GetVar gets a variable value
+func GetVar(sVarName string) string {
+
+	var sRes string
+	sParams := fmt.Sprintf("[\"getvar\",\"%s\"]", sVarName)
+	b := sendoutAndReturn(sParams)
+	if b[0] == byte('+') {
+		b = b[1:len(b)]
+	}
+	err := json.Unmarshal(b, &sRes)
+	if err != nil {
+		return ""
+	}
+
+	return sRes
 }
 
 // SetImagePath sets a directory where GuiServer should look for image files.

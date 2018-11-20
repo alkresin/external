@@ -226,9 +226,9 @@ func fbrowse([]string) string {
 	pBrw := pDlg.AddWidget(&(egui.Widget{Type: "browse", Name: "brw", X: 10, Y: 10, W: 260, H: 150}))
 	pBrw.SetParam("oStyleHead", egui.GetStyle("st1"))
 	egui.BrwSetArray(pBrw, &arr)
-	egui.BrwSetColumn(pBrw, 1, "Name", 1, 0, false)
-	egui.BrwSetColumn(pBrw, 2, "Age", 1, 0, false)
-	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, true)
+	egui.BrwSetColumn(pBrw, 1, "Name", 1, 0, false, 0)
+	egui.BrwSetColumn(pBrw, 2, "Age", 1, 0, false, 0)
+	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, true, 0)
 
 	pDlg.AddWidget(&(egui.Widget{Type: "button", X: 90, Y: 180, W: 100, H: 32, Title: "Ok"}))
 	egui.PLastWidget.SetCallBackProc("onclick", fbrwclose, "fbrwclose")
