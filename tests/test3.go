@@ -45,40 +45,40 @@ func main() {
 		return
 	}
 
-	egui.CreateStyle(&(egui.Style{Name: "st1", Orient: 1, Colors: []int32{CLR_LBLUE, CLR_LBLUE3}}))
-	egui.CreateStyle(&(egui.Style{Name: "st2", Colors: []int32{CLR_LBLUE}, BorderW: 3}))
-	egui.CreateStyle(&(egui.Style{Name: "st3", Colors: []int32{CLR_LBLUE},
-		BorderW: 2, BorderClr: CLR_LBLUE0}))
-	pFont := egui.CreateFont(&(egui.Font{Name: "f1", Family: "Georgia", Height: -14}))
+	egui.CreateStyle(&egui.Style{Name: "st1", Orient: 1, Colors: []int32{CLR_LBLUE, CLR_LBLUE3}})
+	egui.CreateStyle(&egui.Style{Name: "st2", Colors: []int32{CLR_LBLUE}, BorderW: 3})
+	egui.CreateStyle(&egui.Style{Name: "st3", Colors: []int32{CLR_LBLUE},
+		BorderW: 2, BorderClr: CLR_LBLUE0})
+	pFont := egui.CreateFont(&egui.Font{Name: "f1", Family: "Georgia", Height: -14})
 
-	pWindow := &(egui.Widget{X: 100, Y: 100, W: 716, H: 764, Title: "Test3", BColor: 1, Font: pFont})
+	pWindow := &egui.Widget{X: 100, Y: 100, W: 716, H: 764, Title: "Test3", BColor: 1, Font: pFont}
 	egui.InitMainWindow(pWindow)
 
-	pPanel := pWindow.AddWidget(&(egui.Widget{Type: "paneltop", H: 32,
-		AProps: map[string]string{"HStyle": "st1"}}))
+	pPanel := pWindow.AddWidget(&egui.Widget{Type: "paneltop", H: 32,
+		AProps: map[string]string{"HStyle": "st1"}})
 
-	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 60, H: 32, Title: "Exit",
-		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	pPanel.AddWidget(&egui.Widget{Type: "ownbtn", X: 0, Y: 0, W: 60, H: 32, Title: "Exit",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}})
 	egui.PLastWidget.SetCallBackProc("onclick", nil, "hwg_EndWindow()")
 
-	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 60, Y: 0, W: 60, H: 32, Title: "M-brot",
-		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	pPanel.AddWidget(&egui.Widget{Type: "ownbtn", X: 60, Y: 0, W: 60, H: 32, Title: "M-brot",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}})
 	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "1")
 
-	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 120, Y: 0, W: 60, H: 32, Title: "Acos",
-		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	pPanel.AddWidget(&egui.Widget{Type: "ownbtn", X: 120, Y: 0, W: 60, H: 32, Title: "Acos",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}})
 	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "2")
 
-	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 180, Y: 0, W: 60, H: 32, Title: "Sqrt",
-		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	pPanel.AddWidget(&egui.Widget{Type: "ownbtn", X: 180, Y: 0, W: 60, H: 32, Title: "Sqrt",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}})
 	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "3")
 
-	pPanel.AddWidget(&(egui.Widget{Type: "ownbtn", X: 240, Y: 0, W: 60, H: 32, Title: "Newton",
-		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}}))
+	pPanel.AddWidget(&egui.Widget{Type: "ownbtn", X: 240, Y: 0, W: 60, H: 32, Title: "Newton",
+		AProps: map[string]string{"HStyles": egui.ToString("st1", "st2", "st3")}})
 	egui.PLastWidget.SetCallBackProc("onclick", fu1, "fu1", "4")
 
-	pWindow.AddWidget(&(egui.Widget{Type: "bitmap", Name: "img", X: 10, Y: 36, W: 680,
-		H: 680, BColor: CLR_LGRAY2}))
+	pWindow.AddWidget(&egui.Widget{Type: "bitmap", Name: "img", X: 10, Y: 36, W: 680,
+		H: 680, BColor: CLR_LGRAY2})
 	//	Anchor: egui.A_TOPABS+egui.A_LEFTABS+egui.A_BOTTOMABS+egui.A_RIGHTABS }))
 	//egui.PLastWidget.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,x-o:nLeft,y-72)}")
 
