@@ -143,7 +143,7 @@ func init() {
 	mWidgs["paneltop"] = map[string]string{"HStyle": "C"}
 	mWidgs["panelbot"] = map[string]string{"HStyle": "C", "AParts": "AC"}
 	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
-	mWidgs["splitter"] = map[string]string{"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC"}
+	mWidgs["splitter"] = map[string]string{"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC", "HStyle": "C"}
 	mWidgs["updown"] = map[string]string{"From": "N", "TO": "N"}
 	mWidgs["tree"] = map[string]string{"AImages": "AC", "EditLabel": "L"}
 	mWidgs["progress"] = map[string]string{"Maxpos": "N"}
