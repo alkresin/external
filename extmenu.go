@@ -85,6 +85,9 @@ func AddMenuItem(sName string, id int, fu func([]string) string, sCode string, p
 	sMenu += "[\"" + sName + "\"," + getscode(fu, sCode, params...) + "," + strconv.Itoa(id) + "]"
 }
 
+// AddCheckMenuItem is the same as AddMenuItem, but it creates a menu item, which may be checked.
+// In fact, it is needed in a GTK version only, but for the sake of compatibility it is
+// recommended to use it in your code if this is a check menu item.
 func AddCheckMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string) {
 	
 	if sMenu[len(sMenu)-1] != '[' {
@@ -101,11 +104,20 @@ func AddMenuSeparator() {
 	sMenu += "[\"-\"]"
 }
 
+// MenuItemEnable enables (bValue == true) or disables a menu item.
+// If this is a window menu (main or a dialog), you need to pass the appropriate window name
+// via sWndName parameter, if context - the menu name via sMenuName.
+// iItem is a menu item id.
 func MenuItemEnable(sWndName string, sMenuName string, iItem int, bValue bool) {
 
 	sendout("[\"menu\",\"enable\",\"" + sWndName + "\",\"" + sMenuName + "\"," +
 		strconv.Itoa(iItem) + "," + strconv.FormatBool(bValue) + "]")
 }
+
+// MenuItemCheck checks (bValue == true) or unchecks a menu item.
+// If this is a window menu (main or a dialog), you need to pass the appropriate window name
+// via sWndName parameter, if context - the menu name via sMenuName.
+// iItem is a menu item id.
 
 func MenuItemCheck(sWndName string, sMenuName string, iItem int, bValue bool) {
 

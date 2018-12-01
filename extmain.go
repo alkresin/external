@@ -40,7 +40,7 @@ var aRunProc [][]string
 // guiserver=<full path to GuiServer executable>
 // ip=<ip address of a computer, where GuiServer runs>
 // port=<tcp/ip port number>
-// log (switch on logging)
+// log=<0, 1 or 2> - logging level
 func Init(sOpt string) int {
 
 	var err error

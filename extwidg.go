@@ -120,10 +120,17 @@ var aFonts []*Font
 var aStyles []*Style
 var iIdCount int32
 
+// PLastWindow is a pointer to a last used window structure (*Widget)
 var PLastWindow *Widget
+
+// PLastWidget is a pointer to a last used widget structure (*Widget)
 var PLastWidget *Widget
+
+// PLastPrinter is a pointer to a last used printer structure (*Printer)
 var PLastPrinter *Printer
 
+// Var mWidgs is filled in init function and includes all possible widgets types with
+// its properties, which may be installed, using AProps member of a Widget structure.
 var mWidgs = make(map[string]map[string]string)
 
 func init() {
@@ -355,7 +362,7 @@ func CreateStyle(pStyle *Style) *Style {
 	return pStyle
 }
 
-// CreateHighliter creates a highlight rules for a code editor
+// CreateHighliter creates a highlight rules for a code editor ("cedit" widget)
 func CreateHighliter(sName string, sCommands string, sFuncs string,
 	sSingleLineComm string, sMultiLineComm string, bCase bool) *Highlight {
 
@@ -365,6 +372,7 @@ func CreateHighliter(sName string, sCommands string, sFuncs string,
 	return &(Highlight{Name: sName})
 }
 
+// SetHighliter sets or unsets (if p == nil) a given Highliter to a "cedit" widget.
 func SetHighliter(pEdit *Widget, p *Highlight) {
 	var sHiliName string
 	if p == nil {
@@ -377,7 +385,7 @@ func SetHighliter(pEdit *Widget, p *Highlight) {
 	sendout(sParams)
 }
 
-// SetHili defines highlighting options for a code editor: a font, text color and background color
+// SetHili defines highlighting options for a code editor ("cedit" widget): a font, text color and background color
 func SetHiliOpt(pEdit *Widget, iGroup int, pFont *Font, tColor int32, bColor int32) {
 	var sFontName string
 	if pFont == nil {
@@ -546,6 +554,10 @@ func GetValues(pWnd *Widget, aNames []string) []string {
 	}
 }
 
+// GetVersion returns the version string in different verbosity level, depending of i value
+// i == 0  - GuiServer version only ("1.3", for example);
+// i == 1  - GuiServer version with "GuiServer" word;
+// i == 2  - GuiServer, Harbour and HwGUI versions.
 func GetVersion(i int) string {
 
 	var sRes string
@@ -562,6 +574,8 @@ func GetVersion(i int) string {
 
 // MsgInfo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func MsgInfo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -577,6 +591,8 @@ func MsgInfo(sMessage string, sTitle string, fu func([]string) string, sFunc str
 
 // MsgStop creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func MsgStop(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -592,6 +608,8 @@ func MsgStop(sMessage string, sTitle string, fu func([]string) string, sFunc str
 
 // MsgYesNo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func MsgYesNo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -605,6 +623,10 @@ func MsgYesNo(sMessage string, sTitle string, fu func([]string) string, sFunc st
 	sendout(sParams)
 }
 
+// MsgGet creates a messagebox, which allows to input a string
+// sTitle - box title, sMessage - text in a box, iStyle - a Winstyle for an "edit" widget (ES_PASSWORD, for example).
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func MsgGet(sMessage string, sTitle string, iStyle int32, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -618,6 +640,10 @@ func MsgGet(sMessage string, sTitle string, iStyle int32, fu func([]string) stri
 	sendout(sParams)
 }
 
+// Choice creates a dialog with a "browse" inside, which allows to select one of items in
+// a passed slice arr.
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func Choice(arr []string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -631,6 +657,10 @@ func Choice(arr []string, sTitle string, fu func([]string) string, sFunc string,
 	sendout(sParams)
 }
 
+// SelectFile creates a standard dialog to select file
+// sPath - initial path;
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func SelectFile(sPath string, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -643,6 +673,10 @@ func SelectFile(sPath string, fu func([]string) string, sFunc string, sName stri
 	sendout(sParams)
 }
 
+// SelectColor creates a standard dialog to select color
+// iColor - base color;
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func SelectColor(iColor int32, fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -655,6 +689,9 @@ func SelectColor(iColor int32, fu func([]string) string, sFunc string, sName str
 	sendout(sParams)
 }
 
+// SelectFont creates a standard dialog to select font
+// fu, sCode - a definition of a callback procedure;
+// sName - a parameter, passed to a callback procedure.
 func SelectFont(fu func([]string) string, sFunc string, sName string) {
 
 	if fu != nil && sFunc != "" {
@@ -668,6 +705,13 @@ func SelectFont(fu func([]string) string, sFunc string, sName string) {
 	sendout(sParams)
 }
 
+// InsertNode inserts a node to a tree widget pTree.
+// sNodeName - a name of a parent node, or empty, if it is root node;
+// sNodeNew - a name of an inserted node;
+// sTitle - a caption of an inserted node;
+// sNodeNext - a name of a node, you want to insert the new before;
+// aImages - path to images for the node ( unselected, selected );
+// fu, sCode - a definition of a callback procedure.
 func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 	sNodeNext string, aImages []string, fu func([]string) string, sCode string) {
 
@@ -696,6 +740,7 @@ func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 	sendout(sParams)
 }
 
+// PBarStep does a next step for a pPBar progress bar widget
 func PBarStep(pPBar *Widget) {
 
 	var sName = widgFullName(pPBar)
