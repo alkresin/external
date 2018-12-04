@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"sync"
 )
 
 const (
@@ -31,7 +32,12 @@ var connOut, connIn net.Conn
 var bConnExist = false
 var bPacket = false
 var sPacketBuf string
+
 var aRunProc [][]string
+var muxRunProc sync.Mutex
+
+var aRunFu []func()
+var muxRunFu sync.Mutex
 
 // Init runs, if needed, the Guiserver application, and connects to it.
 // It returns 0, if the connection is successful, 1 - in other case,
@@ -186,7 +192,9 @@ func listen(iPort int) {
 				sendResponse(connIn, "[\"Ok\"]")
 				if len(arr) > 1 {
 					if bWait {
+						muxRunProc.Lock()
 						aRunProc = append(aRunProc,arr)
+						muxRunProc.Unlock()
 					} else {
 						runproc(arr)
 					}
@@ -353,6 +361,13 @@ func RegFunc(sName string, fu func([]string) string) {
 	mfu[sName] = fu
 }
 
+// AddFuncToIdle adds a function to be executed while wait state.
+func AddFuncToIdle( fu func() ) {
+	muxRunFu.Lock()
+	aRunFu = append(aRunFu, fu)
+	muxRunFu.Unlock()
+}
+
 func runproc( arr []string ) {
 	if fnc, bExist := mfu[arr[1]]; bExist {
 		var ap []string
@@ -371,10 +386,29 @@ func runproc( arr []string ) {
 func wait() {
 	bWait = true
 	for !bEndProg {
-		for len(aRunProc) > 0 {
+		for {
+			muxRunFu.Lock()
+			if len(aRunFu) == 0 {
+				muxRunFu.Unlock()
+				break
+			}
+			fu := aRunFu[0]
+			aRunFu = append(aRunFu, fu)
+			aRunFu = append(aRunFu[:0], aRunFu[1:]...)
+			muxRunFu.Unlock()
+
+			fu()
+		}
+		for {
+			muxRunProc.Lock()
+			if len(aRunProc) == 0 {
+				muxRunProc.Unlock()
+				break
+			}
 			arr := aRunProc[0]
-			//WriteLog( arr[0]+" "+arr[1]+" "+arr[2]+"\r\n" )
 			aRunProc = append(aRunProc[:0], aRunProc[1:]...)
+			muxRunProc.Unlock()
+
 			runproc(arr)
 		}
 		time.Sleep(20 * time.Millisecond)
