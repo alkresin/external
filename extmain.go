@@ -220,7 +220,7 @@ func listen(iPort int) {
 				if len(arr) > 1 {
 					oW := Wnd(arr[1])
 					if oW != nil {
-						oW.Delete()
+						oW.delete()
 					}
 				} else {
 					bErr = true

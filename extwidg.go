@@ -129,36 +129,34 @@ var PLastWidget *Widget
 // PLastPrinter is a pointer to a last used printer structure (*Printer)
 var PLastPrinter *Printer
 
-// Var mWidgs is filled in init function and includes all possible widgets types with
+// Var mWidgs includes all possible widgets types with
 // its properties, which may be installed, using AProps member of a Widget structure.
-var mWidgs = make(map[string]map[string]string)
+var mWidgs = map[string]map[string]string{
+	"main": {"Icon": "C"},
+	"dialog": nil,
+	"label": {"Transpa": "L"},
+	"edit": {"Picture": "C"},
+	"button": nil,
+	"check": {"Transpa": "L"},
+	"radio": {"Transpa": "L"},
+	"radiogr": nil,
+	"group": nil,
+	"combo": {"AItems": "AC"},
+	"bitmap": {"Transpa": "L", "TrColor": "N", "Image": "C"},
+	"line": {"Vertical": "L"},
+	"panel": {"HStyle": "C"},
+	"paneltop": {"HStyle": "C"},
+	"panelbot": {"HStyle": "C", "AParts": "AC"},
+	"ownbtn": {"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"},
+	"splitter": {"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC", "HStyle": "C"},
+	"updown": {"From": "N", "TO": "N"},
+	"tree": {"AImages": "AC", "EditLabel": "L"},
+	"progress": {"Maxpos": "N"},
+	"tab": nil,
+	"browse": {"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"},
+	"cedit": {"NoVScroll": "L", "NoBorder": "L"},
+	"monthcal": {"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"} }
 
-func init() {
-	mWidgs["main"] = map[string]string{"Icon": "C"}
-	mWidgs["dialog"] = nil
-	mWidgs["label"] = map[string]string{"Transpa": "L"}
-	mWidgs["edit"] = map[string]string{"Picture": "C"}
-	mWidgs["button"] = nil
-	mWidgs["check"] = map[string]string{"Transpa": "L"}
-	mWidgs["radio"] = map[string]string{"Transpa": "L"}
-	mWidgs["radiogr"] = nil
-	mWidgs["group"] = nil
-	mWidgs["combo"] = map[string]string{"AItems": "AC"}
-	mWidgs["bitmap"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C"}
-	mWidgs["line"] = map[string]string{"Vertical": "L"}
-	mWidgs["panel"] = map[string]string{"HStyle": "C"}
-	mWidgs["paneltop"] = map[string]string{"HStyle": "C"}
-	mWidgs["panelbot"] = map[string]string{"HStyle": "C", "AParts": "AC"}
-	mWidgs["ownbtn"] = map[string]string{"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"}
-	mWidgs["splitter"] = map[string]string{"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC", "HStyle": "C"}
-	mWidgs["updown"] = map[string]string{"From": "N", "TO": "N"}
-	mWidgs["tree"] = map[string]string{"AImages": "AC", "EditLabel": "L"}
-	mWidgs["progress"] = map[string]string{"Maxpos": "N"}
-	mWidgs["tab"] = nil
-	mWidgs["browse"] = map[string]string{"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"}
-	mWidgs["cedit"] = map[string]string{"NoVScroll": "L", "NoBorder": "L"}
-	mWidgs["monthcal"] = map[string]string{"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"}
-}
 
 func widgFullName(pWidg *Widget) string {
 	sName := pWidg.Name
@@ -278,8 +276,7 @@ func setprops(pWidg *Widget, mwidg map[string]string) string {
 					sPar += fmt.Sprintf(",\"%s\": %s", name, val)
 				}
 			} else {
-				WriteLog(fmt.Sprintf("Error! \"%s\" does not defined for \"%s\"", name, pWidg.Type))
-				return ""
+				WriteLog(fmt.Sprintf("Error! \"%s\" does not defined for \"%s\"\r\n", name, pWidg.Type))
 			}
 		}
 	}
@@ -574,7 +571,7 @@ func GetVersion(i int) string {
 
 // MsgInfo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgInfo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -591,7 +588,7 @@ func MsgInfo(sMessage string, sTitle string, fu func([]string) string, sFunc str
 
 // MsgStop creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgStop(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -608,7 +605,7 @@ func MsgStop(sMessage string, sTitle string, fu func([]string) string, sFunc str
 
 // MsgYesNo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgYesNo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -625,7 +622,7 @@ func MsgYesNo(sMessage string, sTitle string, fu func([]string) string, sFunc st
 
 // MsgGet creates a messagebox, which allows to input a string
 // sTitle - box title, sMessage - text in a box, iStyle - a Winstyle for an "edit" widget (ES_PASSWORD, for example).
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgGet(sMessage string, sTitle string, iStyle int32, fu func([]string) string, sFunc string, sName string) {
 
@@ -642,7 +639,7 @@ func MsgGet(sMessage string, sTitle string, iStyle int32, fu func([]string) stri
 
 // Choice creates a dialog with a "browse" inside, which allows to select one of items in
 // a passed slice arr.
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func Choice(arr []string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -659,7 +656,7 @@ func Choice(arr []string, sTitle string, fu func([]string) string, sFunc string,
 
 // SelectFile creates a standard dialog to select file
 // sPath - initial path;
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func SelectFile(sPath string, fu func([]string) string, sFunc string, sName string) {
 
@@ -675,7 +672,7 @@ func SelectFile(sPath string, fu func([]string) string, sFunc string, sName stri
 
 // SelectColor creates a standard dialog to select color
 // iColor - base color;
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func SelectColor(iColor int32, fu func([]string) string, sFunc string, sName string) {
 
@@ -690,7 +687,7 @@ func SelectColor(iColor int32, fu func([]string) string, sFunc string, sName str
 }
 
 // SelectFont creates a standard dialog to select font
-// fu, sCode - a definition of a callback procedure;
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
 // sName - a parameter, passed to a callback procedure.
 func SelectFont(fu func([]string) string, sFunc string, sName string) {
 
@@ -711,7 +708,7 @@ func SelectFont(fu func([]string) string, sFunc string, sName string) {
 // sTitle - a caption of an inserted node;
 // sNodeNext - a name of a node, you want to insert the new before;
 // aImages - path to images for the node ( unselected, selected );
-// fu, sCode - a definition of a callback procedure.
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier or Harbour script.
 func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 	sNodeNext string, aImages []string, fu func([]string) string, sCode string) {
 
@@ -748,6 +745,7 @@ func PBarStep(pPBar *Widget) {
 	sendout(sParams)
 }
 
+// PBarSet sets a progress bar position
 func PBarSet(pPBar *Widget, iPos int) {
 
 	var sName = widgFullName(pPBar)
@@ -755,18 +753,25 @@ func PBarSet(pPBar *Widget, iPos int) {
 	sendout(sParams)
 }
 
+// InitTray forces the main window to be placed in a tray,
+// sIcon - a path to icon file,
+// sMenuName - a name of a context menu,
+// sTooltip - a tooltip for an icon in tray.
 func InitTray(sIcon string, sMenuName string, sTooltip string) {
 
 	sParams := fmt.Sprintf("[\"tray\",\"init\",\"%s\",\"%s\",\"%s\"]", sIcon, sMenuName, sTooltip)
 	sendout(sParams)
 }
 
+// ModifyTrayIcon changes a tray icon of a main window,
+// sIcon - a path to icon file.
 func ModifyTrayIcon(sIcon string) {
 
 	sParams := fmt.Sprintf("[\"tray\",\"icon\",\"%s\"]", sIcon)
 	sendout(sParams)
 }
 
+// RadioEnd completes a group of radio buttons, started with a "radiogr" widget
 func RadioEnd(p *Widget, iSel int) {
 
 	var sName = widgFullName(p)
@@ -902,6 +907,7 @@ func (p *Font) FillFont(arr []string) {
 	p.Charset = int16(i)
 }
 
+// Method Activate shows on the screen a main window or a dialog
 func (o *Widget) Activate() bool {
 	var sParams string
 	if o.Type == "main" {
@@ -918,19 +924,20 @@ func (o *Widget) Activate() bool {
 	return b
 }
 
+// Method Close closes a main window or a dialog
 func (o *Widget) Close() bool {
 	if o.Type == "main" || o.Type == "dialog" {
 		sParams := fmt.Sprintf("[\"close\",\"%s\"]", o.Name)
 		b := sendout("" + sParams)
 		if o.Type == "dialog" {
-			o.Delete()
+			o.delete()
 		}
 		return b
 	}
 	return false
 }
 
-func (o *Widget) Delete() bool {
+func (o *Widget) delete() bool {
 	if o.Type == "dialog" {
 		for i, od := range aDialogs {
 			if o.Name == od.Name {
@@ -943,11 +950,14 @@ func (o *Widget) Delete() bool {
 	return false
 }
 
+// Method AddWidget adds new child widget
+// o - parent window or widget
+// pWidg - a Widget structure with definition of a new widget
 func (o *Widget) AddWidget(pWidg *Widget) *Widget {
 	pWidg.Parent = o
 	mwidg, bOk := mWidgs[pWidg.Type]
 	if !bOk {
-		WriteLog(fmt.Sprintf("Error! \"%s\" does not defined", pWidg.Type))
+		WriteLog(fmt.Sprintf("Error! \"%s\" does not defined\r\n", pWidg.Type))
 		return nil
 	}
 	if pWidg.Name == "" {
@@ -968,6 +978,7 @@ func (o *Widget) AddWidget(pWidg *Widget) *Widget {
 	return pWidg
 }
 
+// Method SetText sets a text aText to a widget, pointed by o.
 func (o *Widget) SetText(sText string) {
 
 	var sName = widgFullName(o)
@@ -977,6 +988,8 @@ func (o *Widget) SetText(sText string) {
 	sendout(sParams)
 }
 
+// Method SetImage sets an image widget, pointed by o,
+// sImage - a path to an image
 func (o *Widget) SetImage(sImage string) {
 
 	var sName = widgFullName(o)
@@ -998,6 +1011,9 @@ func (o *Widget) SetImage(sImage string) {
 	sendout(sParams)
 }
 
+// Method SetParam sets a property to a widget, pointed by o,
+// sParam - a name of a property,
+// xParam - a value of a property.
 func (o *Widget) SetParam(sParam string, xParam interface{}) {
 
 	var sName = widgFullName(o)
@@ -1022,6 +1038,7 @@ func (o *Widget) SetParam(sParam string, xParam interface{}) {
 	sendout(sParams)
 }
 
+// Method GetText gets the text from a widget, pointed by o.
 func (o *Widget) GetText() string {
 	var sRes string
 	var sName = widgFullName(o)
@@ -1039,6 +1056,7 @@ func (o *Widget) GetText() string {
 	return sRes
 }
 
+// Method SetColor sets a text color tColor and background color bColor to a widget, pointed by o.
 func (o *Widget) SetColor(tColor int32, bColor int32) {
 
 	var sName = widgFullName(o)
@@ -1047,6 +1065,7 @@ func (o *Widget) SetColor(tColor int32, bColor int32) {
 	sendout(sParams)
 }
 
+// Method SetFont sets a font pFont to a widget, pointed by o.
 func (o *Widget) SetFont(pFont *Font) {
 
 	var sName = widgFullName(o)
