@@ -18,6 +18,8 @@ const (
 	CLR_LBLUE2 = 16770002
 	CLR_LBLUE3 = 16772062
 	CLR_LBLUE4 = 16775920
+	CLR_GRAY   = 0x333333
+	CLR_LGRAY1 = 0xeeeeee
 )
 
 var arr = [][]string{{"Alex", "17", "1200"}, {"Victor", "42", "1600"}, {"John", "31", "1000"}}
@@ -225,10 +227,17 @@ func fbrowse([]string) string {
 
 	pBrw := pDlg.AddWidget(&egui.Widget{Type: "browse", Name: "brw", X: 10, Y: 10, W: 260, H: 150})
 	pBrw.SetParam("oStyleHead", egui.GetStyle("st1"))
+	pBrw.SetParam("tColor", CLR_GRAY)
+	pBrw.SetParam("bColorSel", CLR_LGRAY1)
+	pBrw.SetParam("htbColor", CLR_LGRAY1)
+	pBrw.SetParam("tColorSel", 0)
+	pBrw.SetParam("httColor", 0)
 	egui.BrwSetArray(pBrw, &arr)
 	egui.BrwSetColumn(pBrw, 1, "Name", 1, 0, false, 0)
 	egui.BrwSetColumn(pBrw, 2, "Age", 1, 0, false, 0)
 	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, true, 0)
+	egui.BrwSetColumnEx(pBrw, 2, "bColor", CLR_LBLUE3)
+	egui.BrwSetColumnEx(pBrw, 2, "lResizable", false)
 
 	pDlg.AddWidget(&egui.Widget{Type: "button", X: 90, Y: 180, W: 100, H: 32, Title: "Ok"})
 	egui.PLastWidget.SetCallBackProc("onclick", fbrwclose, "fbrwclose")

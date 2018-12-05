@@ -15,8 +15,8 @@ import (
 	"os/exec"
 	"strconv"
 	"strings"
-	"time"
 	"sync"
+	"time"
 )
 
 const (
@@ -193,7 +193,7 @@ func listen(iPort int) {
 				if len(arr) > 1 {
 					if bWait {
 						muxRunProc.Lock()
-						aRunProc = append(aRunProc,arr)
+						aRunProc = append(aRunProc, arr)
 						muxRunProc.Unlock()
 					} else {
 						runproc(arr)
@@ -279,7 +279,7 @@ func sendout(s string) bool {
 		sPacketBuf += "," + s
 	} else {
 		if !bConnExist {
-			WriteLog( "sendout: No connection established.\r\n" )
+			WriteLog("sendout: No connection established.\r\n")
 			return false
 		}
 
@@ -305,7 +305,7 @@ func sendoutAndReturn(s string) []byte {
 	buf := make([]byte, 1024)
 
 	if !bConnExist {
-		WriteLog( "sendoutAndReturn: No connection established.\r\n" )
+		WriteLog("sendoutAndReturn: No connection established.\r\n")
 		return []byte("")
 	}
 
@@ -362,13 +362,13 @@ func RegFunc(sName string, fu func([]string) string) {
 }
 
 // AddFuncToIdle adds a function to be executed while wait state.
-func AddFuncToIdle( fu func() ) {
+func AddFuncToIdle(fu func()) {
 	muxRunFu.Lock()
 	aRunFu = append(aRunFu, fu)
 	muxRunFu.Unlock()
 }
 
-func runproc( arr []string ) {
+func runproc(arr []string) {
 	if fnc, bExist := mfu[arr[1]]; bExist {
 		var ap []string
 		if len(arr) > 2 {
@@ -393,7 +393,6 @@ func wait() {
 				break
 			}
 			fu := aRunFu[0]
-			aRunFu = append(aRunFu, fu)
 			aRunFu = append(aRunFu[:0], aRunFu[1:]...)
 			muxRunFu.Unlock()
 

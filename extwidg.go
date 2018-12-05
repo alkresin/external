@@ -36,8 +36,8 @@ const (
 	ES_MULTILINE = 4
 	ES_READONLY  = 2048
 
-	WS_HSCROLL   = 2097152
-	WS_VSCROLL   = 1048576
+	WS_HSCROLL = 2097152
+	WS_VSCROLL = 1048576
 )
 
 // A set of constants of the printer paper types
@@ -132,31 +132,30 @@ var PLastPrinter *Printer
 // Var mWidgs includes all possible widgets types with
 // its properties, which may be installed, using AProps member of a Widget structure.
 var mWidgs = map[string]map[string]string{
-	"main": {"Icon": "C"},
-	"dialog": nil,
-	"label": {"Transpa": "L"},
-	"edit": {"Picture": "C"},
-	"button": nil,
-	"check": {"Transpa": "L"},
-	"radio": {"Transpa": "L"},
-	"radiogr": nil,
-	"group": nil,
-	"combo": {"AItems": "AC"},
-	"bitmap": {"Transpa": "L", "TrColor": "N", "Image": "C"},
-	"line": {"Vertical": "L"},
-	"panel": {"HStyle": "C"},
+	"main":     {"Icon": "C"},
+	"dialog":   nil,
+	"label":    {"Transpa": "L"},
+	"edit":     {"Picture": "C"},
+	"button":   nil,
+	"check":    {"Transpa": "L"},
+	"radio":    {"Transpa": "L"},
+	"radiogr":  nil,
+	"group":    nil,
+	"combo":    {"AItems": "AC"},
+	"bitmap":   {"Transpa": "L", "TrColor": "N", "Image": "C"},
+	"line":     {"Vertical": "L"},
+	"panel":    {"HStyle": "C"},
 	"paneltop": {"HStyle": "C"},
 	"panelbot": {"HStyle": "C", "AParts": "AC"},
-	"ownbtn": {"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"},
+	"ownbtn":   {"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"},
 	"splitter": {"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC", "HStyle": "C"},
-	"updown": {"From": "N", "TO": "N"},
-	"tree": {"AImages": "AC", "EditLabel": "L"},
+	"updown":   {"From": "N", "TO": "N"},
+	"tree":     {"AImages": "AC", "EditLabel": "L"},
 	"progress": {"Maxpos": "N"},
-	"tab": nil,
-	"browse": {"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"},
-	"cedit": {"NoVScroll": "L", "NoBorder": "L"},
-	"monthcal": {"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"} }
-
+	"tab":      nil,
+	"browse":   {"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"},
+	"cedit":    {"NoVScroll": "L", "NoBorder": "L"},
+	"monthcal": {"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"}}
 
 func widgFullName(pWidg *Widget) string {
 	sName := pWidg.Name
@@ -829,10 +828,34 @@ func BrwGetArray(p *Widget) [][]string {
 //   bEditable bool - is the data in a column editable.
 //   iLength - column width in characters;
 func BrwSetColumn(p *Widget, ic int, sHead string, iAlignHead int, iAlignData int,
-		bEditable bool, iLength int) {
+	bEditable bool, iLength int) {
 	var sName = widgFullName(p)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcol\",[%d,\"%s\",%d,%d,%t,%d]]",
 		sName, ic, sHead, iAlignHead, iAlignData, bEditable, iLength)
+	sendout(sParams)
+}
+
+// BrwSetColumnEx sets options for a column with number ic of a browse widget p -
+// those, which can not be set via BrwSetColumn.
+// sParam - option name, xParam - option value
+func BrwSetColumnEx(p *Widget, ic int, sParam string, xParam interface{}) {
+	var sName = widgFullName(p)
+	var sParValue string
+	var bObj = true
+
+	switch v := xParam.(type) {
+	case *Font:
+		sParValue = "\"" + v.Name + "\""
+	case *Style:
+		sParValue = "\"" + v.Name + "\""
+	default:
+		b, _ := json.Marshal(xParam)
+		sParValue = string(b)
+		bObj = false
+	}
+
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcolx\",[%d,\"%s\",%s,%t]]",
+		sName, ic, sParam, sParValue, bObj)
 	sendout(sParams)
 }
 
