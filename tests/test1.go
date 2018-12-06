@@ -222,10 +222,10 @@ func fbrowse([]string) string {
 
 	egui.BeginPacket()
 	pFont := egui.CreateFont(&egui.Font{Name: "f1", Family: "Georgia", Height: 16})
-	pDlg := &egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 280, H: 220, Title: "browse", Font: pFont}
+	pDlg := &egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 280, H: 240, Title: "browse", Font: pFont}
 	egui.InitDialog(pDlg)
 
-	pBrw := pDlg.AddWidget(&egui.Widget{Type: "browse", Name: "brw", X: 10, Y: 10, W: 260, H: 150})
+	pBrw := pDlg.AddWidget(&egui.Widget{Type: "browse", Name: "brw", X: 10, Y: 10, W: 260, H: 140})
 	pBrw.SetParam("oStyleHead", egui.GetStyle("st1"))
 	pBrw.SetParam("tColor", CLR_GRAY)
 	pBrw.SetParam("bColorSel", CLR_LGRAY1)
@@ -238,8 +238,12 @@ func fbrowse([]string) string {
 	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, true, 0)
 	egui.BrwSetColumnEx(pBrw, 2, "bColor", CLR_LBLUE3)
 	egui.BrwSetColumnEx(pBrw, 2, "lResizable", false)
+	pBrw.SetCallBackProc("onposchanged", fbrwpc, "fbrwpc")
 
-	pDlg.AddWidget(&egui.Widget{Type: "button", X: 90, Y: 180, W: 100, H: 32, Title: "Ok"})
+	pDlg.AddWidget(&egui.Widget{Type: "label", Name: "l1",
+		X: 90, Y: 160, W: 100, H: 24, Winstyle: egui.DT_CENTER})
+
+	pDlg.AddWidget(&egui.Widget{Type: "button", X: 90, Y: 200, W: 100, H: 32, Title: "Ok"})
 	egui.PLastWidget.SetCallBackProc("onclick", fbrwclose, "fbrwclose")
 
 	pDlg.Activate()
@@ -264,6 +268,18 @@ func fbrwclose([]string) string {
 		egui.MsgInfo(s, "Changes", nil, "", "")
 	}
 
+	return ""
+}
+
+func fbrwpc(p []string) string {
+
+	pLabel := egui.Widg("dlg2.l1")
+	if len(p) > 1 {
+		i, _ := strconv.Atoi(p[1])
+		if i > 0 && i <= 3 {
+			pLabel.SetText(arr[i-1][0])
+		}
+	}
 	return ""
 }
 

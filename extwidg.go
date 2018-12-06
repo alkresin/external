@@ -155,6 +155,7 @@ var mWidgs = map[string]map[string]string{
 	"tab":      nil,
 	"browse":   {"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"},
 	"cedit":    {"NoVScroll": "L", "NoBorder": "L"},
+	"link":    {"Link": "C", "ClrVisited": "N", "ClrLink": "N", "ClrOver": "N"},
 	"monthcal": {"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"}}
 
 func widgFullName(pWidg *Widget) string {
@@ -270,7 +271,7 @@ func setprops(pWidg *Widget, mwidg map[string]string) string {
 				} else if cType == "L" {
 					sPar += fmt.Sprintf(",\"%s\": \"%s\"", name, val)
 				} else if cType == "N" {
-					sPar += fmt.Sprintf(",\"%s\": %d", name, val)
+					sPar += fmt.Sprintf(",\"%s\": %s", name, val)
 				} else if cType == "AC" {
 					sPar += fmt.Sprintf(",\"%s\": %s", name, val)
 				}
@@ -1100,14 +1101,22 @@ func (o *Widget) SetFont(pFont *Font) {
 func (o *Widget) SetCallBackProc(sbName string, fu func([]string) string, sCode string, params ...string) {
 
 	var sName = widgFullName(o)
+	var sc1, sc2 string
 
 	if fu != nil {
 		RegFunc(sCode, fu)
-		sCode = "pgo(\"" + sCode + "\",{\"" + sName + "\""
+		if sbName == "onposchanged" {
+			sc1 = "o,n"
+			sc2 = ",n"
+		} else {
+			sc1 = ""
+			sc2 = ""
+		}
+		sCode = "{|" + sc1 + "|pgo(\"" + sCode + "\",{\"" + sName + "\"" + sc2
 		for _, v := range params {
 			sCode += ",\"" + v + "\""
 		}
-		sCode += "})"
+		sCode += "})}"
 	}
 	b, _ := json.Marshal(sCode)
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"cb.%s\",%s]", sName, sbName, string(b))
