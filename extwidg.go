@@ -56,6 +56,9 @@ const (
 	HILI_COMM  = 4
 )
 
+// The CodeBlock type for Harbour scripts, which are set via SetParam() method and BrwSetColumnEx()
+type CodeBlock string
+
 // The Font structure prepares data to create a new font
 type Font struct {
 	Family    string
@@ -842,21 +845,26 @@ func BrwSetColumn(p *Widget, ic int, sHead string, iAlignHead int, iAlignData in
 func BrwSetColumnEx(p *Widget, ic int, sParam string, xParam interface{}) {
 	var sName = widgFullName(p)
 	var sParValue string
-	var bObj = true
+	var sObj = "d"
 
 	switch v := xParam.(type) {
 	case *Font:
 		sParValue = "\"" + v.Name + "\""
+		sObj = "o"
 	case *Style:
 		sParValue = "\"" + v.Name + "\""
+		sObj = "o"
+	case CodeBlock:
+		b, _ := json.Marshal(xParam)
+		sParValue = string(b)
+		sObj = "b"
 	default:
 		b, _ := json.Marshal(xParam)
 		sParValue = string(b)
-		bObj = false
 	}
 
-	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcolx\",[%d,\"%s\",%s,%t]]",
-		sName, ic, sParam, sParValue, bObj)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcolx\",[%d,\"%s\",%s,\"%s\"]]",
+		sName, ic, sParam, sParValue, sObj)
 	sendout(sParams)
 }
 
@@ -1042,23 +1050,30 @@ func (o *Widget) SetParam(sParam string, xParam interface{}) {
 
 	var sName = widgFullName(o)
 	var sParValue string
-	var bObj = true
+	var sObj = "d"
 
 	switch v := xParam.(type) {
 	case *Font:
 		sParValue = "\"" + v.Name + "\""
+		sObj = "o"
 	case *Style:
 		sParValue = "\"" + v.Name + "\""
+		sObj = "o"
 	case *Widget:
 		sParValue = "\"" + v.Name + "\""
+		sObj = "o"
 	case *Highlight:
 		sParValue = "\"" + v.Name + "\""
+		sObj = "o"
+	case CodeBlock:
+		b, _ := json.Marshal(xParam)
+		sParValue = string(b)
+		sObj = "b"
 	default:
 		b, _ := json.Marshal(xParam)
 		sParValue = string(b)
-		bObj = false
 	}
-	sParams := fmt.Sprintf("[\"set\",\"%s\",\"xparam\",[\"%s\",%s,%t]]", sName, sParam, sParValue, bObj)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"xparam\",[\"%s\",%s,\"%s\"]]", sName, sParam, sParValue, sObj)
 	sendout(sParams)
 }
 
