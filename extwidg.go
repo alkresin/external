@@ -1108,6 +1108,9 @@ func (o *Widget) SetCallBackProc(sbName string, fu func([]string) string, sCode 
 		if sbName == "onposchanged" {
 			sc1 = "o,n"
 			sc2 = ",n"
+		} else if sbName == "onrclick" || sbName == "onenter" {
+			sc1 = "o,nc,nr"
+			sc2 = ",nc,nr"
 		} else {
 			sc1 = ""
 			sc2 = ""

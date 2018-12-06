@@ -239,6 +239,7 @@ func fbrowse([]string) string {
 	egui.BrwSetColumnEx(pBrw, 2, "bColor", CLR_LBLUE3)
 	egui.BrwSetColumnEx(pBrw, 2, "lResizable", false)
 	pBrw.SetCallBackProc("onposchanged", fbrwpc, "fbrwpc")
+	pBrw.SetCallBackProc("onrclick", fbrwrc, "fbrwrc")
 
 	pDlg.AddWidget(&egui.Widget{Type: "label", Name: "l1",
 		X: 90, Y: 160, W: 100, H: 24, Winstyle: egui.DT_CENTER})
@@ -279,6 +280,14 @@ func fbrwpc(p []string) string {
 		if i > 0 && i <= 3 {
 			pLabel.SetText(arr[i-1][0])
 		}
+	}
+	return ""
+}
+
+func fbrwrc(p []string) string {
+
+	if len(p) > 2 {
+		egui.MsgInfo("Row: "+p[2]+" Col: "+p[1], "Right click position", nil, "", "")
 	}
 	return ""
 }
