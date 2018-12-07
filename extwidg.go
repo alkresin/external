@@ -158,7 +158,7 @@ var mWidgs = map[string]map[string]string{
 	"tab":      nil,
 	"browse":   {"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"},
 	"cedit":    {"NoVScroll": "L", "NoBorder": "L"},
-	"link":    {"Link": "C", "ClrVisited": "N", "ClrLink": "N", "ClrOver": "N"},
+	"link":     {"Link": "C", "ClrVisited": "N", "ClrLink": "N", "ClrOver": "N"},
 	"monthcal": {"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"}}
 
 func widgFullName(pWidg *Widget) string {
@@ -865,6 +865,13 @@ func BrwSetColumnEx(p *Widget, ic int, sParam string, xParam interface{}) {
 
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcolx\",[%d,\"%s\",%s,\"%s\"]]",
 		sName, ic, sParam, sParValue, sObj)
+	sendout(sParams)
+}
+
+// BrwDelColumn deletes a column with number ic of a browse widget p.
+func BrwDelColumn(p *Widget, ic int) {
+	var sName = widgFullName(p)
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"brwcoldel\",%d]", sName, ic)
 	sendout(sParams)
 }
 

@@ -22,7 +22,8 @@ const (
 	CLR_LGRAY1 = 0xeeeeee
 )
 
-var arr = [][]string{{"Alex", "17", "1200"}, {"Victor", "42", "1600"}, {"John", "31", "1000"}}
+var arr = [][]string{{"Alex", "17", "1200", "f", "1"}, {"Victor", "42", "1600", "f", "2"},
+	{"John", "31", "1000", "f", "3"}}
 
 func main() {
 
@@ -232,7 +233,9 @@ func fbrowse([]string) string {
 	pBrw.SetParam("htbColor", CLR_LGRAY1)
 	pBrw.SetParam("tColorSel", 0)
 	pBrw.SetParam("httColor", 0)
+	pBrw.SetParam("lInFocus", true)
 	egui.BrwSetArray(pBrw, &arr)
+	egui.BrwDelColumn(pBrw, 5)
 	egui.BrwSetColumn(pBrw, 1, "Name", 1, 0, false, 0)
 	egui.BrwSetColumn(pBrw, 2, "Age", 1, 0, false, 0)
 	egui.BrwSetColumn(pBrw, 3, "Salary", 1, 0, true, 0)
