@@ -227,6 +227,7 @@ func fbrowse([]string) string {
 	egui.InitDialog(pDlg)
 
 	pBrw := pDlg.AddWidget(&egui.Widget{Type: "browse", Name: "brw", X: 10, Y: 10, W: 260, H: 140})
+
 	pBrw.SetParam("oStyleHead", egui.GetStyle("st1"))
 	pBrw.SetParam("tColor", CLR_GRAY)
 	pBrw.SetParam("bColorSel", CLR_LGRAY1)

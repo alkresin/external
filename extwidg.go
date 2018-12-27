@@ -38,6 +38,10 @@ const (
 
 	WS_HSCROLL = 2097152
 	WS_VSCROLL = 1048576
+
+	WND_NOTITLE   = -1
+	WND_NOSYSMENU = -2
+	WND_NOSIZEBOX = -4
 )
 
 // A set of constants of the printer paper types
@@ -135,31 +139,32 @@ var PLastPrinter *Printer
 // Var mWidgs includes all possible widgets types with
 // its properties, which may be installed, using AProps member of a Widget structure.
 var mWidgs = map[string]map[string]string{
-	"main":     {"Icon": "C"},
-	"dialog":   nil,
-	"label":    {"Transpa": "L"},
-	"edit":     {"Picture": "C"},
-	"button":   nil,
-	"check":    {"Transpa": "L"},
-	"radio":    {"Transpa": "L"},
-	"radiogr":  nil,
-	"group":    nil,
-	"combo":    {"AItems": "AC"},
-	"bitmap":   {"Transpa": "L", "TrColor": "N", "Image": "C"},
-	"line":     {"Vertical": "L"},
-	"panel":    {"HStyle": "C"},
-	"paneltop": {"HStyle": "C"},
-	"panelbot": {"HStyle": "C", "AParts": "AC"},
-	"ownbtn":   {"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC"},
-	"splitter": {"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC", "HStyle": "C"},
-	"updown":   {"From": "N", "TO": "N"},
-	"tree":     {"AImages": "AC", "EditLabel": "L"},
-	"progress": {"Maxpos": "N"},
-	"tab":      nil,
-	"browse":   {"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"},
-	"cedit":    {"NoVScroll": "L", "NoBorder": "L"},
-	"link":     {"Link": "C", "ClrVisited": "N", "ClrLink": "N", "ClrOver": "N"},
-	"monthcal": {"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"}}
+	"main":      {"Icon": "C"},
+	"dialog":    nil,
+	"label":     {"Transpa": "L"},
+	"edit":      {"Picture": "C"},
+	"button":    nil,
+	"check":     {"Transpa": "L"},
+	"radio":     {"Transpa": "L"},
+	"radiogr":   nil,
+	"group":     nil,
+	"combo":     {"AItems": "AC"},
+	"bitmap":    {"Transpa": "L", "TrColor": "N", "Image": "C"},
+	"line":      {"Vertical": "L"},
+	"panel":     {"HStyle": "C"},
+	"paneltop":  {"HStyle": "C"},
+	"panelbot":  {"HStyle": "C", "AParts": "AC"},
+	"panelhead": {"HStyle": "C", "Xt": "N", "Yt": "N", "BtnClose": "L", "BtnMax": "L", "BtnMin": "L"},
+	"ownbtn":    {"Transpa": "L", "TrColor": "N", "Image": "C", "HStyles": "AC", "Xt": "N", "Yt": "N"},
+	"splitter":  {"Vertical": "L", "From": "N", "TO": "N", "ALeft": "AC", "ARight": "AC", "HStyle": "C"},
+	"updown":    {"From": "N", "TO": "N"},
+	"tree":      {"AImages": "AC", "EditLabel": "L"},
+	"progress":  {"Maxpos": "N"},
+	"tab":       nil,
+	"browse":    {"Append": "L", "Autoedit": "L", "NoVScroll": "L", "NoBorder": "L"},
+	"cedit":     {"NoVScroll": "L", "NoBorder": "L"},
+	"link":      {"Link": "C", "ClrVisited": "N", "ClrLink": "N", "ClrOver": "N"},
+	"monthcal":  {"NoToday": "L", "NoTodayCirc": "L", "WeekNumb": "L"}}
 
 func widgFullName(pWidg *Widget) string {
 	sName := pWidg.Name
