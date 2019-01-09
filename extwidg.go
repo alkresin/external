@@ -315,18 +315,28 @@ func ToString(xParam ...interface{}) string {
 // OpenMainForm reads a main window description from a xml file, prepared by HwGUI's Designer,
 // initialises and activates this window with all its widgets
 func OpenMainForm(sForm string) bool {
-	var b bool
-	b = sendout("[\"openformmain\",\"" + sForm + "\"]")
+	var bres bool
+	b, err := json.Marshal(sForm)
+	if err != nil {
+		WriteLog( fmt.Sprintln(err) )
+		return false
+	}
+	bres = sendout("[\"openformmain\"," + string(b) + "]")
 	wait()
-	return b
+	return bres
 }
 
 // OpenForm reads a dialog window description from a xml file, prepared by HwGUI's Designer,
 // initialises and activates this dialog with all its widgets
 func OpenForm(sForm string) bool {
-	var b bool
-	b = sendout("[\"openform\",\"" + sForm + "\"]")
-	return b
+	var bres bool
+	b, err := json.Marshal(sForm)
+	if err != nil {
+		WriteLog( fmt.Sprintln(err) )
+		return false
+	}
+	bres = sendout("[\"openform\"," + string(b) + "]")
+	return bres
 }
 
 // OpenReport reads a report description from a xml file, prepared by HwGUI's Designer

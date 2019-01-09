@@ -44,7 +44,7 @@ var muxRunFu sync.Mutex
 // 2 -if a protocol version of a GuiServer isn't equal to a local protocol.
 // The sOpt argument specifies connection details. It may contain following strings:
 // guiserver=<full path to GuiServer executable>
-// ip=<ip address of a computer, where GuiServer runs>
+// address=<ip address of a computer, where GuiServer runs>
 // port=<tcp/ip port number>
 // log=<0, 1 or 2> - logging level
 func Init(sOpt string) int {
@@ -192,8 +192,10 @@ func listen(iPort int) {
 				sendResponse(connIn, "[\"Ok\"]")
 				if len(arr) > 1 {
 					if bWait {
+						tmp := make([]string, len(arr))
 						muxRunProc.Lock()
-						aRunProc = append(aRunProc, arr)
+						copy(tmp, arr)
+						aRunProc = append(aRunProc, tmp)
 						muxRunProc.Unlock()
 					} else {
 						runproc(arr)
