@@ -385,7 +385,7 @@ func runproc(arr []string) {
 	}
 }
 
-func wait() {
+func Wait() {
 	bWait = true
 	for !bEndProg {
 		for {

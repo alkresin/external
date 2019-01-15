@@ -322,7 +322,7 @@ func OpenMainForm(sForm string) bool {
 		return false
 	}
 	bres = sendout("[\"openformmain\"," + string(b) + "]")
-	wait()
+	Wait()
 	return bres
 }
 
@@ -973,7 +973,7 @@ func (o *Widget) Activate() bool {
 	}
 	b := sendout("" + sParams)
 	if o.Type == "main" {
-		wait()
+		Wait()
 	}
 	return b
 }
