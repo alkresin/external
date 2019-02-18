@@ -58,7 +58,7 @@ func main() {
 	pTree.SetCallBackProc("onsize", nil, "{|o,x,y|o:Move(,,,y-72)}")
 
 	egui.InsertNode(pTree, "", "n1", "First", "", nil, nil, "")
-	egui.InsertNode(pTree, "", "n2", "Second", "", nil, nil, "")
+	egui.InsertNode(pTree, "", "n2", "Second «item»", "", nil, nil, "")
 	egui.InsertNode(pTree, "n2", "n2a", "second-1", "", []string{"book.bmp"}, nil, "hwg_msginfo(\"n2a\")")
 	egui.InsertNode(pTree, "", "n3", "Third", "", nil, nil, "")
 

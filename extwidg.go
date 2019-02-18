@@ -140,7 +140,7 @@ var PLastPrinter *Printer
 // its properties, which may be installed, using AProps member of a Widget structure.
 var mWidgs = map[string]map[string]string{
 	"main":      {"Icon": "C"},
-	"dialog":    nil,
+	"dialog":    {"Icon": "C"},
 	"label":     {"Transpa": "L"},
 	"edit":      {"Picture": "C"},
 	"button":    nil,
