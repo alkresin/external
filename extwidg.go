@@ -318,7 +318,7 @@ func OpenMainForm(sForm string) bool {
 	var bres bool
 	b, err := json.Marshal(sForm)
 	if err != nil {
-		WriteLog( fmt.Sprintln(err) )
+		WriteLog(fmt.Sprintln(err))
 		return false
 	}
 	bres = sendout("[\"openformmain\"," + string(b) + "]")
@@ -332,7 +332,7 @@ func OpenForm(sForm string) bool {
 	var bres bool
 	b, err := json.Marshal(sForm)
 	if err != nil {
-		WriteLog( fmt.Sprintln(err) )
+		WriteLog(fmt.Sprintln(err))
 		return false
 	}
 	bres = sendout("[\"openform\"," + string(b) + "]")
@@ -752,6 +752,13 @@ func InsertNode(pTree *Widget, sNodeName string, sNodeNew string, sTitle string,
 	}
 	sParams += "," + sCode + "]]"
 
+	sendout(sParams)
+}
+
+func SelectNode(pTree *Widget, sNodeName string) {
+
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"nodesele\",\"%s\"]",
+		widgFullName(pTree), sNodeName)
 	sendout(sParams)
 }
 
@@ -1188,10 +1195,20 @@ func (o *Widget) Move(iLeft, iTop, iWidth, iHeight int32) {
 	sendout(sParams)
 }
 
+// Method Enable enables or disables a widget, pointed by o.
 func (o *Widget) Enable(bEnable bool) {
 
 	var sName = widgFullName(o)
 
 	sParams := fmt.Sprintf("[\"set\",\"%s\",\"enable\",%t]", sName, bEnable)
+	sendout(sParams)
+}
+
+// Method Hide hides or shows a widget, pointed by o.
+func (o *Widget) Hide(bHide bool) {
+
+	var sName = widgFullName(o)
+
+	sParams := fmt.Sprintf("[\"set\",\"%s\",\"hide\",%t]", sName, bHide)
 	sendout(sParams)
 }
