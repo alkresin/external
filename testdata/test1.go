@@ -186,7 +186,8 @@ func ftab([]string) string {
 
 	egui.BeginPacket()
 	pFont := egui.CreateFont(&egui.Font{Name: "f1", Family: "Georgia", Height: 16})
-	pDlg := &egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 200, H: 340, Title: "Tab", Font: pFont}
+	pDlg := &egui.Widget{Name: "dlg2", X: 300, Y: 200, W: 200, H: 340, Title: "Tab", Font: pFont,
+		AProps: map[string]string{"NoExitOnEsc": "t","NoCloseAble": "t"}}
 	egui.InitDialog(pDlg)
 
 	pTab := pDlg.AddWidget(&egui.Widget{Type: "tab", X: 10, Y: 10, W: 180, H: 280})
