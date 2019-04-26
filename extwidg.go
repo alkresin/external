@@ -688,6 +688,21 @@ func SelectFile(sPath string, fu func([]string) string, sFunc string, sName stri
 	sendout(sParams)
 }
 
+// SelectFolder creates a standard dialog to select folder
+// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// sName - a parameter, passed to a callback procedure.
+func SelectFolder(fu func([]string) string, sFunc string, sName string) {
+
+	if fu != nil && sFunc != "" {
+		RegFunc(sFunc, fu)
+	} else {
+		sFunc = ""
+		sName = ""
+	}
+	sParams := fmt.Sprintf("[\"common\",\"cfold\",\"%s\",\"%s\"]", sFunc, sName)
+	sendout(sParams)
+}
+
 // SelectColor creates a standard dialog to select color
 // iColor - base color;
 // fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;

@@ -292,7 +292,7 @@ func fbrwpc(p []string) string {
 func fbrwrc(p []string) string {
 
 	if len(p) > 2 {
-		egui.MsgInfo("Row: "+p[2]+" Col: "+p[1], "Right click position", nil, "", "")
+		egui.MsgInfo(p[0]+" Row: "+p[2]+" Col: "+p[1], "Right click position", nil, "", "")
 	}
 	return ""
 }
