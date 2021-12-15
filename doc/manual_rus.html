@@ -111,7 +111,40 @@ func main() {
 
     <p><strong class="title"><a name="Crwidg" href="#_Crwidg"> 4.  Создание окон и виджетов</a></strong></p>
     <p>Итак, инициализация прошла успешно, теперь мы можем формировать интерфейс программы. В
-       большинстве случаев начать следует с создания главного окна.</p>
+       большинстве случаев начать следует с создания главного окна. Это делается посредством
+       вызова функции InitMainWindow(pWindow), которой в качестве единственного параметра передается
+       указатель на предварительно созданную структуру Widget, описывающую окно. Вот объявление
+       этой структуры:</p>
+       <pre class="brush: go;">
+   type Widget struct {
+      Parent   *Widget
+      Type     string
+      Name     string
+      X        int
+      Y        int
+      W        int
+      H        int
+      Title    string
+      Winstyle int32
+      TColor   int32
+      BColor   int32
+      Tooltip  string
+      Anchor   int32
+      Font     *Font
+      AProps   map[string]string
+      aWidgets []*Widget
+   }</pre>
+    <p>Структура Widget используется для создания окон, диалогов и виджетов, конкретный тип
+       объекта определяется полем Type; для главного окна это &quot;main&quot;, для
+       диалога - &quot;dialog&quot;, для, например, кнопки, - &quot;button&quot;. К описанию
+       полей структуры мы вернемся чуть позже, а пока продолжим разговор о создании окна.</p>
+    <p>InitMainWindow(pWindow) создает окно, этот вызов приводит в конечном итоге к вызову на
+       стороне GuiServer функции Windows API CreateWindowEx() или, если мы работаем под
+       Unix/Linux, gtk_window_new(). Для того, чтобы окно появилось на экране, необходимо вызвать еще
+       метод объекта Widget Activate(). GuiServer по получении этой команды вызывает функцию
+       Windows API ShowWindow() и начинает цикл обработки сообщений, в Unix/Linux делается вызов
+       gtk_main(), что, по сути, то же самое. External после отправки команды на GuiServer тоже входит
+       в цикл ожидания сообщений - от GuiServer.</p>
     <hr>
     <script type="text/javascript" src="js/shCore.js"></script>
     <script type="text/javascript" src="js/shBrushGo.js"></script>
