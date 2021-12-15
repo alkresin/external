@@ -1,0 +1,54 @@
+
+#header { background-color: #053061; border-bottom: 1px solid #fff; padding: 20px 0 0; }
+#header > div { width: 940px; line-height: 24px; margin: 0 auto; padding: 0 10px;  }
+#logo   { color: #ffc947; font-size: 40px; }
+#logo .subt { color: #fff; font-size: 20px; }
+
+#lang   { font-size: 14px; }
+#lang .link { color: #fff; text-decoration: none; }
+#lang .sel { color: #ffc947; }
+
+#body { background: #818E9F; }
+#content { 
+  width: 82%;
+  padding: 10px;
+  margin: 0 auto;
+  font-family: Verdana, Arial;
+  font-size: 16px;
+  background-color: #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, .3), -23px 0 20px -23px rgba(0, 0, 0, .8), 23px 0 20px -23px rgba(0, 0, 0, .8), 0 0 40px rgba(0, 0, 0, .1) inset;
+}
+#content p { margin: 8px; }
+#content h1 { margin: 0; }
+@media screen and (max-width: 1100px) {
+  #content {
+    width: 94%;
+  }
+}
+
+#footer { background-color: #053061; color: #ab7d0f; border-top: 1px solid #fff; padding: 28px 0 14px; }
+#footer p { font-size: 12px; line-height: 18px; margin: 0; }
+#footer > div { width: 940px; margin: 0 auto; padding: 0 10px; }
+#footer a { color:#fff; text-decoration:none; }
+#footer a:hover { text-decoration:underline; }
+
+.shad1 { box-shadow: 6px 8px 5px 0px #888; }
+
+blockquote { color: #101310; background-color: #e5e5e5; font-size: 1em; border: 1px solid #050505; padding: .5em margin: 0 2em; }
+
+/* Old */
+.code-sample	{ background-color: #e5e5e5; border: 1px solid #050505; }
+.sidebar        { background-color: #fff; border-right: 1px solid #050505; border-bottom: 1px solid #050505; }
+.title		{font-size: medium; color: #3333CC}
+.subtitle	{font-size: 9pt; color: #3333CC}
+.subhead	{font-size: 12pt}
+.subhea1	{font-size: 12pt; text-decoration: underline;}
+
+.hdr { font:110%; font-family: "Arial Cyr"; font-weight: bold; color: #ffffff; ;background-color: #4777D6 }
+.dt { font-weight: bold }
+table.tbl1 { width: 100%; border: 0; }
+a:Link{ Color: #0044ff; text-decoration: none; font-family: Arial; }
+a:Visited{ Color: #0088ee; text-decoration: none; font-family: Arial; }
+a:Hover{ Color: #000088; text-decoration: underline; font-family: Arial; }
+p { text-indent: 0.3in }
+pre.code { color: #101310; background-color: #e5e5e5; font-size: 1em; border: 1px solid #050505; padding: .5em; margin: 0 2em; }
+pre.subh { color: #101310; background-color: #f1f1f1; padding: .1em; font-weight: bold; font-size: 150%;}

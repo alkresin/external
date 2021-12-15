@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>External: Справочное руководство</title>
+   <meta name="description" content="Руководство по External GUI library">
+   <meta name="keywords" content="go,golang,GUI,library,Harbour,HWGUI,guide,документация,программирование">
+   <link rel="stylesheet" type="text/css" href="css/table.css">
+   <link type="text/css" rel="stylesheet" href="css/shCoreDefault.css"/>
+</head>
+
+<body>
+
+<div id="header">
+  <div>
+    <table width="100%"><tr>
+    <td style="text-align: left;"><div id="logo"> External GUI library<br><span class="subt">Александр Кресин, 2018-2021</span> </div></td>
+    <td style="text-align: right;"><div>
+      <div id="lang">
+        <span class="sel">Rus</span> &nbsp;&nbsp; <a href="manual_en.html" class="link">Eng</a>
+      </div>
+      <div id="d_menu"></div>
+    </div></td>
+    </tr></table>
+  </div>
+</div>
+
+<div id="body">
+  <div id="content">
+    <h1> External: Справочное руководство</h1>
+    <ul>
+      <li><a name="_Intro" href="#Intro">1.  Введение</a>
+      <li><a name="_Hello" href="#Hello">2.  Hello, World</a>
+      <li><a name="_Init" href="#Init">3.  Инициализация</a>
+      <li><a name="_Crwidg" href="#Crwidg">4.  Создание окон и виджетов</a>
+      <ul>
+        <li><a name="_Widglist" href="#Widglist">4.1  Список виджетов</a>
+      </ul>
+    </ul>
+    <br>
+    <p><strong class="title"><a name="Intro" href="#_Intro"> 1.  Введение</a></strong></p>
+    <p>External - это GUI библиотека для golang, которая для реализации интерфейса использует отдельную
+       программу, GuiServer - <a target="_blank" href="http://www.kresin.ru/guisrv.html">см. здесь</a>.</p>
+    <p>При старте External запускает GuiServer, если он еще не запущен, и присоединяется к нему, используя
+       два tcp/ip порта. GuiServer может работать как на том же компьютере, что и ваше приложение, так и
+       на удаленном - в этом случае запустить его из приложения не удастся, так что он должен быть
+       запущен заранее. По одному порту External отправляет команды GuiServer&#39у - создание окон, виджетов,
+       всякие действия с ними и пр., по другому - принимает от него сообщения, поступающие при наступлении
+       каких либо событий, нажатия кнопки, например.</p>
+    <br>
+    <p><strong class="title"><a name="Hello" href="#_Hello"> 2.  Hello, World</a></strong></p>
+    <p>Начнем, по традиции, с Hello, World. Вот пример простейшей программы, создающей окно с этой надписью:</p>
+    <pre class="brush: go;">
+package main
+
+import egui "github.com/alkresin/external"
+
+func main() {
+
+    if egui.Init("") != 0 {
+        return
+    }
+    pWindow := &egui.Widget{X: 100, Y: 100, W: 400, H: 140, Title: "My first GUI app"}
+    egui.InitMainWindow(pWindow)
+
+    pWindow.AddWidget(&egui.Widget{Type: "label",
+        X: 20, Y: 60, W: 160, H: 24, Title: "Hello, World!" })
+
+    pWindow.Activate()
+    egui.Exit()
+}</pre>
+    <p>Функция Init() запускает GuiServer и присоединяется к нему. InitMainWindow() создает
+       главное окно приложения с заданными параметрами. Метод AddWidget() — добавляет виджет типа label.
+       Activate() — выводит окно на экран и переводит программу в режим ожидания.<p>
+    <p>Далее рассмотрим эти действия по порядку.</p>
+    <br>
+
+    <p><strong class="title"><a name="Init" href="#_Init"> 3.  Инициализация</a></strong></p>
+    <p>Как я уже говорил, первое, что следует сделать - это запустить GuiServer и присоединиться к нему.
+       Это делает функция Init(sOpt string), которой передается строка параметров, разделенных символом
+       конца строки ( &quot;\n&quot; ). Вот они (приведены значения по умолчанию):</p>
+    <pre>
+    guiserver=guiserver.exe
+    address=127.0.0.1
+    port=3101
+    log=0</pre>
+    <p>Если вам надо изменить, например, номер порта и уровень журналирования (0...2), вы можете
+       использовать такой вызов Init():</p>
+    <pre>
+    egui.Init("port=4801\nlog=1")
+    </pre>
+    <p>Символ конца строки используется в качестве разделителя, чтобы было удобнее передать в
+       качестве параметра содержимое ini файла:</p>
+    <pre class="brush: go;">
+    var sInit string
+    b, err := ioutil.ReadFile("test.ini")
+    if err != nil {
+       sInit = ""
+    } else {
+       sInit = string(b)
+    }
+
+    if egui.Init(sInit) != 0 {
+        return
+    }
+    // ...</pre>
+    <p>Функция Init() возвращает 0 в случае успешного выполнения, 1 - если соединиться не удалось,
+       и 2 - если протоколы связи вашей версии External и GuiServer отличаются.</p>
+    <br>
+
+    <p><strong class="title"><a name="Crwidg" href="#_Crwidg"> 4.  Создание окон и виджетов</a></strong></p>
+    <p>Итак, инициализация прошла успешно, теперь мы можем формировать интерфейс программы. В
+       большинстве случаев начать следует с создания главного окна.</p>
+    <hr>
+    <script type="text/javascript" src="js/shCore.js"></script>
+    <script type="text/javascript" src="js/shBrushGo.js"></script>
+    <script type="text/javascript">SyntaxHighlighter.all();</script>
+  </div>
+</div>
+
+<div id="footer">
+  <div>
+    <p> © Copyright 2021. All Rights Reserved.</p>
+  </div>
+</div>
+
+</body>
+</html>

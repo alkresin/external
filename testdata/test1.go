@@ -349,6 +349,7 @@ func fsele_font(p []string) string {
 			} else {
 				fmt.Println("font fam: ", p[1])
 			}
+			egui.Widg("main.l1").SetFont( pFont );
 		}
 	}
 	return ""

@@ -589,7 +589,7 @@ func GetVersion(i int) string {
 
 // MsgInfo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgInfo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -606,7 +606,7 @@ func MsgInfo(sMessage string, sTitle string, fu func([]string) string, sFunc str
 
 // MsgStop creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgStop(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -623,7 +623,7 @@ func MsgStop(sMessage string, sTitle string, fu func([]string) string, sFunc str
 
 // MsgYesNo creates a standard nessagebox
 // sTitle - box title, sMessage - text in a box
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgYesNo(sMessage string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -640,7 +640,7 @@ func MsgYesNo(sMessage string, sTitle string, fu func([]string) string, sFunc st
 
 // MsgGet creates a messagebox, which allows to input a string
 // sTitle - box title, sMessage - text in a box, iStyle - a Winstyle for an "edit" widget (ES_PASSWORD, for example).
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func MsgGet(sMessage string, sTitle string, iStyle int32, fu func([]string) string, sFunc string, sName string) {
 
@@ -657,7 +657,7 @@ func MsgGet(sMessage string, sTitle string, iStyle int32, fu func([]string) stri
 
 // Choice creates a dialog with a "browse" inside, which allows to select one of items in
 // a passed slice arr.
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func Choice(arr []string, sTitle string, fu func([]string) string, sFunc string, sName string) {
 
@@ -674,7 +674,7 @@ func Choice(arr []string, sTitle string, fu func([]string) string, sFunc string,
 
 // SelectFile creates a standard dialog to select file
 // sPath - initial path;
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func SelectFile(sPath string, fu func([]string) string, sFunc string, sName string) {
 
@@ -689,7 +689,7 @@ func SelectFile(sPath string, fu func([]string) string, sFunc string, sName stri
 }
 
 // SelectFolder creates a standard dialog to select folder
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func SelectFolder(fu func([]string) string, sFunc string, sName string) {
 
@@ -705,7 +705,7 @@ func SelectFolder(fu func([]string) string, sFunc string, sName string) {
 
 // SelectColor creates a standard dialog to select color
 // iColor - base color;
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func SelectColor(iColor int32, fu func([]string) string, sFunc string, sName string) {
 
@@ -720,7 +720,7 @@ func SelectColor(iColor int32, fu func([]string) string, sFunc string, sName str
 }
 
 // SelectFont creates a standard dialog to select font
-// fu, sCode - a definition of a callback procedure; fu - function, sCode - identifier;
+// fu, sFunc - a definition of a callback procedure; fu - function, sFunc - identifier;
 // sName - a parameter, passed to a callback procedure.
 func SelectFont(fu func([]string) string, sFunc string, sName string) {
 
