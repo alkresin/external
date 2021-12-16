@@ -35,7 +35,15 @@
       <li><a name="_Init" href="#Init">3.  Инициализация</a>
       <li><a name="_Crwidg" href="#Crwidg">4.  Создание окон и виджетов</a>
       <ul>
-        <li><a name="_Widglist" href="#Widglist">4.1  Список виджетов</a>
+        <li><a name="_Widg1" href="#Widg1">4.1  Структура Widget - описание полей</a>
+        <li><a name="_Widg2" href="#Widg2">4.2  Список виджетов</a>
+        <li><a name="_Widg3" href="#Widg3">4.3  AProps - дополнительные атрибуты</a>
+      </ul>
+      <li><a name="_Font" href="#Font">5.  Font, Style</a>
+      <li><a name="_Metod" href="#Metod">6.  Widget - методы</a>
+      <li><a name="_Pril" href="#Pril">A.  Приложения</a>
+      <ul>
+        <li><a name="_Pril1" href="#Pril1">Anchor</a>
       </ul>
     </ul>
     <br>
@@ -115,7 +123,7 @@ func main() {
        вызова функции InitMainWindow(pWindow), которой в качестве единственного параметра передается
        указатель на предварительно созданную структуру Widget, описывающую окно. Вот объявление
        этой структуры:</p>
-       <pre class="brush: go;">
+    <pre class="brush: go;">
    type Widget struct {
       Parent   *Widget
       Type     string
@@ -138,13 +146,208 @@ func main() {
        объекта определяется полем Type; для главного окна это &quot;main&quot;, для
        диалога - &quot;dialog&quot;, для, например, кнопки, - &quot;button&quot;. К описанию
        полей структуры мы вернемся чуть позже, а пока продолжим разговор о создании окна.</p>
-    <p>InitMainWindow(pWindow) создает окно, этот вызов приводит в конечном итоге к вызову на
+    <p>InitMainWindow(pWindow *Widget) создает окно, этот вызов приводит в конечном итоге к вызову на
        стороне GuiServer функции Windows API CreateWindowEx() или, если мы работаем под
-       Unix/Linux, gtk_window_new(). Для того, чтобы окно появилось на экране, необходимо вызвать еще
-       метод объекта Widget Activate(). GuiServer по получении этой команды вызывает функцию
+       Unix/Linux, gtk_window_new().</p>
+    <p>Для того, чтобы окно появилось на экране, необходимо вызвать еще
+       метод объекта Widget Activate(). GuiServer по получении соответствующей команды вызывает функцию
        Windows API ShowWindow() и начинает цикл обработки сообщений, в Unix/Linux делается вызов
-       gtk_main(), что, по сути, то же самое. External после отправки команды на GuiServer тоже входит
-       в цикл ожидания сообщений - от GuiServer.</p>
+       gtk_main(), что, по сути, то же самое. External после отправления команды на GuiServer тоже входит
+       в цикл ожидания сообщений, (он принимает их, как вы помните, от GuiServer через второй порт), поэтому
+       выполнение программы на этом приостанавливается. Следующие после вызова Activate() для главного окна
+       строки программы (точнее, функции, в которой стоит Activate()) будут выполнены только после закрытия
+       окна, обычно это завершение программы.</p>
+     <p>Для добавления виджетов используется метод объекта Widget AddWidget(pWidg *Widget). Добавить
+        виджет можно в любой другой виджет, но практически нет какого-либо смысла добавлять, например, Edit
+        в кнопку. Виджеты добавляются в окно (главное или диалог), на панель, на Tab. При добавлении в окно
+        вызовы AddWidget() располагаются между InitMainWindow() и Activate(). При необходимости виджеты
+        можно добавлять и в других частях программы при наступлении каких-то событий. Единственным
+        параметром AddWidget() является указатель на соответствующую структуру Widget, содержащую описание
+        нового виджета</p>
+     <br>
+
+     <p><strong class="subhead"><a name="Widg1" href="#_Widg1"> 4.1  Структура Widget - описание полей</a></strong></p>
+     <table class="tabl1">
+     <tr><td>Parent</td><td> объект Widget, родительское окно/виджет</td>
+     <tr><td>Type</td><td> строка, определяющая тип виджета: &quot;main&quot;, &quot;dialog&quot;,
+     &quot;button&quot;, &quot;label&quot; и пр., полный список <a href="#Widg2">см. дальше</a></td>
+     <tr><td>Name</td><td> строка - идентификатор виджета</td>
+     <tr><td>X, Y, W, H</td><td> координаты верхнего левого угла окна/виджета, ширина и высота в пикселях</td>
+     <tr><td>Title</td><td> заголовок окна, надпись на кнопке, т.е., текст отображаемый на виджете</td>
+     <tr><td>Winstyle</td><td> число, стиль окна/виджета, принятый в Windows API</td>
+     <tr><td>TColor, BColor</td><td> число, цвет текста и фона, соответственно</td>
+     <tr><td>Tooltip</td><td> он и есть тултип - строчка текста, появляющаяся при наведении мышки на виджет</td>
+     <tr><td>Anchor</td><td> якорь, число, определяющее привязку виджета к краям окна при изменении размера окна, подробнее
+     <a href="#Pril1">см. в Приложении</a></td>
+     <tr><td>Font</td><td> шрифт, объект структуры Font, подробнее <a href="#Font">см. дальше</a></td>
+     <tr><td>AProps</td><td> поле типа map, список дополнительных атрибутов окна/виджета, подробнее <a href="#Widg3">см. дальше</a>;</td>
+     <tr><td>aWidgets</td><td> массив объектов Widget - тех, что включены в состав этого окна/виджета</td>
+     </table>
+
+     <p><strong class="subhead"><a name="Widg2" href="#_Widg2"> 4.2  Список виджетов</a></strong></p>
+     <p>В таблице - список типов виджетов (поле Type структуры Widget), поддерживаемых к моменту написания
+     этого руководства.</p>
+     <table class="tabl1">
+     <tr><td>main</td><td> главное окно</td>
+     <tr><td>dialog</td><td> диалог</td>
+     <tr><td>label</td><td> стандартный статический текст</td>
+     <tr><td>edit</td><td> стандартный виджет для ввода/редактирования текста</td>
+     <tr><td>button</td><td> стандартная кнопка</td>
+     <tr><td>check</td><td> стандартная check - кнопка</td>
+     <tr><td>radio</td><td> стандартная радио - кнопка</td>
+     <tr><td>radiogr</td><td> группа радио-кнопок</td>
+     <tr><td>group</td><td> прямоугольная рамка для выделения группы виджетов</td>
+     <tr><td>combo</td><td> стандартный комбобокс</td>
+     <tr><td>bitmap</td><td> картинка</td>
+     <tr><td>line</td><td> разделительная линия</td>
+     <tr><td>panel</td><td> панель (тулбар), на ней можно размещать другие виджеты</td>
+     <tr><td>paneltop</td><td> панель, прикрепленная к верхней части окна</td>
+     <tr><td>panelbot</td><td> панель, прикрепленная к нижней части окна (статусбар)</td>
+     <tr><td>panelhead</td><td> панель - заголовок окна</td>
+     <tr><td>ownbtn</td><td> нестандартная кнопка</td>
+     <tr><td>splitter</td><td> сплиттер - ну, вы знаете</td>
+     <tr><td>updown</td><td> стандартный виджет для редактирования числа с кнопками вверх/вниз</td>
+     <tr><td>tree</td><td> дерево</td>
+     <tr><td>progress</td><td> прогресс - бар</td>
+     <tr><td>tab</td><td> таб с вкладками</td>
+     <tr><td>browse</td><td> виджет для отображения таблицы данных</td>
+     <tr><td>cedit</td><td> виджет для редактирования текста с расширенными возможностями</td>
+     <tr><td>link</td><td> виджет - ссылка</td>
+     <tr><td>monthcal</td><td> стандартный календарик</td>
+     </table>
+     <br>
+
+     <p><strong class="subhead"><a name="Widg3" href="#_Widg3"> 4.3  AProps - дополнительные атрибуты</a></strong></p>
+     <p>Поскольку структура Widget - одна для всех типов виджетов, а наборы свойств у виджетов - разные, то
+        помимо свойств, общих для большинства виджетов (координаты, текст, цвета, ...), в структуру включена
+        хэш-таблица (map) AProps, которая содержит свойства/атрибуты, которые вы хотите установить именно
+        для этого виджета. Конечно, вы можете указывать там не всё, что угодно, а только те атрибуты, которые
+        определены для виджетов этого типа. Ниже - список типов виджетов с соответствующими свойствами:</p>
+     <table class="tabl1">
+     <tr><td>main</td><td> Icon: C</td>
+     <tr><td>dialog</td><td> Icon: C, NoExitOnEsc: L, NoCloseAble: L</td>
+     <tr><td>label</td><td> Transpa: L</td>
+     <tr><td>edit</td><td> Picture: C</td>
+     <tr><td>check</td><td> Transpa: L</td>
+     <tr><td>radio</td><td> Transpa: L</td>
+     <tr><td>combo</td><td> AItems: AC</td>
+     <tr><td>bitmap</td><td> Transpa: L, TrColor: N, Image: C</td>
+     <tr><td>line</td><td> Vertical: L</td>
+     <tr><td>panel</td><td> HStyle: C</td>
+     <tr><td>paneltop</td><td> HStyle: C</td>
+     <tr><td>panelbot</td><td> HStyle: C, AParts: AC</td>
+     <tr><td>panelhead</td><td> HStyle: C, Xt: N, Yt: N, BtnClose: L, BtnMax: L, BtnMin: L</td>
+     <tr><td>ownbtn</td><td> Transpa: L, TrColor: N, Image: C, HStyles: AC, Xt: N, Yt: N</td>
+     <tr><td>splitter</td><td> Vertical: L, From: N, TO: N, ALeft: AC, ARight: AC, HStyle: C</td>
+     <tr><td>updown</td><td> From: N, TO: N</td>
+     <tr><td>tree</td><td> AImages: AC, EditLabel: L</td>
+     <tr><td>progress</td><td> Maxpos: N</td>
+     <tr><td>browse</td><td> Append: L, Autoedit: L, NoVScroll: L, NoBorder: L</td>
+     <tr><td>cedit</td><td> NoVScroll: L, NoBorder: L</td>
+     <tr><td>link</td><td> Link: C, ClrVisited: N, ClrLink: N, ClrOver: N</td>
+     <tr><td>monthcal</td><td> NoToday: L, NoTodayCirc: L, WeekNumb: L</td>
+     </table>
+     <p>Здесь перед двоеточием - имя атрибута, после - его тип:
+     <br> - <i>C</i> - строка;
+     <br> - <i>N</i> - число;
+     <br> - <i>L</i> - логическое значение (boolean);
+     <br> - <i>AC</i> - массив строк.
+     </p>
+     <p>Поскольку AProps имеет тип map[string]string, мы можем значения всех атрибутов указывать только
+        как строки. Поэтому числа берем в кавычки, логические значения указываем как &quot;t&quot; и
+        &quot;f&quot;, для массивов строк лучше всего использовать функцию ToString(xParam ...interface{}), например:</p>
+     <pre>
+   AProps: map[string]string{"AItems": egui.ToString("first", "second", "third")}}
+   AProps: map[string]string{"Transpa": "t"}}
+   AProps: map[string]string{"HStyle": "st2", "BtnClose": "true", "Xt": "60"}}
+     </pre>
+
+     <p>Далее - список атрибутов с комментариями:</p>
+     <table class="tabl1">
+     <tr><td>Icon</td><td> </td>
+     <tr><td>NoExitOnEsc </td><td> </td>
+     <tr><td>NoCloseAble </td><td> </td>
+     <tr><td>Transpa </td><td> </td>
+     <tr><td>TrColor </td><td> </td>
+     <tr><td>Picture </td><td> </td>
+     <tr><td>AItems </td><td> </td>
+     <tr><td>Image </td><td> </td>
+     <tr><td>Vertical </td><td> </td>
+     <tr><td>HStyle </td><td> </td>
+     <tr><td>HStyles </td><td> </td>
+     <tr><td>AParts </td><td> </td>
+     <tr><td>Xt, Yt </td><td> </td>
+     <tr><td>BtnClose </td><td> </td>
+     <tr><td>BtnMax </td><td> </td>
+     <tr><td>BtnMin </td><td> </td>
+     <tr><td>From, TO </td><td> </td>
+     <tr><td>ALeft, ARight </td><td> </td>
+     <tr><td>AImages </td><td> </td>
+     <tr><td>EditLabel </td><td> </td>
+     <tr><td>Maxpos </td><td> </td>
+     <tr><td>Append </td><td> </td>
+     <tr><td>Autoedit </td><td> </td>
+     <tr><td>NoVScroll </td><td> </td>
+     <tr><td>NoBorder </td><td> </td>
+     <tr><td>Link </td><td> </td>
+     <tr><td>ClrVisited </td><td> </td>
+     <tr><td>ClrLink </td><td> </td>
+     <tr><td>ClrOver </td><td> </td>
+     <tr><td>NoToday </td><td> </td>
+     <tr><td>NoTodayCirc </td><td> </td>
+     <tr><td>WeekNumb </td><td> </td>
+     </table>
+     <p></p>
+     <br>
+
+     <p><strong class="title"><a name="Font" href="#_Font"> 5.  Font, Style</a></strong></p>
+     <p></p>
+     <pre class="brush: go;">
+type Font struct {
+	Family    string
+	Name      string
+	Height    int
+	Bold      bool
+	Italic    bool
+	Underline bool
+	Strikeout bool
+	Charset   int16
+}</pre>
+     <p></p>
+     <pre class="brush: go;">
+type Style struct {
+	Name      string
+	Orient    int16
+	Colors    []int32
+	Corners   []int32
+	BorderW   int8
+	BorderClr int32
+	Bitmap    string
+}</pre>
+     <br>
+
+     <p><strong class="title"><a name="Metod" href="#_Metod"> 6.  Widget - методы</a></strong></p>
+     <p></p>
+     <br>
+
+     <p><strong class="title"><a name="Pril" href="#_Pril"> A.  Приложения</a></strong></p>
+     <p><strong class="subhead"><a name="Pril1" href="#_Pril1"> Anchor</a></strong></p>
+     <table class="tabl1">
+     <p>Список возможных значений поля Anchor структуры Widget:</p>
+	  <tr><td>A_TOPLEFT</td><td> = -1  // Anchors control to the top and left borders of the container and does not change the distance between the top and left borders. (Default)</td>
+	  <tr><td>A_TOPABS</td><td> = 1   // Anchors control to top border of container and does not change the distance between the top border.</td>
+	  <tr><td>A_LEFTABS</td><td> = 2   // Anchors control to left border of container and does not change the distance between the left border.</td>
+	  <tr><td>A_BOTTOMABS</td><td> = 4   // Anchors control to bottom border of container and does not change the distance between the bottom border.</td>
+	  <tr><td>A_RIGHTABS</td><td> = 8   // Anchors control to right border of container and does not change the distance between the right border.</td>
+	  <tr><td>A_TOPREL</td><td> = 16  // Anchors control to top border of container and maintains relative distance between the top border.</td>
+	  <tr><td>A_LEFTREL</td><td> = 32  // Anchors control to left border of container and maintains relative distance between the left border.</td>
+	  <tr><td>A_BOTTOMREL</td><td> = 64  // Anchors control to bottom border of container and maintains relative distance between the bottom border.</td>
+	  <tr><td>A_RIGHTREL</td><td> = 128 // Anchors control to right border of container and maintains relative distance between the right border.</td>
+	  <tr><td>A_HORFIX</td><td> = 256 // Anchors center of control relative to left and right borders but remains fixed in size.</td>
+	  <tr><td>A_VERTFIX</td><td> = 512 // Anchors center of control relative to top and bottom borders but remains fixed in size.</td>
+	  </table>
+	  <p>Эти значения можно комбинировать. Например, <i>egui.A_LEFTABS+egui.A_RIGHTABS</i> - такой виджет, привязанный
+	     к левому и правому краям, будет растягиваться в ширину при растягивании окна.</p>
     <hr>
     <script type="text/javascript" src="js/shCore.js"></script>
     <script type="text/javascript" src="js/shBrushGo.js"></script>

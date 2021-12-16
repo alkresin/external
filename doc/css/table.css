@@ -25,6 +25,10 @@
   }
 }
 
+/* table.tabl1 { margin-left: auto; margin-right: auto; } */
+table.tabl1 tr > td { padding-left:20px }
+table.tabl1 tr > td:first-child { font-style: italic; }
+
 #footer { background-color: #053061; color: #ab7d0f; border-top: 1px solid #fff; padding: 28px 0 14px; }
 #footer p { font-size: 12px; line-height: 18px; margin: 0; }
 #footer > div { width: 940px; margin: 0 auto; padding: 0 10px; }
@@ -38,14 +42,13 @@ blockquote { color: #101310; background-color: #e5e5e5; font-size: 1em; border: 
 /* Old */
 .code-sample	{ background-color: #e5e5e5; border: 1px solid #050505; }
 .sidebar        { background-color: #fff; border-right: 1px solid #050505; border-bottom: 1px solid #050505; }
-.title		{font-size: medium; color: #3333CC}
-.subtitle	{font-size: 9pt; color: #3333CC}
-.subhead	{font-size: 12pt}
-.subhea1	{font-size: 12pt; text-decoration: underline;}
+.title		{font-size: 120%; color: #3333CC}
+.subtitle	{font-size: 110%; color: #3333CC}
+.subhead	{font-size: 110%}
 
 .hdr { font:110%; font-family: "Arial Cyr"; font-weight: bold; color: #ffffff; ;background-color: #4777D6 }
 .dt { font-weight: bold }
-table.tbl1 { width: 100%; border: 0; }
+
 a:Link{ Color: #0044ff; text-decoration: none; font-family: Arial; }
 a:Visited{ Color: #0088ee; text-decoration: none; font-family: Arial; }
 a:Hover{ Color: #000088; text-decoration: underline; font-family: Arial; }
