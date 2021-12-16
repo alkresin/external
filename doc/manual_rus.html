@@ -41,9 +41,14 @@
       </ul>
       <li><a name="_Font" href="#Font">5.  Font, Style</a>
       <li><a name="_Metod" href="#Metod">6.  Widget - методы</a>
+      <li><a name="_Menu" href="#Menu">7.  Создание меню</a>
+      <li><a name="_Func" href="#Func">8.  Функции</a>
+      <li><a name="_Print" href="#Print">9.  Печать</a>
       <li><a name="_Pril" href="#Pril">A.  Приложения</a>
       <ul>
         <li><a name="_Pril1" href="#Pril1">Anchor</a>
+        <li><a name="_Pril2" href="#Pril2">Winapi стили</a>
+        <li><a name="_Pril3" href="#Pril3">Типы бумаги</a>
       </ul>
     </ul>
     <br>
@@ -265,21 +270,21 @@ func main() {
      <p>Далее - список атрибутов с комментариями:</p>
      <table class="tabl1">
      <tr><td>Icon</td><td> </td>
-     <tr><td>NoExitOnEsc </td><td> </td>
+     <tr><td>NoExitOnEsc </td><td> Для диалога: не закрывать диалог при нажатии ESC (Нет)</td>
      <tr><td>NoCloseAble </td><td> </td>
-     <tr><td>Transpa </td><td> </td>
-     <tr><td>TrColor </td><td> </td>
+     <tr><td>Transpa </td><td> Прозрачность (Нет)</td>
+     <tr><td>TrColor </td><td> Цвет прозрачного слоя</td>
      <tr><td>Picture </td><td> </td>
      <tr><td>AItems </td><td> </td>
      <tr><td>Image </td><td> </td>
-     <tr><td>Vertical </td><td> </td>
+     <tr><td>Vertical </td><td>Для линии (line): вертикальная или горизонтальная (Нет)</td>
      <tr><td>HStyle </td><td> </td>
      <tr><td>HStyles </td><td> </td>
      <tr><td>AParts </td><td> </td>
-     <tr><td>Xt, Yt </td><td> </td>
-     <tr><td>BtnClose </td><td> </td>
-     <tr><td>BtnMax </td><td> </td>
-     <tr><td>BtnMin </td><td> </td>
+     <tr><td>Xt, Yt </td><td> x и y координаты для размещения текста</td>
+     <tr><td>BtnClose </td><td>Для panelhead: показать ли кнопку закрытия окна (Да)</td>
+     <tr><td>BtnMax </td><td>Для panelhead: показать ли кнопку максимизации окна (Да)</td>
+     <tr><td>BtnMin </td><td>Для panelhead: показать ли кнопку минимизации окна (Да) </td>
      <tr><td>From, TO </td><td> </td>
      <tr><td>ALeft, ARight </td><td> </td>
      <tr><td>AImages </td><td> </td>
@@ -289,15 +294,17 @@ func main() {
      <tr><td>Autoedit </td><td> </td>
      <tr><td>NoVScroll </td><td> </td>
      <tr><td>NoBorder </td><td> </td>
-     <tr><td>Link </td><td> </td>
-     <tr><td>ClrVisited </td><td> </td>
-     <tr><td>ClrLink </td><td> </td>
-     <tr><td>ClrOver </td><td> </td>
-     <tr><td>NoToday </td><td> </td>
-     <tr><td>NoTodayCirc </td><td> </td>
-     <tr><td>WeekNumb </td><td> </td>
+     <tr><td>Link </td><td>Для link: url ссылки</td>
+     <tr><td>ClrVisited </td><td>Для link: цвет уже посещенной ссылки</td>
+     <tr><td>ClrLink </td><td>Для link: цвет ссылки</td>
+     <tr><td>ClrOver </td><td>Для link: цвет ссылки при наведении мыши</td>
+     <tr><td>NoToday </td><td>Для monthcal: </td>
+     <tr><td>NoTodayCirc </td><td>Для monthcal: </td>
+     <tr><td>WeekNumb </td><td>Для monthcal: </td>
      </table>
-     <p></p>
+     <p>Как видите, набор атрибутов, которые можно указать в AProps, невелик. На самом деле список
+       атрибутов виджетов HwGUI (и, соответственно, GuiServer) гораздо больше. External позволяет
+       установить все эти атрибуты, не поддерживаемые через AProps, с помощью <a href="#Metod">метода SetParam()</a></p>
      <br>
 
      <p><strong class="title"><a name="Font" href="#_Font"> 5.  Font, Style</a></strong></p>
@@ -328,12 +335,97 @@ type Style struct {
 
      <p><strong class="title"><a name="Metod" href="#_Metod"> 6.  Widget - методы</a></strong></p>
      <p></p>
+     <table class="tabl2">
+     <tr><td>Activate() bool </td><td>Активирует главного окно или диалог </td>
+     <tr><td>Close() bool </td><td>Закрывает главное окно или диалог </td>
+     <tr><td>delete() bool </td><td>Удаляет виджет </td>
+     <tr><td>AddWidget(pWidg *Widget) *Widget </td><td>Добавляет виджет </td>
+     <tr><td>SetText(sText string) </td><td>Установить текст виджета </td>
+     <tr><td>SetImage(sImage string) </td><td> </td>
+     <tr><td>SetParam(sParam string, xParam interface{}) </td><td> </td>
+     <tr><td>GetText() string </td><td> </td>
+     <tr><td>SetColor(tColor int32, bColor int32) </td><td> </td>
+     <tr><td>SetFont(pFont *Font) </td><td> </td>
+     <tr><td>SetCallBackProc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td><td> </td>
+     <tr><td>SetCallBackFunc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td><td> </td>
+     <tr><td>Move(iLeft, iTop, iWidth, iHeight int32) </td><td> </td>
+     <tr><td>Enable(bEnable bool) </td><td> </td>
+     <tr><td>Hide(bHide bool) </td><td> </td>
+     </table>
+     <br>
+
+     <p><strong class="title"><a name="Menu" href="#_Menu"> 7.  Создание меню</a></strong></p>
+     <p></p>
+     <br>
+
+     <p><strong class="title"><a name="Func" href="#_Func"> 8.  Функции</a></strong></p>
+     <p></p>
+     <table class="tabl2">
+      <tr><td>InitMainWindow(pWnd *Widget) bool </td><td> </td>
+      <tr><td>InitDialog(pWnd *Widget) bool </td><td> </td>
+      <tr><td>BeginPacket() </td><td> </td>
+      <tr><td>EndPacket() </td><td> </td>
+      <tr><td>WriteLog(sText string) </td><td> </td>
+      <tr><td>GetFont(sName string) *Font </td><td> </td>
+      <tr><td>GetStyle(sName string) *Style </td><td> </td>
+      <tr><td>Wnd(sName string) *Widget </td><td> </td>
+      <tr><td>Widg(sName string) *Widget </td><td> </td>
+      <tr><td>ToString(xParam ...interface{}) string </td><td> </td>
+      <tr><td>OpenMainForm(sForm string) bool </td><td> </td>
+      <tr><td>OpenForm(sForm string) bool </td><td> </td>
+      <tr><td>OpenReport(sForm string) bool </td><td> </td>
+      <tr><td>CreateFont(pFont *Font) *Font </td><td> </td>
+      <tr><td>CreateStyle(pStyle *Style) *Style </td><td> </td>
+      <tr><td>CreateHighliter(sName string, sCommands string,<br> sFuncs string,
+	sSingleLineComm string,<br> sMultiLineComm string, bCase bool) *Highlight </td><td> </td>
+      <tr><td>SetHighliter(pEdit *Widget, p *Highlight) </td><td> </td>
+      <tr><td>SetHiliOpt(pEdit *Widget, iGroup int,<br> pFont *Font, tColor int32, bColor int32) </td><td> </td>
+      <tr><td>InitPrinter(pPrinter *Printer, sFunc string,<br> fu func([]string) string, sMark string) *Printer </td><td> </td>
+      <tr><td>EvalProc(s string) </td><td> </td>
+      <tr><td>EvalFunc(s string) []byte </td><td> </td>
+      <tr><td>GetValues(pWnd *Widget, aNames []string) []string </td><td> </td>
+      <tr><td>GetVersion(i int) string </td><td> </td>
+      <tr><td>MsgInfo(sMessage string, sTitle string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>MsgStop(sMessage string, sTitle string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>MsgYesNo(sMessage string, sTitle string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>MsgGet(sMessage string, sTitle string, iStyle int32,<br>fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>Choice(arr []string, sTitle string,<br>fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectFile(sPath string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectFolder(fu func([]string) string,<br> sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectColor(iColor int32,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectFont(fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>InsertNode(pTree *Widget, sNodeName string,<br> sNodeNew string, sTitle string,
+	sNodeNext string,<br> aImages []string, fu func([]string) string, sCode string) </td><td> </td>
+      <tr><td>SelectNode(pTree *Widget, sNodeName string) </td><td> </td>
+      <tr><td>PBarStep(pPBar *Widget) </td><td> </td>
+      <tr><td>PBarSet(pPBar *Widget, iPos int) { </td><td> </td>
+      <tr><td>InitTray(sIcon string, sMenuName string, sTooltip string) </td><td> </td>
+      <tr><td>ModifyTrayIcon(sIcon string) </td><td> </td>
+      <tr><td>RadioEnd(p *Widget, iSel int) </td><td> </td>
+      <tr><td>TabPage(pTab *Widget, sCaption string) </td><td> </td>
+      <tr><td>TabPageEnd(pTab *Widget) </td><td> </td>
+      <tr><td>BrwSetArray(p *Widget, arr *[][]string) </td><td> </td>
+      <tr><td>BrwGetArray(p *Widget) [][]string </td><td> </td>
+      <tr><td>BrwSetColumn(p *Widget, ic int, sHead string,<br> iAlignHead int, iAlignData int,
+	bEditable bool, iLength int) </td><td> </td>
+      <tr><td>BrwSetColumnEx(p *Widget, ic int, sParam string, xParam interface{}) </td><td> </td>
+      <tr><td>BrwDelColumn(p *Widget, ic int) </td><td> </td>
+      <tr><td>SetVar(sVarName string, sValue string) </td><td> </td>
+      <tr><td>GetVar(sVarName string) string </td><td> </td>
+      <tr><td>SetImagePath(sValue string) </td><td> </td>
+      <tr><td>SetPath(sValue string) </td><td> </td>
+      <tr><td>SetDateFormat(sValue string) </td><td> </td>
+     </table>
+     <br>
+
+     <p><strong class="title"><a name="Print" href="#_Print"> 9.  Печать</a></strong></p>
+     <p></p>
      <br>
 
      <p><strong class="title"><a name="Pril" href="#_Pril"> A.  Приложения</a></strong></p>
      <p><strong class="subhead"><a name="Pril1" href="#_Pril1"> Anchor</a></strong></p>
-     <table class="tabl1">
      <p>Список возможных значений поля Anchor структуры Widget:</p>
+     <table class="tabl1">
 	  <tr><td>A_TOPLEFT</td><td> = -1  // Anchors control to the top and left borders of the container and does not change the distance between the top and left borders. (Default)</td>
 	  <tr><td>A_TOPABS</td><td> = 1   // Anchors control to top border of container and does not change the distance between the top border.</td>
 	  <tr><td>A_LEFTABS</td><td> = 2   // Anchors control to left border of container and does not change the distance between the left border.</td>
@@ -348,6 +440,33 @@ type Style struct {
 	  </table>
 	  <p>Эти значения можно комбинировать. Например, <i>egui.A_LEFTABS+egui.A_RIGHTABS</i> - такой виджет, привязанный
 	     к левому и правому краям, будет растягиваться в ширину при растягивании окна.</p>
+	  <br>
+	
+     <p><strong class="subhead"><a name="Pril2" href="#_Pril2"> WinAPI стили</a></strong></p>
+     <table class="tabl1">
+	 <tr><td>DT_LEFT </td><td> </td>
+	 <tr><td>DT_CENTER </td><td> </td>
+	 <tr><td>DT_RIGHT </td><td> </td>
+	 <tr><td>ES_PASSWORD </td><td> </td>
+	 <tr><td>ES_MULTILINE </td><td> </td>
+	 <tr><td>ES_READONLY </td><td> </td>
+	 <tr><td>WS_HSCROLL </td><td> </td>
+	 <tr><td>WS_VSCROLL </td><td> </td>
+	 <tr><td>WND_NOTITLE </td><td> </td>
+	 <tr><td>WND_NOSYSMENU </td><td> </td>
+	 <tr><td>WND_NOSIZEBOX </td><td> </td>
+	 </table>
+     <br>
+	
+     <p><strong class="subhead"><a name="Pril3" href="#_Pril3"> Типы бумаги</a></strong></p>
+     <table class="tabl1">
+     <tr><td>DMPAPER_A3</td><td>A3 297 x 420 mm </td>
+     <tr><td>DMPAPER_A4</td><td>A4 210 x 297 mm </td>
+     <tr><td>DMPAPER_A5</td><td>A5 148 x 210 mm </td>
+     <tr><td>DMPAPER_A6</td><td>A6 105 x 148 mm </td>
+	 </table>
+     <br>
+	
     <hr>
     <script type="text/javascript" src="js/shCore.js"></script>
     <script type="text/javascript" src="js/shBrushGo.js"></script>

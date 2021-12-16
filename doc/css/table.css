@@ -29,6 +29,9 @@
 table.tabl1 tr > td { padding-left:20px }
 table.tabl1 tr > td:first-child { font-style: italic; }
 
+table.tabl2, table.tabl2 td { border: 1px solid black; border-collapse: collapse; padding: 2px; }
+table.tabl2 tr > td { padding-left:12px; padding-right:8px }
+
 #footer { background-color: #053061; color: #ab7d0f; border-top: 1px solid #fff; padding: 28px 0 14px; }
 #footer p { font-size: 12px; line-height: 18px; margin: 0; }
 #footer > div { width: 940px; margin: 0 auto; padding: 0 10px; }
