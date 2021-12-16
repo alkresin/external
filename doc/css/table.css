@@ -9,7 +9,7 @@
 #lang .sel { color: #ffc947; }
 
 #body { background: #818E9F; }
-#content { 
+#content {
   width: 82%;
   padding: 10px;
   margin: 0 auto;
@@ -26,11 +26,13 @@
 }
 
 /* table.tabl1 { margin-left: auto; margin-right: auto; } */
-table.tabl1 tr > td { padding-left:20px }
+table.tabl1 tr > td { padding: 4px; padding-left:12px }
 table.tabl1 tr > td:first-child { font-style: italic; }
+table.tabl1 tr:nth-child(odd){background-color: #f2f2f2;}
 
-table.tabl2, table.tabl2 td { border: 1px solid black; border-collapse: collapse; padding: 2px; }
+table.tabl2, table.tabl2 td { border: 1px solid #ddd; border-collapse: collapse; padding: 4px; }
 table.tabl2 tr > td { padding-left:12px; padding-right:8px }
+table.tabl2 tr:nth-child(odd){background-color: #f2f2f2;}
 
 #footer { background-color: #053061; color: #ab7d0f; border-top: 1px solid #fff; padding: 28px 0 14px; }
 #footer p { font-size: 12px; line-height: 18px; margin: 0; }

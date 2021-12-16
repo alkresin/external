@@ -361,41 +361,41 @@ type Style struct {
      <p><strong class="title"><a name="Func" href="#_Func"> 8.  Функции</a></strong></p>
      <p></p>
      <table class="tabl2">
-      <tr><td>InitMainWindow(pWnd *Widget) bool </td><td> </td>
-      <tr><td>InitDialog(pWnd *Widget) bool </td><td> </td>
-      <tr><td>BeginPacket() </td><td> </td>
-      <tr><td>EndPacket() </td><td> </td>
-      <tr><td>WriteLog(sText string) </td><td> </td>
-      <tr><td>GetFont(sName string) *Font </td><td> </td>
-      <tr><td>GetStyle(sName string) *Style </td><td> </td>
-      <tr><td>Wnd(sName string) *Widget </td><td> </td>
-      <tr><td>Widg(sName string) *Widget </td><td> </td>
-      <tr><td>ToString(xParam ...interface{}) string </td><td> </td>
+      <tr><td>InitMainWindow(pWnd *Widget) bool </td><td>Создает главное окно </td>
+      <tr><td>InitDialog(pWnd *Widget) bool </td><td>Создает диалоговое окно </td>
+      <tr><td>BeginPacket() </td><td>Начало пакетной передачи данных </td>
+      <tr><td>EndPacket() </td><td>Завершение пакетной передачи данных </td>
+      <tr><td>WriteLog(sText string) </td><td>Добавляет строку в файл egui.log </td>
+      <tr><td>GetFont(sName string) *Font </td><td>Ищет по имени в списке созданных в программе шрифтов, возвращает найденный указатель на структуру Font </td>
+      <tr><td>GetStyle(sName string) *Style </td><td>Ищет по имени в списке созданных в программе стилей, возвращает найденный указатель на структуру Style </td>
+      <tr><td>Wnd(sName string) *Widget </td><td>Ищет по имени в списке созданных в программе окон, возвращает найденный указатель на структуру Widget </td>
+      <tr><td>Widg(sName string) *Widget </td><td>Ищет по имени в списке созданных в программе виджетов, возвращает найденный указатель на структуру Widget </td>
+      <tr><td>ToString(xParam ...interface{}) string </td><td>Преобразует параметры в json-строку для отправки на GuiServer </td>
       <tr><td>OpenMainForm(sForm string) bool </td><td> </td>
       <tr><td>OpenForm(sForm string) bool </td><td> </td>
       <tr><td>OpenReport(sForm string) bool </td><td> </td>
       <tr><td>CreateFont(pFont *Font) *Font </td><td> </td>
       <tr><td>CreateStyle(pStyle *Style) *Style </td><td> </td>
-      <tr><td>CreateHighliter(sName string, sCommands string,<br> sFuncs string,
-	sSingleLineComm string,<br> sMultiLineComm string, bCase bool) *Highlight </td><td> </td>
+      <tr><td>CreateHighliter(sName string, sCommands string,<br>&nbsp;&nbsp;&nbsp;sFuncs string,
+	sSingleLineComm string,<br>&nbsp;&nbsp;&nbsp;sMultiLineComm string, bCase bool) *Highlight </td><td> </td>
       <tr><td>SetHighliter(pEdit *Widget, p *Highlight) </td><td> </td>
-      <tr><td>SetHiliOpt(pEdit *Widget, iGroup int,<br> pFont *Font, tColor int32, bColor int32) </td><td> </td>
-      <tr><td>InitPrinter(pPrinter *Printer, sFunc string,<br> fu func([]string) string, sMark string) *Printer </td><td> </td>
+      <tr><td>SetHiliOpt(pEdit *Widget, iGroup int,<br>&nbsp;&nbsp;&nbsp;pFont *Font, tColor int32, bColor int32) </td><td> </td>
+      <tr><td>InitPrinter(pPrinter *Printer, sFunc string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sMark string) *Printer </td><td> </td>
       <tr><td>EvalProc(s string) </td><td> </td>
       <tr><td>EvalFunc(s string) []byte </td><td> </td>
       <tr><td>GetValues(pWnd *Widget, aNames []string) []string </td><td> </td>
       <tr><td>GetVersion(i int) string </td><td> </td>
-      <tr><td>MsgInfo(sMessage string, sTitle string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>MsgStop(sMessage string, sTitle string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>MsgYesNo(sMessage string, sTitle string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>MsgGet(sMessage string, sTitle string, iStyle int32,<br>fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>Choice(arr []string, sTitle string,<br>fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>SelectFile(sPath string,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>SelectFolder(fu func([]string) string,<br> sFunc string, sName string) </td><td> </td>
-      <tr><td>SelectColor(iColor int32,<br> fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>SelectFont(fu func([]string) string, sFunc string, sName string) </td><td> </td>
-      <tr><td>InsertNode(pTree *Widget, sNodeName string,<br> sNodeNew string, sTitle string,
-	sNodeNext string,<br> aImages []string, fu func([]string) string, sCode string) </td><td> </td>
+      <tr><td>MsgInfo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td>Создает стандартный диалог </td>
+      <tr><td>MsgStop(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>MsgYesNo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>MsgGet(sMessage string, sTitle string, iStyle int32,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>Choice(arr []string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectFile(sPath string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectFolder(fu func([]string) string,<br>&nbsp;&nbsp;&nbsp;sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectColor(iColor int32,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
+      <tr><td>SelectFont(fu func([]string) string,<br>&nbsp;&nbsp;&nbsp;sFunc string, sName string) </td><td> </td>
+      <tr><td>InsertNode(pTree *Widget, sNodeName string,<br>&nbsp;&nbsp;&nbsp;sNodeNew string, sTitle string,
+	sNodeNext string,<br>&nbsp;&nbsp;&nbsp;aImages []string, fu func([]string) string, sCode string) </td><td> </td>
       <tr><td>SelectNode(pTree *Widget, sNodeName string) </td><td> </td>
       <tr><td>PBarStep(pPBar *Widget) </td><td> </td>
       <tr><td>PBarSet(pPBar *Widget, iPos int) { </td><td> </td>
@@ -406,7 +406,7 @@ type Style struct {
       <tr><td>TabPageEnd(pTab *Widget) </td><td> </td>
       <tr><td>BrwSetArray(p *Widget, arr *[][]string) </td><td> </td>
       <tr><td>BrwGetArray(p *Widget) [][]string </td><td> </td>
-      <tr><td>BrwSetColumn(p *Widget, ic int, sHead string,<br> iAlignHead int, iAlignData int,
+      <tr><td>BrwSetColumn(p *Widget, ic int, sHead string,<br>&nbsp;&nbsp;&nbsp;iAlignHead int, iAlignData int,
 	bEditable bool, iLength int) </td><td> </td>
       <tr><td>BrwSetColumnEx(p *Widget, ic int, sParam string, xParam interface{}) </td><td> </td>
       <tr><td>BrwDelColumn(p *Widget, ic int) </td><td> </td>
@@ -415,6 +415,15 @@ type Style struct {
       <tr><td>SetImagePath(sValue string) </td><td> </td>
       <tr><td>SetPath(sValue string) </td><td> </td>
       <tr><td>SetDateFormat(sValue string) </td><td> </td>
+      <tr><td>Menu(sTitle string) </td><td> </td>
+      <tr><td>MenuContext(sName string) </td><td> </td>
+      <tr><td>ShowMenuContext(sName string, pWnd *Widget) </td><td> </td>
+      <tr><td>EndMenu() </td><td> </td>
+      <tr><td>AddMenuItem(sName string, id int, fu func([]string) string,<br>&nbsp;&nbsp;&nbsp;sCode string, params ...string) </td><td> </td>
+      <tr><td>AddCheckMenuItem(sName string, id int,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td><td> </td>
+      <tr><td>AddMenuSeparator() </td><td> </td>
+      <tr><td>MenuItemEnable(sWndName string, sMenuName string,<br>&nbsp;&nbsp;&nbsp;iItem int, bValue bool) </td><td> </td>
+      <tr><td>MenuItemCheck(sWndName string, sMenuName string,<br>&nbsp;&nbsp;&nbsp;iItem int, bValue bool) </td><td> </td>
      </table>
      <br>
 
