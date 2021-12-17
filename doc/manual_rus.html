@@ -49,12 +49,15 @@
         <li><a name="_Pril1" href="#Pril1">Anchor</a>
         <li><a name="_Pril2" href="#Pril2">Winapi стили</a>
         <li><a name="_Pril3" href="#Pril3">Типы бумаги</a>
+        <li><a name="_Pril4" href="#Pril4">Типы градиента в Style</a>
       </ul>
     </ul>
     <br>
     <p><strong class="title"><a name="Intro" href="#_Intro"> 1.  Введение</a></strong></p>
     <p>External - это GUI библиотека для golang, которая для реализации интерфейса использует отдельную
        программу, GuiServer - <a target="_blank" href="http://www.kresin.ru/guisrv.html">см. здесь</a>.</p>
+    <p>GuiServer написан на Harbour и GUI-библиотеке HwGUI. Я специально это оговариваю, поскольку в
+    дальнейшем буду ссылаться на HwGUI при описании некоторых виджетов.<p>
     <p>При старте External запускает GuiServer, если он еще не запущен, и присоединяется к нему, используя
        два tcp/ip порта. GuiServer может работать как на том же компьютере, что и ваше приложение, так и
        на удаленном - в этом случае запустить его из приложения не удастся, так что он должен быть
@@ -83,15 +86,15 @@ func main() {
     pWindow.Activate()
     egui.Exit()
 }</pre>
-    <p>Функция Init() запускает GuiServer и присоединяется к нему. InitMainWindow() создает
+    <p>Функция <i>Init()</i> запускает GuiServer и присоединяется к нему. <i>InitMainWindow()</i> создает
        главное окно приложения с заданными параметрами. Метод AddWidget() — добавляет виджет типа label.
-       Activate() — выводит окно на экран и переводит программу в режим ожидания.<p>
+       <i>Activate()</i> — выводит окно на экран и переводит программу в режим ожидания.<p>
     <p>Далее рассмотрим эти действия по порядку.</p>
     <br>
 
     <p><strong class="title"><a name="Init" href="#_Init"> 3.  Инициализация</a></strong></p>
     <p>Как я уже говорил, первое, что следует сделать - это запустить GuiServer и присоединиться к нему.
-       Это делает функция Init(sOpt string), которой передается строка параметров, разделенных символом
+       Это делает функция <i>Init(sOpt string)</i>, которой передается строка параметров, разделенных символом
        конца строки ( &quot;\n&quot; ). Вот они (приведены значения по умолчанию):</p>
     <pre>
     guiserver=guiserver.exe
@@ -99,7 +102,7 @@ func main() {
     port=3101
     log=0</pre>
     <p>Если вам надо изменить, например, номер порта и уровень журналирования (0...2), вы можете
-       использовать такой вызов Init():</p>
+       использовать такой вызов <i>Init()</i>:</p>
     <pre>
     egui.Init("port=4801\nlog=1")
     </pre>
@@ -118,15 +121,15 @@ func main() {
         return
     }
     // ...</pre>
-    <p>Функция Init() возвращает 0 в случае успешного выполнения, 1 - если соединиться не удалось,
+    <p>Функция <i>Init()</i> возвращает 0 в случае успешного выполнения, 1 - если соединиться не удалось,
        и 2 - если протоколы связи вашей версии External и GuiServer отличаются.</p>
     <br>
 
     <p><strong class="title"><a name="Crwidg" href="#_Crwidg"> 4.  Создание окон и виджетов</a></strong></p>
     <p>Итак, инициализация прошла успешно, теперь мы можем формировать интерфейс программы. В
        большинстве случаев начать следует с создания главного окна. Это делается посредством
-       вызова функции InitMainWindow(pWindow), которой в качестве единственного параметра передается
-       указатель на предварительно созданную структуру Widget, описывающую окно. Вот объявление
+       вызова функции <i>InitMainWindow(pWindow)</i>, которой в качестве единственного параметра передается
+       указатель на предварительно созданную структуру <i>Widget</i>, описывающую окно. Вот объявление
        этой структуры:</p>
     <pre class="brush: go;">
    type Widget struct {
@@ -147,27 +150,27 @@ func main() {
       AProps   map[string]string
       aWidgets []*Widget
    }</pre>
-    <p>Структура Widget используется для создания окон, диалогов и виджетов, конкретный тип
-       объекта определяется полем Type; для главного окна это &quot;main&quot;, для
+    <p>Структура <i>Widget</i> используется для создания окон, диалогов и виджетов, конкретный тип
+       объекта определяется полем <i>Type</i>; для главного окна это &quot;main&quot;, для
        диалога - &quot;dialog&quot;, для, например, кнопки, - &quot;button&quot;. К описанию
        полей структуры мы вернемся чуть позже, а пока продолжим разговор о создании окна.</p>
-    <p>InitMainWindow(pWindow *Widget) создает окно, этот вызов приводит в конечном итоге к вызову на
-       стороне GuiServer функции Windows API CreateWindowEx() или, если мы работаем под
-       Unix/Linux, gtk_window_new().</p>
+    <p><i>InitMainWindow(pWindow *Widget)</i> создает окно, этот вызов приводит в конечном итоге к вызову на
+       стороне GuiServer функции Windows API <i>CreateWindowEx()</i> или, если мы работаем под
+       Unix/Linux, <i>gtk_window_new()</i>.</p>
     <p>Для того, чтобы окно появилось на экране, необходимо вызвать еще
-       метод объекта Widget Activate(). GuiServer по получении соответствующей команды вызывает функцию
-       Windows API ShowWindow() и начинает цикл обработки сообщений, в Unix/Linux делается вызов
-       gtk_main(), что, по сути, то же самое. External после отправления команды на GuiServer тоже входит
+       метод объекта <i>Widget Activate()</i>. GuiServer по получении соответствующей команды вызывает функцию
+       Windows API <i>ShowWindow()</i> и начинает цикл обработки сообщений, в Unix/Linux делается вызов
+       <i>gtk_main()</i>, что, по сути, то же самое. External после отправления команды на GuiServer тоже входит
        в цикл ожидания сообщений, (он принимает их, как вы помните, от GuiServer через второй порт), поэтому
-       выполнение программы на этом приостанавливается. Следующие после вызова Activate() для главного окна
-       строки программы (точнее, функции, в которой стоит Activate()) будут выполнены только после закрытия
+       выполнение программы на этом приостанавливается. Следующие после вызова <i>Activate()</i> для главного окна
+       строки программы (точнее, функции, в которой стоит <i>Activate()</i>) будут выполнены только после закрытия
        окна, обычно это завершение программы.</p>
-     <p>Для добавления виджетов используется метод объекта Widget AddWidget(pWidg *Widget). Добавить
+     <p>Для добавления виджетов используется метод объекта <i>Widget AddWidget(pWidg *Widget)</i>. Добавить
         виджет можно в любой другой виджет, но практически нет какого-либо смысла добавлять, например, Edit
         в кнопку. Виджеты добавляются в окно (главное или диалог), на панель, на Tab. При добавлении в окно
-        вызовы AddWidget() располагаются между InitMainWindow() и Activate(). При необходимости виджеты
+        вызовы <i>AddWidget()</i> располагаются между <i>InitMainWindow()</i> и <i>Activate()</i>. При необходимости виджеты
         можно добавлять и в других частях программы при наступлении каких-то событий. Единственным
-        параметром AddWidget() является указатель на соответствующую структуру Widget, содержащую описание
+        параметром <i>AddWidget()</i> является указатель на соответствующую структуру <i>Widget</i>, содержащую описание
         нового виджета</p>
      <br>
 
@@ -190,7 +193,7 @@ func main() {
      </table>
 
      <p><strong class="subhead"><a name="Widg2" href="#_Widg2"> 4.2  Список виджетов</a></strong></p>
-     <p>В таблице - список типов виджетов (поле Type структуры Widget), поддерживаемых к моменту написания
+     <p>В таблице - список типов виджетов (поле Type структуры <i>Widget</i>), поддерживаемых к моменту написания
      этого руководства.</p>
      <table class="tabl1">
      <tr><td>main</td><td> главное окно</td>
@@ -223,9 +226,9 @@ func main() {
      <br>
 
      <p><strong class="subhead"><a name="Widg3" href="#_Widg3"> 4.3  AProps - дополнительные атрибуты</a></strong></p>
-     <p>Поскольку структура Widget - одна для всех типов виджетов, а наборы свойств у виджетов - разные, то
+     <p>Поскольку структура <i>Widget</i> - одна для всех типов виджетов, а наборы свойств у виджетов - разные, то
         помимо свойств, общих для большинства виджетов (координаты, текст, цвета, ...), в структуру включена
-        хэш-таблица (map) AProps, которая содержит свойства/атрибуты, которые вы хотите установить именно
+        хэш-таблица (map) <i>AProps</i>, которая содержит свойства/атрибуты, которые вы хотите установить именно
         для этого виджета. Конечно, вы можете указывать там не всё, что угодно, а только те атрибуты, которые
         определены для виджетов этого типа. Ниже - список типов виджетов с соответствующими свойствами:</p>
      <table class="tabl1">
@@ -258,16 +261,16 @@ func main() {
      <br> - <i>L</i> - логическое значение (boolean);
      <br> - <i>AC</i> - массив строк.
      </p>
-     <p>Поскольку AProps имеет тип map[string]string, мы можем значения всех атрибутов указывать только
+     <p>Поскольку <i>AProps</i> имеет тип map[string]string, мы можем значения всех атрибутов указывать только
         как строки. Поэтому числа берем в кавычки, логические значения указываем как &quot;t&quot; и
-        &quot;f&quot;, для массивов строк лучше всего использовать функцию ToString(xParam ...interface{}), например:</p>
+        &quot;f&quot;, для массивов строк лучше всего использовать функцию <i>ToString(xParam ...interface{})</i>, например:</p>
      <pre>
    AProps: map[string]string{"AItems": egui.ToString("first", "second", "third")}}
    AProps: map[string]string{"Transpa": "t"}}
    AProps: map[string]string{"HStyle": "st2", "BtnClose": "true", "Xt": "60"}}
      </pre>
 
-     <p>Далее - список атрибутов с комментариями:</p>
+     <p>Далее - список атрибутов с комментариями (в скобках - значения по умолчанию):</p>
      <table class="tabl1">
      <tr><td>Icon</td><td> </td>
      <tr><td>NoExitOnEsc </td><td> Для диалога: не закрывать диалог при нажатии ESC (Нет)</td>
@@ -275,12 +278,12 @@ func main() {
      <tr><td>Transpa </td><td> Прозрачность (Нет)</td>
      <tr><td>TrColor </td><td> Цвет прозрачного слоя</td>
      <tr><td>Picture </td><td> </td>
-     <tr><td>AItems </td><td> </td>
+     <tr><td>AItems </td><td>Для combobox: массив элементов </td>
      <tr><td>Image </td><td> </td>
      <tr><td>Vertical </td><td>Для линии (line): вертикальная или горизонтальная (Нет)</td>
-     <tr><td>HStyle </td><td> </td>
+     <tr><td>HStyle </td><td>Стиль - подробнее <a href="#Font">см. дальше</a></td>
      <tr><td>HStyles </td><td> </td>
-     <tr><td>AParts </td><td> </td>
+     <tr><td>AParts </td><td>Для panelbot: массив с размерами (шириной) в пикселях частей панели </td>
      <tr><td>Xt, Yt </td><td> x и y координаты для размещения текста</td>
      <tr><td>BtnClose </td><td>Для panelhead: показать ли кнопку закрытия окна (Да)</td>
      <tr><td>BtnMax </td><td>Для panelhead: показать ли кнопку максимизации окна (Да)</td>
@@ -290,10 +293,10 @@ func main() {
      <tr><td>AImages </td><td> </td>
      <tr><td>EditLabel </td><td> </td>
      <tr><td>Maxpos </td><td> </td>
-     <tr><td>Append </td><td> </td>
-     <tr><td>Autoedit </td><td> </td>
-     <tr><td>NoVScroll </td><td> </td>
-     <tr><td>NoBorder </td><td> </td>
+     <tr><td>Append </td><td>Для browse: можно добавлять строчки (Нет)</td>
+     <tr><td>Autoedit </td><td>Для browse: можно редактировать ячейки (Нет)</td>
+     <tr><td>NoVScroll </td><td>Без вертикального скролла (Нет)</td>
+     <tr><td>NoBorder </td><td>Без окантовки (Нет)</td>
      <tr><td>Link </td><td>Для link: url ссылки</td>
      <tr><td>ClrVisited </td><td>Для link: цвет уже посещенной ссылки</td>
      <tr><td>ClrLink </td><td>Для link: цвет ссылки</td>
@@ -302,35 +305,68 @@ func main() {
      <tr><td>NoTodayCirc </td><td>Для monthcal: </td>
      <tr><td>WeekNumb </td><td>Для monthcal: </td>
      </table>
-     <p>Как видите, набор атрибутов, которые можно указать в AProps, невелик. На самом деле список
+     <p>Как видите, набор атрибутов, которые можно указать в <i>AProps</i>, невелик. На самом деле список
        атрибутов виджетов HwGUI (и, соответственно, GuiServer) гораздо больше. External позволяет
-       установить все эти атрибуты, не поддерживаемые через AProps, с помощью <a href="#Metod">метода SetParam()</a></p>
+       установить все эти атрибуты, не поддерживаемые через <i>AProps</i>, с помощью метода <i>SetParam()</i></p>
      <br>
 
      <p><strong class="title"><a name="Font" href="#_Font"> 5.  Font, Style</a></strong></p>
-     <p></p>
+     <p>Для работы со шрифтами в External предусмотрена структура <i>Font</i>:</p>
      <pre class="brush: go;">
 type Font struct {
-	Family    string
-	Name      string
-	Height    int
-	Bold      bool
-	Italic    bool
-	Underline bool
-	Strikeout bool
-	Charset   int16
+	Family    string     // наименование шрифта (Arial, Serif, ...)
+	Name      string     // идентификатор шрифта
+	Height    int        // размер (высота) шрифта
+	Bold      bool       // жирный
+	Italic    bool       // наклонный
+	Underline bool       // подчеркнутый
+	Strikeout bool       // перечеркнутый
+	Charset   int16      // 204 - русский
 }</pre>
-     <p></p>
+     <p>Поля этой структуры, думаю, в комментариях не нуждаются - это стандартные атрибуты шрифта. Поле <i>Name</i>, как
+     и в структуре <i>Widget</i>, используется для идентификации шрифта в вашей программе: вы сможете найти
+     ранее созданный экземпляр шрифта (указатель на соответствующую структуру <i>Font</i>) с помощью функции <i>GetFont(sName string)</i>.</p>
+     <p>Для создания шрифта используется функция <i>CreateFont(pFont *Font)</i>. Она возвращает указатель на
+     структуру <i>Font</i> (ту же, что передается ей в качестве параметра), который можно затем использовать при
+     объявлении структуры <i>Widget</i> с полем <i>Font</i>. Для изменения шрифта виджета - метод структуры <i>Widget SetFont(pFont *Font)</i>:</p>
+     <pre class="brush: go;">
+    // Создаем шрифт с идентификатором "flbl"
+    egui.CreateFont(&egui.Font{Name: "flbl", Family: "Georgia", Height: 16})
+    // Создаем шрифт и указываем его как атрибут диалогового окна
+	pFont := egui.CreateFont(&egui.Font{Family: "Georgia", Height: 16})
+	pDlg := &egui.Widget{Name: "dlg", X: 300, Y: 200, W: 400, H: 260, Title: "Dialog Test", Font: pFont}
+	egui.InitDialog(pDlg)
+
+	pLbl1 := pDlg.AddWidget(&egui.Widget{Type: "label", X: 20, Y: 10, W: 160, H: 24, Title: "Identifier:"})
+	// ...
+	// Изменяем шрифт метки на созданный ранее с идентификатором "flbl"
+	pLbl1.SetFont( egui.GetFont("flbl") )
+     </pre>
+     <p><i>Style</i> (не путать с <i>Winstyle</i>) - это структура, описывающая вневний вид виджета. Она может
+     использоваться для нестандартных виджетов, которые рисуются самим HwGUI: &quot;panel&quot;,
+     &quot;paneltop&quot;, &quot;panelbot&quot;, &quot;panelhead&quot;, &quot;ownbtn&quot;.</p>
      <pre class="brush: go;">
 type Style struct {
-	Name      string
-	Orient    int16
-	Colors    []int32
-	Corners   []int32
-	BorderW   int8
-	BorderClr int32
-	Bitmap    string
+	Name      string    // идентификатор стиля
+	Orient    int16     // тип градиента, его направление
+	Colors    []int32   // массив цветов для заполнения фона
+	Corners   []int32   // массив с радиусами закругления углов, [верхний левый,
+	                    //   верхний правый, нижний правый, нижний левый]
+	BorderW   int8      // толщина рамки в пикселях, если не задана - рамка
+                        //   рисоваться не будет
+	BorderClr int32     // цвет рамки
+	Bitmap    string    // картинка для заполнения фона
 }</pre>
+     <p> Главным образом <i>Style</i> используется для создания градиентного фона виджета. Поле
+     <i>Colors</i> - массив цветов градиента, Orient - направление <a href="#Pril4"> подробнее см. дальше</a>.</p>
+     <p>Поле <i>Name</i>, как и в структурах <i>Widget</i> и <i>Font</i>, используется для идентификации
+     стиля в вашей программе: вы сможете найти ранее созданный экземпляр стиля (указатель на
+     соответствующую структуру <i>Style</i>) с помощью функции <i>GetStyle(sName string)</i>.</p>
+     <p>Для создания стиля используется функция <i>CreateStyle(pStyle *Style)</i>. Она возвращает указатель на
+     структуру <i>Style</i> (ту же, что передается ей в качестве параметра), который можно затем использовать при
+     объявлении структуры <i>Widget</i> в составе хэш-массива <i>AProps</i>. Ключом соответствующего
+     элемента будет <i>HStyle</i>, а значением - идентификатор (<i>Name</i>) структуры <i>Style</i>.</p>
+     <p></p>
      <br>
 
      <p><strong class="title"><a name="Metod" href="#_Metod"> 6.  Widget - методы</a></strong></p>
@@ -340,22 +376,81 @@ type Style struct {
      <tr><td>Close() bool </td><td>Закрывает главное окно или диалог </td>
      <tr><td>delete() bool </td><td>Удаляет виджет </td>
      <tr><td>AddWidget(pWidg *Widget) *Widget </td><td>Добавляет виджет </td>
-     <tr><td>SetText(sText string) </td><td>Установить текст виджета </td>
-     <tr><td>SetImage(sImage string) </td><td> </td>
+     <tr><td>SetText(sText string) </td><td>Устанавливает текст виджета </td>
+     <tr><td>SetImage(sImage string) </td><td>Для виджета &quot;bitmap&quot; - изменить картинку, в качестве параметра передается путь и имя файла изображения </td>
      <tr><td>SetParam(sParam string, xParam interface{}) </td><td> </td>
-     <tr><td>GetText() string </td><td> </td>
-     <tr><td>SetColor(tColor int32, bColor int32) </td><td> </td>
-     <tr><td>SetFont(pFont *Font) </td><td> </td>
+     <tr><td>GetText() string </td><td>Возвращает текст виджета </td>
+     <tr><td>SetColor(tColor int32, bColor int32) </td><td>Устанавливает цвет текста и фона виджета </td>
+     <tr><td>SetFont(pFont *Font) </td><td>Устанавливает шрифт виджета </td>
      <tr><td>SetCallBackProc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td><td> </td>
      <tr><td>SetCallBackFunc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td><td> </td>
-     <tr><td>Move(iLeft, iTop, iWidth, iHeight int32) </td><td> </td>
-     <tr><td>Enable(bEnable bool) </td><td> </td>
-     <tr><td>Hide(bHide bool) </td><td> </td>
+     <tr><td>Move(iLeft, iTop, iWidth, iHeight int32) </td><td>Перемещает виджет и/или изменяет его размер </td>
+     <tr><td>Enable(bEnable bool) </td><td>Enable или Disable виджет, в зависимости от параметра bEnable </td>
+     <tr><td>Hide(bHide bool) </td><td>Спрятать или показать виджет - в зависимости от параметра bHide </td>
      </table>
      <br>
 
      <p><strong class="title"><a name="Menu" href="#_Menu"> 7.  Создание меню</a></strong></p>
-     <p></p>
+     <p>Главное меню программы создается между вызовами <i>InitMainWindow()</i> и <i>Activate()</i>,
+        для этого используются функции <i>Menu(sTitle string)</i>, <i>EndMenu()</i>,
+        <i>AddMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string)</i>,
+        <i>AddMenuSeparator()</i>. Фигурные скобки после <i>Menu()</i> необязательны, они добавлены здесь для
+        большей выразительности.</p>
+     <pre class="brush: go;">
+package main
+
+import (
+    "time"
+    egui "github.com/alkresin/external"
+)
+
+func main() {
+
+    if egui.Init("") != 0 {
+        return
+    }
+
+    pWindow := &(egui.Widget{X: 100, Y: 100, W: 400, H: 280, Title: "GUI for Golang"})
+    egui.InitMainWindow(pWindow)
+
+    // Создание меню начинается с вызва функции Menu("")
+    // с пустым заголовком
+    egui.Menu("")
+    {
+        // Субменю тоже создается с помощью вызова Menu(),
+        // но уже с текстом заголовка
+        egui.Menu("File")
+        {
+            // Добавляем пункт меню
+            // fu1() - callback функция, которая должна выполняться при
+            // выборе этого пункта меню
+            egui.AddMenuItem("Date", 0, fu1, "fu1" )
+            // Добавляем разделитель
+            egui.AddMenuSeparator()
+            // Здесь в качестве callback-функции указывается Harbour-код,
+            // который будет выполняться на GuiServer.
+            // Здесь это функция, которая закрывает главно окно.
+            egui.AddMenuItem("Exit", 0, nil, "hwg_EndWindow()")
+        }
+        egui.EndMenu()
+        egui.Menu("Help")
+        {
+            egui.AddMenuItem("About", 0, nil,
+                "hwg_MsgInfo(\"My Golang GUI application\"+chr(10)+chr(13)+hwg_version(),\"About\")")
+        }
+        egui.EndMenu()
+    }
+    egui.EndMenu()
+
+    pWindow.Activate()
+    egui.Exit()
+}
+
+func fu1([]string) string {
+
+    egui.MsgInfo("Today is " + time.Now().Format("02.01.2006"), "Info", nil, "", "")
+    return ""
+}</pre>
      <br>
 
      <p><strong class="title"><a name="Func" href="#_Func"> 8.  Функции</a></strong></p>
@@ -371,20 +466,20 @@ type Style struct {
       <tr><td>Wnd(sName string) *Widget </td><td>Ищет по имени в списке созданных в программе окон, возвращает найденный указатель на структуру Widget </td>
       <tr><td>Widg(sName string) *Widget </td><td>Ищет по имени в списке созданных в программе виджетов, возвращает найденный указатель на структуру Widget </td>
       <tr><td>ToString(xParam ...interface{}) string </td><td>Преобразует параметры в json-строку для отправки на GuiServer </td>
-      <tr><td>OpenMainForm(sForm string) bool </td><td> </td>
-      <tr><td>OpenForm(sForm string) bool </td><td> </td>
-      <tr><td>OpenReport(sForm string) bool </td><td> </td>
-      <tr><td>CreateFont(pFont *Font) *Font </td><td> </td>
-      <tr><td>CreateStyle(pStyle *Style) *Style </td><td> </td>
+      <tr><td>OpenMainForm(sForm string) bool </td><td>Открывает xml форму с описанием главного окна, предварительно подготовленную с помощью HwGUI Designer </td>
+      <tr><td>OpenForm(sForm string) bool </td><td>Открывает xml форму с описанием диалогового окна, предварительно подготовленную с помощью HwGUI Designer </td>
+      <tr><td>OpenReport(sForm string) bool </td><td>Открывает xml форму с описанием отчета, предварительно подготовленную с помощью HwGUI Designer </td>
+      <tr><td>CreateFont(pFont *Font) *Font </td><td>Создает шрифт на основе структуры Font </td>
+      <tr><td>CreateStyle(pStyle *Style) *Style </td><td>Создает стиль на основе структуры Style </td>
       <tr><td>CreateHighliter(sName string, sCommands string,<br>&nbsp;&nbsp;&nbsp;sFuncs string,
 	sSingleLineComm string,<br>&nbsp;&nbsp;&nbsp;sMultiLineComm string, bCase bool) *Highlight </td><td> </td>
       <tr><td>SetHighliter(pEdit *Widget, p *Highlight) </td><td> </td>
       <tr><td>SetHiliOpt(pEdit *Widget, iGroup int,<br>&nbsp;&nbsp;&nbsp;pFont *Font, tColor int32, bColor int32) </td><td> </td>
       <tr><td>InitPrinter(pPrinter *Printer, sFunc string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sMark string) *Printer </td><td> </td>
-      <tr><td>EvalProc(s string) </td><td> </td>
-      <tr><td>EvalFunc(s string) []byte </td><td> </td>
+      <tr><td>EvalProc(s string) </td><td>Передает на GuiServer для выполнения программный код на языке Harbour</td>
+      <tr><td>EvalFunc(s string) []byte </td><td>Передает на GuiServer для выполнения программный код на языке Harbour, возвращает результат </td>
       <tr><td>GetValues(pWnd *Widget, aNames []string) []string </td><td> </td>
-      <tr><td>GetVersion(i int) string </td><td> </td>
+      <tr><td>GetVersion(i int) string </td><td>Возвращает версию GuiServer. Если i==0 - номер версии, i==1 - полную строку с номером версии, i==2 - версию GuiServer, HwGUI и Harbour</td>
       <tr><td>MsgInfo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td>Создает стандартный диалог </td>
       <tr><td>MsgStop(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
       <tr><td>MsgYesNo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td><td> </td>
@@ -453,29 +548,43 @@ type Style struct {
 	
      <p><strong class="subhead"><a name="Pril2" href="#_Pril2"> WinAPI стили</a></strong></p>
      <table class="tabl1">
-	 <tr><td>DT_LEFT </td><td> </td>
-	 <tr><td>DT_CENTER </td><td> </td>
-	 <tr><td>DT_RIGHT </td><td> </td>
-	 <tr><td>ES_PASSWORD </td><td> </td>
-	 <tr><td>ES_MULTILINE </td><td> </td>
-	 <tr><td>ES_READONLY </td><td> </td>
-	 <tr><td>WS_HSCROLL </td><td> </td>
-	 <tr><td>WS_VSCROLL </td><td> </td>
-	 <tr><td>WND_NOTITLE </td><td> </td>
-	 <tr><td>WND_NOSYSMENU </td><td> </td>
-	 <tr><td>WND_NOSIZEBOX </td><td> </td>
+      <tr><td>DT_LEFT </td><td> Выравнивание влево</td>
+      <tr><td>DT_CENTER </td><td> Выравнивание вправо</td>
+      <tr><td>DT_RIGHT </td><td> Выравнивание по центру</td>
+      <tr><td>ES_PASSWORD </td><td> Ввод пароля (для Edit)</td>
+      <tr><td>ES_MULTILINE </td><td> Многострочный Edit</td>
+      <tr><td>ES_READONLY </td><td> Edit - только для чтения</td>
+      <tr><td>WS_HSCROLL </td><td> Горизонтальный скролл</td>
+      <tr><td>WS_VSCROLL </td><td> Вертикальный скролл</td>
+      <tr><td>WND_NOTITLE </td><td> </td>
+      <tr><td>WND_NOSYSMENU </td><td> </td>
+      <tr><td>WND_NOSIZEBOX </td><td> </td>
 	 </table>
      <br>
 	
      <p><strong class="subhead"><a name="Pril3" href="#_Pril3"> Типы бумаги</a></strong></p>
      <table class="tabl1">
-     <tr><td>DMPAPER_A3</td><td>A3 297 x 420 mm </td>
-     <tr><td>DMPAPER_A4</td><td>A4 210 x 297 mm </td>
-     <tr><td>DMPAPER_A5</td><td>A5 148 x 210 mm </td>
-     <tr><td>DMPAPER_A6</td><td>A6 105 x 148 mm </td>
+      <tr><td>DMPAPER_A3</td><td>A3 297 x 420 mm </td>
+      <tr><td>DMPAPER_A4</td><td>A4 210 x 297 mm </td>
+      <tr><td>DMPAPER_A5</td><td>A5 148 x 210 mm </td>
+      <tr><td>DMPAPER_A6</td><td>A6 105 x 148 mm </td>
 	 </table>
      <br>
-	
+
+     <p><strong class="subhead"><a name="Pril4" href="#_Pril4"> Типы градиента в Style</a></strong></p>	
+     <table class="tabl1">
+      <tr><td>1  </td><td>вертикальный сверху вниз </td>
+      <tr><td>2  </td><td>вертикальный снизу вверх </td>
+      <tr><td>3  </td><td>горизонтальный слева направо </td>
+      <tr><td>4  </td><td>горизонтальный справа налево </td>
+      <tr><td>5  </td><td>диагональный справа вверх </td>
+      <tr><td>6  </td><td>диагональный слева вниз </td>
+      <tr><td>7  </td><td>диагональный справа вниз </td>
+      <tr><td>8  </td><td>диагональный слева вверх </td>
+      <tr><td>9  </td><td>радиальный градиент </td>
+     </table>
+     <br>
+
     <hr>
     <script type="text/javascript" src="js/shCore.js"></script>
     <script type="text/javascript" src="js/shBrushGo.js"></script>
