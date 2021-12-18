@@ -40,16 +40,18 @@
         <li><a name="_Widg3" href="#Widg3">4.3  AProps - дополнительные атрибуты</a>
       </ul>
       <li><a name="_Font" href="#Font">5.  Font, Style</a>
-      <li><a name="_Metod" href="#Metod">6.  Widget - методы</a>
-      <li><a name="_Menu" href="#Menu">7.  Создание меню</a>
-      <li><a name="_Func" href="#Func">8.  Функции</a>
-      <li><a name="_Print" href="#Print">9.  Печать</a>
+      <li><a name="_cb" href="#cb">6.  Callback функции</a>
+      <li><a name="_Metod" href="#Metod">7.  Widget - методы</a>
+      <li><a name="_Menu" href="#Menu">8.  Создание меню</a>
+      <li><a name="_Func" href="#Func">9.  Функции</a>
+      <li><a name="_Print" href="#Print">10.  Печать</a>
       <li><a name="_Pril" href="#Pril">A.  Приложения</a>
       <ul>
         <li><a name="_Pril1" href="#Pril1">Anchor</a>
         <li><a name="_Pril2" href="#Pril2">Winapi стили</a>
         <li><a name="_Pril3" href="#Pril3">Типы бумаги</a>
         <li><a name="_Pril4" href="#Pril4">Типы градиента в Style</a>
+        <li><a name="_Pril5" href="#Pril5">Идентификаторы событий</a>
       </ul>
     </ul>
     <br>
@@ -369,12 +371,66 @@ type Style struct {
      <p></p>
      <br>
 
-     <p><strong class="title"><a name="Metod" href="#_Metod"> 6.  Widget - методы</a></strong></p>
+     <p><strong class="title"><a name="cb" href="#_cb"> 6.  Callback функции</a></strong></p>
+     <p>Callback функции (функция обратного вызова) - одно из важнейших понятий в External, это основная часть вашего
+     приложения. В главной функции (<i>main()</i>) вы обычно создаете главное окно, его меню, набор
+     виджетов. После вызова <i>Activate()</i> выполнение программы приостанавливается, она переходит в
+     режим ожидания сообщений от GuiServer, от GUI-элементов вашего окна, вашего интерфейса. Эти
+     сообщения вызывают выполнение callback функций вашего приложения, тех функций, которые вы
+     установили как callback. Это функции, указанные в объявлении пунктов меню
+     (<i>AddMenuItem()</i>), переданные c помощью <i>SetCallBackProc()</i> для обработки того или иного
+     события (нажатия кнопки, потери фокуса ввода, ...), установленные для вызова после закрытия
+     стандартного диалога (<i>MsgInfo()</i>, <i>SelectFile()</i>, ...), ...</p>
+     <p>Спецификация callback функции имеет вид <i>func([]string) string</i>, т.е. она принимает в
+     качестве параметра массив строк и возвращает строку. В функциях, которые предназначены для
+     передачи на GuiServer информации о callback функции, используются для этого два параметра:
+     <i>fu func([]string) string</i> и <i>sCode string</i>. Первый - та самая callback
+     функция, второй - идентификатор этой функции (это может быть имя функции или любая другая
+     уникальная строка). External строит хэш-массив <i>map[string]func([]string) string</i> и
+     передает на GuiServer строковый идентификатор. GuiServer при наступлении соответствующего
+     события этот идентификатор возвращает, External находит по нему нужную функцию в хэш-массиве
+     и выполняет ее. Вот так это и работает. Идентификатор нужен для того, чтобы передавать его
+     на GuiServer и обратно - как, например, имя (<i>sName</i>) структур <i>Widget</i>, <i>Font</i> и пр.
+     Кроме функции и ее идентификатора может передаваться произвольное количество строковых
+     параметров - они будут потом переданы обратно callback - функции.</p>
+     <p>Вот как это может выглядеть в программе:</p>
+     <pre class="brush: go;">
+     ...
+     // Передается ссылка на объявленную в программе функцию fu1
+     egui.AddMenuItem("Date", 0, fu1, "fu1" )
+     ...
+     // Анонимная Callback функция, "Bye...1" - параметр, который она получит в массиве
+     egui.AddMenuItem("Set text to label", 0,
+        func(p []string) string { egui.Widg("main.l1").SetText(p[1]); return "" },
+         "fsett2", "Bye...1")
+     ...
+     // Callback функция fsett1, которая будет вызвана при нажатии pButton
+     pButton.SetCallBackProc("onclick", fsett1, "fsett1", "first parameter")
+     </pre>
+     <p>При вызове callback функции из меню первым элементом в передаваемом обратно параметре-массиве
+     всегда будет строка &quot;menu&quot;, при вызове от какого-либо виджета - идентификатор
+     этого виджета. Т.е., в приведенном выше примере в функции <i>fu1(p []string)</i> массив <i>p</i> будет
+     содержать единственный элемент &quot;menu&quot;, а в функции <i>fsett1</i> - два элемента:
+     идентификатор <i>pButton</i> (<i>sName</i>) и строка &quot;first parameter&quot;.</p>
+     <p>Кроме функции, объявленной в вашем приложении, можно также использовать в качестве
+     callback функции программный код, написанный на Harbour. Для этого вместо функции указываете nil, а
+     вместо ее идентификатора - строку кода. В этом случае событие обрабатывается на GuiServer и
+     в ваше приложение ничего не передаётся:</p>
+     <pre class="brush: go;">
+     ...
+     // Вызов Harbour/HwGUI функции hwg_EndWindow(), которая закрывает главное окно
+     egui.AddMenuItem("Exit", 0, nil, "hwg_EndWindow()")
+     ...
+     // В 1-ую часть нижней панели (panelbot) главного окна пишется текущая дата
+     pButton.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),1,Dtoc(Date()),.T.)")
+     </pre>
+     <br>
+
+     <p><strong class="title"><a name="Metod" href="#_Metod"> 7.  Widget - методы</a></strong></p>
      <p></p>
      <table class="tabl2">
      <tr><td>Activate() bool </td><td>Активирует главного окно или диалог </td>
      <tr><td>Close() bool </td><td>Закрывает главное окно или диалог </td>
-     <tr><td>delete() bool </td><td>Удаляет виджет </td>
      <tr><td>AddWidget(pWidg *Widget) *Widget </td><td>Добавляет виджет </td>
      <tr><td>SetText(sText string) </td><td>Устанавливает текст виджета </td>
      <tr><td>SetImage(sImage string) </td><td>Для виджета &quot;bitmap&quot; - изменить картинку, в качестве параметра передается путь и имя файла изображения </td>
@@ -382,15 +438,19 @@ type Style struct {
      <tr><td>GetText() string </td><td>Возвращает текст виджета </td>
      <tr><td>SetColor(tColor int32, bColor int32) </td><td>Устанавливает цвет текста и фона виджета </td>
      <tr><td>SetFont(pFont *Font) </td><td>Устанавливает шрифт виджета </td>
-     <tr><td>SetCallBackProc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td><td> </td>
-     <tr><td>SetCallBackFunc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td><td> </td>
+     <tr><td>SetCallBackProc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string,<br> &nbsp;&nbsp;params ...string) </td>
+       <td>Устанавливает callback процедуру для виджета, <i>sbName</i> - <a href="#Pril5">идентификатор события</a>, для которого
+           устанавливается процедура, подробнее о callback функциях <a href="#cb">см. выше</a>.</td>
+     <tr><td>SetCallBackFunc(sbName string,<br> &nbsp;&nbsp;fu func([]string) string, sCode string,<br> &nbsp;&nbsp;params ...string) </td>
+       <td>Устанавливает callback функцию для виджета, <i>sbName</i> - <a href="#Pril5">идентификатор события</a>, для которого
+           устанавливается процедура, подробнее о callback функциях <a href="#cb">см. выше</a>. </td>
      <tr><td>Move(iLeft, iTop, iWidth, iHeight int32) </td><td>Перемещает виджет и/или изменяет его размер </td>
      <tr><td>Enable(bEnable bool) </td><td>Enable или Disable виджет, в зависимости от параметра bEnable </td>
      <tr><td>Hide(bHide bool) </td><td>Спрятать или показать виджет - в зависимости от параметра bHide </td>
      </table>
      <br>
 
-     <p><strong class="title"><a name="Menu" href="#_Menu"> 7.  Создание меню</a></strong></p>
+     <p><strong class="title"><a name="Menu" href="#_Menu"> 8.  Создание меню</a></strong></p>
      <p>Главное меню программы создается между вызовами <i>InitMainWindow()</i> и <i>Activate()</i>,
         для этого используются функции <i>Menu(sTitle string)</i>, <i>EndMenu()</i>,
         <i>AddMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string)</i>,
@@ -453,7 +513,7 @@ func fu1([]string) string {
 }</pre>
      <br>
 
-     <p><strong class="title"><a name="Func" href="#_Func"> 8.  Функции</a></strong></p>
+     <p><strong class="title"><a name="Func" href="#_Func"> 9.  Функции</a></strong></p>
      <p></p>
      <table class="tabl2">
       <tr><td>InitMainWindow(pWnd *Widget) bool </td><td>Создает главное окно </td>
@@ -522,7 +582,7 @@ func fu1([]string) string {
      </table>
      <br>
 
-     <p><strong class="title"><a name="Print" href="#_Print"> 9.  Печать</a></strong></p>
+     <p><strong class="title"><a name="Print" href="#_Print"> 10.  Печать</a></strong></p>
      <p></p>
      <br>
 
@@ -582,6 +642,20 @@ func fu1([]string) string {
       <tr><td>7  </td><td>диагональный справа вниз </td>
       <tr><td>8  </td><td>диагональный слева вверх </td>
       <tr><td>9  </td><td>радиальный градиент </td>
+     </table>
+     <br>
+
+     <p><strong class="subhead"><a name="Pril5" href="#_Pril5"> Идентификаторы событий</a></strong></p>	
+     <table class="tabl1">
+      <tr><td>oninit </td><td> </td>
+      <tr><td>ondestroy </td><td> </td>
+      <tr><td>onclick </td><td> </td>
+      <tr><td>onsize </td><td> </td>
+      <tr><td>onpaint </td><td> </td>
+      <tr><td>onrclick </td><td> </td>
+      <tr><td>ondblclick </td><td> </td>
+      <tr><td>onenter </td><td> </td>
+      <tr><td>onposchanged </td><td> </td>
      </table>
      <br>
 
