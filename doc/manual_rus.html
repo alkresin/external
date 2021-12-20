@@ -538,19 +538,23 @@ func fu1([]string) string {
       <tr><td>SetHiliOpt(pEdit *Widget, iGroup int,<br>&nbsp;&nbsp;&nbsp;pFont *Font, tColor int32, bColor int32) </td>
          <td> </td>
       <tr><td>InitPrinter(pPrinter *Printer, sFunc string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sMark string) *Printer </td>
-         <td> </td>
+         <td>Инициализирует принтер - <a href="#Print">подробнее см. здесь</a>. </td>
       <tr><td>EvalProc(s string) </td><td>Передает на GuiServer для выполнения программный код на языке Harbour</td>
       <tr><td>EvalFunc(s string) []byte </td><td>Передает на GuiServer для выполнения программный код на языке Harbour, возвращает результат </td>
-      <tr><td>GetValues(pWnd *Widget, aNames []string) []string </td><td> </td>
+      <tr><td>GetValues(pWnd *Widget, aNames []string) []string </td><td>Возвращает массив строк - значений
+         виджетов окна <i>pWnd</i>, перечисленных по идентификаторам в массиве <i>aNames</i>. </td>
       <tr><td>GetVersion(i int) string </td><td>Возвращает версию GuiServer. Если i==0 - номер версии, i==1 - полную строку с номером версии, i==2 - версию GuiServer, HwGUI и Harbour</td>
       <tr><td>MsgInfo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td>Создает стандартный диалог </td>
+         <td>Создает стандартный Info диалог. <i>sMessage</i> - текст сообщения, <i>sTitle</i> - заголовок окна;<br><i>fu</i>, <i>sFunc</i> - callback функция
+             и ее идентификатор, эта функция вызывается после закрытия диалога; <i>sName</i> - эта строка будет первой в массиве, передаваемом callback
+             функции при ее вызове.</td>
       <tr><td>MsgStop(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td> </td>
+         <td>Создает стандартный Stop диалог. Параметры те же, что и в MsgInfo.</td>
       <tr><td>MsgYesNo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td> </td>
+         <td>Создает стандартный YesNo диалог. Параметры те же, что и в MsgInfo.</td>
       <tr><td>MsgGet(sMessage string, sTitle string, iStyle int32,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td> </td>
+         <td>Создает диалог для ввода строки. Параметры те же, что и в MsgInfo, <i>iStyle</i> - стиль виджета
+             Edit. Возвращает введенную строку.</td>
       <tr><td>Choice(arr []string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
          <td> </td>
       <tr><td>SelectFile(sPath string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
@@ -578,11 +582,11 @@ func fu1([]string) string {
                  bEditable bool, iLength int) </td><td> </td>
       <tr><td>BrwSetColumnEx(p *Widget, ic int, sParam string, xParam interface{}) </td><td> </td>
       <tr><td>BrwDelColumn(p *Widget, ic int) </td><td> </td>
-      <tr><td>SetVar(sVarName string, sValue string) </td><td> </td>
-      <tr><td>GetVar(sVarName string) string </td><td> </td>
-      <tr><td>SetImagePath(sValue string) </td><td> </td>
-      <tr><td>SetPath(sValue string) </td><td> </td>
-      <tr><td>SetDateFormat(sValue string) </td><td> </td>
+      <tr><td>SetVar(sVarName string, sValue string) </td><td>Создает на GuiServer Public переменную <i>sVarName</i> (если ее нет) и устанавливает ее значение <i>sValue</i></td>
+      <tr><td>GetVar(sVarName string) string </td><td>Возвращает с GuiServer значение переменной <i>sVarName</i></td>
+      <tr><td>SetImagePath(sValue string) </td><td>Передает на GuiServer путь по умолчанию для файлов изображений</td>
+      <tr><td>SetPath(sValue string) </td><td>Передает на GuiServer путь по умолчанию для чтения/записи файлов </td>
+      <tr><td>SetDateFormat(sValue string) </td><td>Передает на GuiServer желаемый формат вывода даты </td>
       <tr><td>Menu(sTitle string) </td><td>Начинает объявление меню или субменю </td>
       <tr><td>MenuContext(sName string) </td><td>Начинает объявление контекстного меню </td>
       <tr><td>ShowMenuContext(sName string, pWnd *Widget) </td><td> </td>
@@ -600,7 +604,67 @@ func fu1([]string) string {
      <br>
 
      <p><strong class="title"><a name="Print" href="#_Print"> 10.  Печать</a></strong></p>
-     <p></p>
+     <p>Первое, что надо сделать при при создании печатного документа - это создать структуру <i>Printer</i>, которая
+        имеет следующий вид:</p>
+     <pre class="brush: go;">
+type Printer struct {
+	Name       string      // Идентификатор принтера
+	SPrinter   string      // Имя принтера
+	BPreview   bool        // True, если нужно превью
+	IFormType  int         // Тип бумаги, <a href="#Pril3">см. в Приложении</a>, по умолчанию - DMPAPER_A4
+	BLandscape bool        // True, если нужна альбомная ориентация
+}</pre>
+     <p>Здесь <i>Name</i> - идентификатор принтера, поле, аналогичное таким же идентификаторам в <i>Widget</i>, <i>Font</i>, <i>Style</i>. <i>SPrinter</i> - имя
+        принтера в системе. Если <i>SPrinter</i> не указан, будет использоваться принтер по умолчанию; если
+        его значение - &quot;...&quot;, то появится стандартное диалоговое окно для выбора принтера. </p>
+     <p>Затем инициализируем принтер с помощью функции <i>InitPrinter()</i>, которой передаем созданную структуру.</p>
+     <pre>
+     InitPrinter(pPrinter *Printer, sFunc string, fu func([]string) string, sMark string) *Printer
+     </pre>
+     <p>Параметры <i>sFunc</i>, <i>fu</i>, <i>sMark</i> (те же, что в функциях, вызывающих стандартные диалоги), используются в
+        тех случаях, когда поле <i>Sprinter</i> структуры <i>Printer</i> равно &quot;...&quot;, т.е., требуется стандартный
+        диалог выбора принтера. Напомню, <i>fu</i> - функция, которая должна быть вызвана по завершении диалога, <i>sFunc</i> - ее
+        идентификатор, <i>sMark</i> - первый элемент массива строк, который будет передан этой функции.</p>
+     <p>После инициализации принтера можно приступать к печати. Ниже - список методов структуры <i>Printer</i>, которые
+        при этом используются: </p>
+     <table class="tabl2">
+       <tr><td>AddFont(pFont *Font) *Font </td><td>Добавляет шрифт </td>
+       <tr><td>SetFont(pFont *Font) </td><td>Устанавливает текущий шрифт для печати </td>
+       <tr><td>Say(iTop, iLeft, iRight, iBottom int32, sText string, iOpt int32) </td><td>Печатает
+          текст <i>sText</i> в прямоугольной области с координатами <i>iTop</i>, <i>iLeft</i>, <i>iRight</i>, <i>iBottom</i>. <i>iOpt</i> - тип
+          выравнивания ( <i>DT_LEFT</i>, <i>DT_RIGHT</i>, <i>DT_CENTER</i> ) </td>
+       <tr><td>Line(iTop, iLeft, iRight, iBottom int32) </td><td>Рисует линию в заданных координатах </td>
+       <tr><td>Box(iTop, iLeft, iRight, iBottom int32) </td><td>Рисует прямоугольник в заданных координатах </td>
+       <tr><td>StartPage() </td><td>Начинает новую страницу печати, этот вызов обязателен. </td>
+       <tr><td>EndPage() </td><td>Завершает печать страницы, этот вызов обязателен. </td>
+       <tr><td>End() </td><td>Завершает печать, освобождает принтер. </td>
+     </table>
+     <p>Все координаты указаны в миллиметрах.</p>
+     <p>Вот пример печати одной простой страницы:</p>
+     <pre class="brush: go;">
+func fprint(p []string) string {
+    // Функция первоначально вызывается из главного меню
+	if p[0] == "menu" {
+		egui.InitPrinter(&egui.Printer{SPrinter: "...", BPreview: true}, "fprint", fprint, "mm1")
+	} else {
+	    // Повторно она же вызывается после выбора принтера из стандартного диалога
+		pPrinter := egui.PLastPrinter
+		pFont := pPrinter.AddFont(&egui.Font{Family: "Times New Roman", Height: 10})
+		pPrinter.StartPage()
+		pPrinter.SetFont(pFont)
+		pPrinter.Box(5, 5, 200, 282)
+		pPrinter.Say(50, 10, 165, 26, "Printing first sample !", egui.DT_CENTER)
+		pPrinter.Line(45, 30, 170, 30)
+		pPrinter.Line(45, 5, 45, 30)
+		pPrinter.Line(170, 5, 170, 30)
+		pPrinter.Say(50, 120, 150, 132, "----------", egui.DT_CENTER)
+		pPrinter.Box(50, 134, 160, 146)
+		pPrinter.Say(50, 135, 160, 146, "End Of Report", egui.DT_CENTER)
+		pPrinter.EndPage()
+		pPrinter.End()
+	}
+	return ""
+}</pre>
      <br>
 
      <p><strong class="title"><a name="Pril" href="#_Pril"> A.  Приложения</a></strong></p>
@@ -663,6 +727,8 @@ func fu1([]string) string {
      <br>
 
      <p><strong class="subhead"><a name="Pril5" href="#_Pril5"> Идентификаторы событий</a></strong></p>	
+     <p>Здесь приведен список идентификаторов событий, поддерживаемых к моменту написания этого
+        руководства - тех идентификаторов, которые можно указать в <i>SetCallBackProc()</i> и <i>SetCallBackFunc()</i>.</p>
      <table class="tabl1">
       <tr><td>oninit </td><td> </td>
       <tr><td>ondestroy </td><td> </td>
