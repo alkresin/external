@@ -424,6 +424,31 @@ type Style struct {
      // В 1-ую часть нижней панели (panelbot) главного окна пишется текущая дата
      pButton.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),1,Dtoc(Date()),.T.)")
      </pre>
+     <p>В External есть набор функций, вызывающих стандартные диалоги - информационные, выбора файла и
+     пр. При вызове этих функций можно, а в тех случаях, когда вам требуется результат от диалога, необходимо
+     указать функцию - получатель сообщения о закрытии диалога, т.е., callback функцию. Возьмем, например, диалог
+     выбора цвета:</p>
+     <pre class="brush: go;">
+func fsele_color(p []string) string {
+    // Функция первоначально вызывается из главного меню
+	if p[0] == "menu" {
+		egui.SelectColor(0, fsele_color, "fsele_color", "mm1")
+	} else if p[0] == "mm1" {
+	    // Функция была вызвана после закрытия диалога и первым параметром передана метка "mm1"
+	    // Второй параметр - выбранный цвет
+		iColor, _ := strconv.Atoi(p[1])
+		egui.Widg("main.l1").SetColor(int32(iColor), -1)
+	}
+	return ""
+}</pre>
+     <p>Здесь функции <i>SelectColor(iColor int32, fu func([]string) string, sFunc string, sName string)</i> переданы те же параметры <i>fu</i> и <i>sCode</i> (fsele_color, &quot;fsele_color&quot;), определяющие callback
+        функцию и параметр <i>sName</i> (&quot;mm1&quot;) - метка, идентифицирующая источник вызова callback
+        функции - он передается ей первым в массиве строк - параметров. Вторым в данном случае передается значение
+        выбранного цвета.</p>
+     <p>Если вызова callback функции при закрытии диалога не требуется, соответствующие параметры оставляйте пустыми:</p>
+     <pre>
+        egui.MsgInfo("Some message", "Title", nil, "", "")
+     </pre>
      <br>
 
      <p><strong class="title"><a name="Metod" href="#_Metod"> 7.  Widget - методы</a></strong></p>
@@ -547,40 +572,41 @@ func fu1([]string) string {
       <tr><td>MsgInfo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
          <td>Создает стандартный Info диалог. <i>sMessage</i> - текст сообщения, <i>sTitle</i> - заголовок окна;<br><i>fu</i>, <i>sFunc</i> - callback функция
              и ее идентификатор, эта функция вызывается после закрытия диалога; <i>sName</i> - эта строка будет первой в массиве, передаваемом callback
-             функции при ее вызове.</td>
+             функции при ее вызове. Подробнее <a href="#cb">см. выше</a>.</td>
       <tr><td>MsgStop(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
          <td>Создает стандартный Stop диалог. Параметры те же, что и в MsgInfo.</td>
       <tr><td>MsgYesNo(sMessage string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td>Создает стандартный YesNo диалог. Параметры те же, что и в MsgInfo.</td>
-      <tr><td>MsgGet(sMessage string, sTitle string, iStyle int32,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
+         <td>Создает стандартный YesNo диалог. Параметры те же, что и в MsgInfo. Возвращает true или false через callback функцию.</td>
+      <tr><td>MsgGet(sMessage string,<br>&nbsp;&nbsp;&nbsp;sTitle string, iStyle int32,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
          <td>Создает диалог для ввода строки. Параметры те же, что и в MsgInfo, <i>iStyle</i> - стиль виджета
-             Edit. Возвращает введенную строку.</td>
+             Edit. Возвращает введенную строку через callback функцию.</td>
       <tr><td>Choice(arr []string, sTitle string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td> </td>
-      <tr><td>SelectFile(sPath string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td> </td>
+         <td>Создает диалог для выбора из массива строк <i>arr</i>. Остальные параметры те же, что и в MsgInfo. Возвращает номер выбранной строки через callback функцию.</td>
+      <tr><td>SelectFile(sPath string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string,<br>&nbsp;&nbsp;&nbsp;sName string) </td>
+         <td>Вызывает стандартный диалог выбора файла, <i>sPath</i> - начальный путь. Остальные параметры те же, что и в MsgInfo. Возвращает имя файла через callback функцию.</td>
       <tr><td>SelectFolder(fu func([]string) string,<br>&nbsp;&nbsp;&nbsp;sFunc string, sName string) </td>
-         <td> </td>
+         <td>Вызывает стандартный диалог выбора каталога. Параметры те же, что и в MsgInfo. Возвращает имя каталога через callback функцию. </td>
       <tr><td>SelectColor(iColor int32,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sFunc string, sName string) </td>
-         <td> </td>
+         <td>Вызывает стандартный диалог выбора цвета, <i>iColor</i> - начальный цвет. Остальные параметры те же, что и в MsgInfo. Возвращает код цвета через callback функцию. </td>
       <tr><td>SelectFont(fu func([]string) string,<br>&nbsp;&nbsp;&nbsp;sFunc string, sName string) </td>
-         <td> </td>
-      <tr><td>InsertNode(pTree *Widget, sNodeName string,<br>&nbsp;&nbsp;&nbsp;sNodeNew string, sTitle string,
+         <td>Вызывает стандартный диалог выбора шрифта. Параметры те же, что и в MsgInfo. Возвращает параметры выбранного шрифта через callback функцию.</td>
+      <tr><td>InsertNode(pTree *Widget,<br>&nbsp;&nbsp;&nbsp;sNodeName string, sNodeNew string,<br>&nbsp;&nbsp;&nbsp;sTitle string,
                 sNodeNext string,<br>&nbsp;&nbsp;&nbsp;aImages []string, fu func([]string) string, sCode string) </td>
          <td> </td>
-      <tr><td>SelectNode(pTree *Widget, sNodeName string) </td><td> </td>
-      <tr><td>PBarStep(pPBar *Widget) </td><td> </td>
-      <tr><td>PBarSet(pPBar *Widget, iPos int) { </td><td> </td>
-      <tr><td>InitTray(sIcon string, sMenuName string, sTooltip string) </td><td> </td>
+      <tr><td>SelectNode(pTree *Widget, sNodeName string) </td><td>Делает текущим узел дерева, указывая его по имени
+              <i>sNodeName</i>, заданному в <i>InsertNode()</i>.</td>
+      <tr><td>PBarStep(pPBar *Widget) </td><td>Передает прогресс-бару команду сделать следующий шаг. </td>
+      <tr><td>PBarSet(pPBar *Widget, iPos int) { </td><td>Устанавливает прогресс-бар в положение <i>iPos</i>.</td>
+      <tr><td>InitTray(sIcon string,<br>&nbsp;&nbsp;&nbsp;sMenuName string, sTooltip string) </td><td> </td>
       <tr><td>ModifyTrayIcon(sIcon string) </td><td> </td>
       <tr><td>RadioEnd(p *Widget, iSel int) </td><td> </td>
       <tr><td>TabPage(pTab *Widget, sCaption string) </td><td> </td>
       <tr><td>TabPageEnd(pTab *Widget) </td><td> </td>
-      <tr><td>BrwSetArray(p *Widget, arr *[][]string) </td><td> </td>
+      <tr><td>BrwSetArray(p *Widget,<br>&nbsp;&nbsp;&nbsp;arr *[][]string) </td><td> </td>
       <tr><td>BrwGetArray(p *Widget) [][]string </td><td> </td>
-      <tr><td>BrwSetColumn(p *Widget, ic int, sHead string,<br>&nbsp;&nbsp;&nbsp;iAlignHead int, iAlignData int,
-                 bEditable bool, iLength int) </td><td> </td>
-      <tr><td>BrwSetColumnEx(p *Widget, ic int, sParam string, xParam interface{}) </td><td> </td>
+      <tr><td>BrwSetColumn(p *Widget, ic int,<br>&nbsp;&nbsp;&nbsp;sHead string, iAlignHead int,
+              <br>&nbsp;&nbsp;&nbsp;iAlignData int, bEditable bool, iLength int) </td><td> </td>
+      <tr><td>BrwSetColumnEx(p *Widget, ic int,<br>&nbsp;&nbsp;&nbsp;sParam string, xParam interface{}) </td><td> </td>
       <tr><td>BrwDelColumn(p *Widget, ic int) </td><td> </td>
       <tr><td>SetVar(sVarName string, sValue string) </td><td>Создает на GuiServer Public переменную <i>sVarName</i> (если ее нет) и устанавливает ее значение <i>sValue</i></td>
       <tr><td>GetVar(sVarName string) string </td><td>Возвращает с GuiServer значение переменной <i>sVarName</i></td>
@@ -589,17 +615,22 @@ func fu1([]string) string {
       <tr><td>SetDateFormat(sValue string) </td><td>Передает на GuiServer желаемый формат вывода даты </td>
       <tr><td>Menu(sTitle string) </td><td>Начинает объявление меню или субменю </td>
       <tr><td>MenuContext(sName string) </td><td>Начинает объявление контекстного меню </td>
-      <tr><td>ShowMenuContext(sName string, pWnd *Widget) </td><td> </td>
+      <tr><td>ShowMenuContext(sName string,<br>&nbsp;&nbsp;&nbsp;pWnd *Widget) </td><td>Показывает контекстное
+              меню, <i>sName</i> - идентификатор меню, <i>pWnd</i> - окно, к которому оно относится. </td>
       <tr><td>EndMenu() </td><td>Завершает объявление меню или субменю </td>
-      <tr><td>AddMenuItem(sName string, id int, fu func([]string) string,<br>&nbsp;&nbsp;&nbsp;sCode string, params ...string) </td>
-         <td> </td>
-      <tr><td>AddCheckMenuItem(sName string, id int,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sCode string, params ...string) </td>
-         <td> </td>
+      <tr><td>AddMenuItem(sName string, id int,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string,<br>&nbsp;&nbsp;&nbsp;sCode string, params ...string) </td>
+         <td>Добавляет пункт меню, <i>sName</i> - имя, <i>id</i> - числовой идентификатор, остальные параметры те же, что и в MsgInfo. </td>
+      <tr><td>AddCheckMenuItem(sName string,<br>&nbsp;&nbsp;&nbsp;id int,fu func([]string) string,
+             <br>&nbsp;&nbsp;&nbsp;sCode string, params ...string) </td>
+         <td>Добавляет пункт меню, который можно помечать. Параметры - те же, что в AddMenuItem(). </td>
       <tr><td>AddMenuSeparator() </td><td>Добавляет в меню линию-разделитель </td>
-      <tr><td>MenuItemEnable(sWndName string, sMenuName string,<br>&nbsp;&nbsp;&nbsp;iItem int, bValue bool) </td>
-         <td> </td>
-      <tr><td>MenuItemCheck(sWndName string, sMenuName string,<br>&nbsp;&nbsp;&nbsp;iItem int, bValue bool) </td>
-         <td> </td>
+      <tr><td>MenuItemEnable(sWndName string,<br>&nbsp;&nbsp;&nbsp;sMenuName string,<br>&nbsp;&nbsp;&nbsp;iItem int, bValue bool) </td>
+         <td>Меняет доступность элемента меню - в зависимости от значения <i>bValue</i>. Здесь
+             <i>sWndName</i> - идентификатор окна, если это главное меню или меню диалога, <i>sMenuName</i> - идентификатор
+             меню, если это контекстное меню, <i>iItem</i> - id пункта меню.</td>
+      <tr><td>MenuItemCheck(sWndName string,<br>&nbsp;&nbsp;&nbsp;sMenuName string,<br>&nbsp;&nbsp;&nbsp;iItem int, bValue bool) </td>
+         <td>Отмечает или снимает отметку с пункта меню - в зависимости от значения <i>bValue</i>. Параметры
+             те же, что и в MenuItemEnable.</td>
      </table>
      <br>
 
