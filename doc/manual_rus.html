@@ -110,9 +110,8 @@ func main() {
     <p>Если вам надо изменить, например, номер порта и уровень журналирования (0...2), вы можете
        использовать такой вызов <i>Init()</i>:</p>
     <pre>
-    egui.Init("port=4801\nlog=1")
-    </pre>
-    <br>
+    egui.Init("port=4801\nlog=1")</pre>
+
     <p>Символ конца строки используется в качестве разделителя, чтобы было удобнее передать в
        качестве параметра содержимое ini файла:</p>
     <br>
@@ -482,7 +481,8 @@ func fsele_color(p []string) string {
      <tr><td>AddWidget(pWidg *Widget) *Widget </td><td>Добавляет виджет </td>
      <tr><td>SetText(sText string) </td><td>Устанавливает текст виджета </td>
      <tr><td>SetImage(sImage string) </td><td>Для виджета &quot;bitmap&quot; - изменить картинку, в качестве параметра передается путь и имя файла изображения </td>
-     <tr><td>SetParam(sParam string, xParam interface{}) </td><td> </td>
+     <tr><td>SetParam(sParam string, xParam interface{}) </td><td>Устанавливает значение
+       <i>xParam</i> атрибута <i>sParam</i>. Атрибуты <i>sParam</i> - это переменные объекта соответствующего виджета HwGUI.</td>
      <tr><td>GetText() string </td><td>Возвращает текст виджета </td>
      <tr><td>SetColor(tColor int32, bColor int32) </td><td>Устанавливает цвет текста и фона виджета </td>
      <tr><td>SetFont(pFont *Font) </td><td>Устанавливает шрифт виджета </td>
@@ -733,7 +733,14 @@ func fprint(p []string) string {
      <p>Если что-то осталось неясным, какой-то информации не хватает, смотрите примеры в external/testdata,
         раздел по External в туториале <a target="_blank" href="https://github.com/alkresin/etutor">etutor</a>.
         Еще один источник информации - <a target="_blank" href="https://groups.google.com/d/forum/guiserver">группа Guiserver на GoogleGroups</a>. </p>
-     <p></p>
+     <p>В некоторых случаях вам придется обратиться к документации
+        <a target="_blank" href="http://www.kresin.ru/harbour.html">Harbour</a> и
+        <a target="_blank" href="http://www.kresin.ru/hwgui.html">HwGUI</a>. Так, чтобы установить в
+        качестве callback функции Harbour код, выполняемый на GuiServer, или выполнить код на GuiServer
+        с помошью <i>EvalProc()</i>, <i>EvalFunc()</i>, желательно чуть-чуть знать и понимать язык Harbour и HwGUI. Точно
+        так же, чтобы непосредственно установить какой-либо атрибут виджета с помощью <i>SetParam()</i> или <i>BrwSetColumnEx()</i>, надо
+        знать , что это за атрибуты (подсказка: это <a target="_blank" href="http://www.kresin.ru/hwgdoc_classes.html">переменные классов HwGUI</a>).</p>
+        <p>Фактически, Harbour - встроенный скриптовый язык вашего приложения. Наличие такого инструмента может оказаться очень полезным.</p>
      <br>
 
      <p><strong class="title"><a name="Pril" href="#_Pril"> A.  Приложения</a></strong></p>
