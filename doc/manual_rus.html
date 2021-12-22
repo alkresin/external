@@ -45,6 +45,7 @@
       <li><a name="_Menu" href="#Menu">8.  Создание меню</a>
       <li><a name="_Func" href="#Func">9.  Функции</a>
       <li><a name="_Print" href="#Print">10.  Печать</a>
+      <li><a name="_Conc" href="#Conc">11.  Заключение</a>
       <li><a name="_Pril" href="#Pril">A.  Приложения</a>
       <ul>
         <li><a name="_Pril1" href="#Pril1">Anchor</a>
@@ -69,6 +70,7 @@
     <br>
     <p><strong class="title"><a name="Hello" href="#_Hello"> 2.  Hello, World</a></strong></p>
     <p>Начнем, по традиции, с Hello, World. Вот пример простейшей программы, создающей окно с этой надписью:</p>
+    <br>
     <pre class="brush: go;">
 package main
 
@@ -88,6 +90,7 @@ func main() {
     pWindow.Activate()
     egui.Exit()
 }</pre>
+    <br>
     <p>Функция <i>Init()</i> запускает GuiServer и присоединяется к нему. <i>InitMainWindow()</i> создает
        главное окно приложения с заданными параметрами. Метод AddWidget() — добавляет виджет типа label.
        <i>Activate()</i> — выводит окно на экран и переводит программу в режим ожидания.<p>
@@ -98,6 +101,7 @@ func main() {
     <p>Как я уже говорил, первое, что следует сделать - это запустить GuiServer и присоединиться к нему.
        Это делает функция <i>Init(sOpt string)</i>, которой передается строка параметров, разделенных символом
        конца строки ( &quot;\n&quot; ). Вот они (приведены значения по умолчанию):</p>
+    <br>
     <pre>
     guiserver=guiserver.exe
     address=127.0.0.1
@@ -108,8 +112,10 @@ func main() {
     <pre>
     egui.Init("port=4801\nlog=1")
     </pre>
+    <br>
     <p>Символ конца строки используется в качестве разделителя, чтобы было удобнее передать в
        качестве параметра содержимое ini файла:</p>
+    <br>
     <pre class="brush: go;">
     var sInit string
     b, err := ioutil.ReadFile("test.ini")
@@ -123,6 +129,7 @@ func main() {
         return
     }
     // ...</pre>
+    <br>
     <p>Функция <i>Init()</i> возвращает 0 в случае успешного выполнения, 1 - если соединиться не удалось,
        и 2 - если протоколы связи вашей версии External и GuiServer отличаются.</p>
     <br>
@@ -133,6 +140,7 @@ func main() {
        вызова функции <i>InitMainWindow(pWindow)</i>, которой в качестве единственного параметра передается
        указатель на предварительно созданную структуру <i>Widget</i>, описывающую окно. Вот объявление
        этой структуры:</p>
+    <br>
     <pre class="brush: go;">
    type Widget struct {
       Parent   *Widget
@@ -152,6 +160,7 @@ func main() {
       AProps   map[string]string
       aWidgets []*Widget
    }</pre>
+   <br>
     <p>Структура <i>Widget</i> используется для создания окон, диалогов и виджетов, конкретный тип
        объекта определяется полем <i>Type</i>; для главного окна это &quot;main&quot;, для
        диалога - &quot;dialog&quot;, для, например, кнопки, - &quot;button&quot;. К описанию
@@ -266,11 +275,13 @@ func main() {
      <p>Поскольку <i>AProps</i> имеет тип map[string]string, мы можем значения всех атрибутов указывать только
         как строки. Поэтому числа берем в кавычки, логические значения указываем как &quot;t&quot; и
         &quot;f&quot;, для массивов строк лучше всего использовать функцию <i>ToString(xParam ...interface{})</i>, например:</p>
+     <br>
      <pre>
    AProps: map[string]string{"AItems": egui.ToString("first", "second", "third")}}
    AProps: map[string]string{"Transpa": "t"}}
    AProps: map[string]string{"HStyle": "st2", "BtnClose": "true", "Xt": "60"}}
      </pre>
+     <br>
 
      <p>Далее - список атрибутов с комментариями (в скобках - значения по умолчанию):</p>
      <table class="tabl1">
@@ -314,6 +325,7 @@ func main() {
 
      <p><strong class="title"><a name="Font" href="#_Font"> 5.  Font, Style</a></strong></p>
      <p>Для работы со шрифтами в External предусмотрена структура <i>Font</i>:</p>
+     <br>
      <pre class="brush: go;">
 type Font struct {
 	Family    string     // наименование шрифта (Arial, Serif, ...)
@@ -325,12 +337,14 @@ type Font struct {
 	Strikeout bool       // перечеркнутый
 	Charset   int16      // 204 - русский
 }</pre>
+     <br>
      <p>Поля этой структуры, думаю, в комментариях не нуждаются - это стандартные атрибуты шрифта. Поле <i>Name</i>, как
      и в структуре <i>Widget</i>, используется для идентификации шрифта в вашей программе: вы сможете найти
      ранее созданный экземпляр шрифта (указатель на соответствующую структуру <i>Font</i>) с помощью функции <i>GetFont(sName string)</i>.</p>
      <p>Для создания шрифта используется функция <i>CreateFont(pFont *Font)</i>. Она возвращает указатель на
      структуру <i>Font</i> (ту же, что передается ей в качестве параметра), который можно затем использовать при
      объявлении структуры <i>Widget</i> с полем <i>Font</i>. Для изменения шрифта виджета - метод структуры <i>Widget SetFont(pFont *Font)</i>:</p>
+     <br>
      <pre class="brush: go;">
     // Создаем шрифт с идентификатором "flbl"
     egui.CreateFont(&egui.Font{Name: "flbl", Family: "Georgia", Height: 16})
@@ -344,9 +358,11 @@ type Font struct {
 	// Изменяем шрифт метки на созданный ранее с идентификатором "flbl"
 	pLbl1.SetFont( egui.GetFont("flbl") )
      </pre>
+     <br>
      <p><i>Style</i> (не путать с <i>Winstyle</i>) - это структура, описывающая вневний вид виджета. Она может
      использоваться для нестандартных виджетов, которые рисуются самим HwGUI: &quot;panel&quot;,
      &quot;paneltop&quot;, &quot;panelbot&quot;, &quot;panelhead&quot;, &quot;ownbtn&quot;.</p>
+     <br>
      <pre class="brush: go;">
 type Style struct {
 	Name      string    // идентификатор стиля
@@ -359,6 +375,7 @@ type Style struct {
 	BorderClr int32     // цвет рамки
 	Bitmap    string    // картинка для заполнения фона
 }</pre>
+     <br>
      <p> Главным образом <i>Style</i> используется для создания градиентного фона виджета. Поле
      <i>Colors</i> - массив цветов градиента, Orient - направление <a href="#Pril4"> подробнее см. дальше</a>.</p>
      <p>Поле <i>Name</i>, как и в структурах <i>Widget</i> и <i>Font</i>, используется для идентификации
@@ -394,6 +411,7 @@ type Style struct {
      Кроме функции и ее идентификатора может передаваться произвольное количество строковых
      параметров - они будут потом переданы обратно callback - функции.</p>
      <p>Вот как это может выглядеть в программе:</p>
+     <br>
      <pre class="brush: go;">
      ...
      // Передается ссылка на объявленную в программе функцию fu1
@@ -407,6 +425,7 @@ type Style struct {
      // Callback функция fsett1, которая будет вызвана при нажатии pButton
      pButton.SetCallBackProc("onclick", fsett1, "fsett1", "first parameter")
      </pre>
+     <br>
      <p>При вызове callback функции из меню первым элементом в передаваемом обратно параметре-массиве
      всегда будет строка &quot;menu&quot;, при вызове от какого-либо виджета - идентификатор
      этого виджета. Т.е., в приведенном выше примере в функции <i>fu1(p []string)</i> массив <i>p</i> будет
@@ -416,6 +435,7 @@ type Style struct {
      callback функции программный код, написанный на Harbour. Для этого вместо функции указываете nil, а
      вместо ее идентификатора - строку кода. В этом случае событие обрабатывается на GuiServer и
      в ваше приложение ничего не передаётся:</p>
+     <br>
      <pre class="brush: go;">
      ...
      // Вызов Harbour/HwGUI функции hwg_EndWindow(), которая закрывает главное окно
@@ -424,10 +444,12 @@ type Style struct {
      // В 1-ую часть нижней панели (panelbot) главного окна пишется текущая дата
      pButton.SetCallBackProc("onclick", nil, "hwg_WriteStatus(HWindow():GetMain(),1,Dtoc(Date()),.T.)")
      </pre>
+     <br>
      <p>В External есть набор функций, вызывающих стандартные диалоги - информационные, выбора файла и
      пр. При вызове этих функций можно, а в тех случаях, когда вам требуется результат от диалога, необходимо
      указать функцию - получатель сообщения о закрытии диалога, т.е., callback функцию. Возьмем, например, диалог
      выбора цвета:</p>
+     <br>
      <pre class="brush: go;">
 func fsele_color(p []string) string {
     // Функция первоначально вызывается из главного меню
@@ -441,6 +463,7 @@ func fsele_color(p []string) string {
 	}
 	return ""
 }</pre>
+     <br>
      <p>Здесь функции <i>SelectColor(iColor int32, fu func([]string) string, sFunc string, sName string)</i> переданы те же параметры <i>fu</i> и <i>sCode</i> (fsele_color, &quot;fsele_color&quot;), определяющие callback
         функцию и параметр <i>sName</i> (&quot;mm1&quot;) - метка, идентифицирующая источник вызова callback
         функции - он передается ей первым в массиве строк - параметров. Вторым в данном случае передается значение
@@ -481,6 +504,7 @@ func fsele_color(p []string) string {
         <i>AddMenuItem(sName string, id int, fu func([]string) string, sCode string, params ...string)</i>,
         <i>AddMenuSeparator()</i>. Фигурные скобки после <i>Menu()</i> необязательны, они добавлены здесь для
         большей выразительности.</p>
+     <br>
      <pre class="brush: go;">
 package main
 
@@ -558,10 +582,10 @@ func fu1([]string) string {
       <tr><td>CreateStyle(pStyle *Style) *Style </td><td>Создает стиль на основе структуры Style </td>
       <tr><td>CreateHighliter(sName string, sCommands string,<br>&nbsp;&nbsp;&nbsp;sFuncs string,
                  sSingleLineComm string,<br>&nbsp;&nbsp;&nbsp;sMultiLineComm string, bCase bool) *Highlight </td>
-         <td> </td>
-      <tr><td>SetHighliter(pEdit *Widget, p *Highlight) </td><td> </td>
+         <td>Создает <i>Highlight</i> структуру для подсветки синтаксиса в виджете редактирования <i>cedit</i>. </td>
+      <tr><td>SetHighliter(pEdit *Widget, p *Highlight) </td><td>Устанавливает структуру <i>Highlight</i> в виджет типа <i>cedit</i>. </td>
       <tr><td>SetHiliOpt(pEdit *Widget, iGroup int,<br>&nbsp;&nbsp;&nbsp;pFont *Font, tColor int32, bColor int32) </td>
-         <td> </td>
+         <td>Устанавливает опции подсветки синтаксиса для виджета типа <i>cedit</i>. </td>
       <tr><td>InitPrinter(pPrinter *Printer, sFunc string,<br>&nbsp;&nbsp;&nbsp;fu func([]string) string, sMark string) *Printer </td>
          <td>Инициализирует принтер - <a href="#Print">подробнее см. здесь</a>. </td>
       <tr><td>EvalProc(s string) </td><td>Передает на GuiServer для выполнения программный код на языке Harbour</td>
@@ -592,22 +616,26 @@ func fu1([]string) string {
          <td>Вызывает стандартный диалог выбора шрифта. Параметры те же, что и в MsgInfo. Возвращает параметры выбранного шрифта через callback функцию.</td>
       <tr><td>InsertNode(pTree *Widget,<br>&nbsp;&nbsp;&nbsp;sNodeName string, sNodeNew string,<br>&nbsp;&nbsp;&nbsp;sTitle string,
                 sNodeNext string,<br>&nbsp;&nbsp;&nbsp;aImages []string, fu func([]string) string, sCode string) </td>
-         <td> </td>
+         <td>Добавляет новый элемент в дерево - pTree. </td>
       <tr><td>SelectNode(pTree *Widget, sNodeName string) </td><td>Делает текущим узел дерева, указывая его по имени
               <i>sNodeName</i>, заданному в <i>InsertNode()</i>.</td>
       <tr><td>PBarStep(pPBar *Widget) </td><td>Передает прогресс-бару команду сделать следующий шаг. </td>
       <tr><td>PBarSet(pPBar *Widget, iPos int) { </td><td>Устанавливает прогресс-бар в положение <i>iPos</i>.</td>
-      <tr><td>InitTray(sIcon string,<br>&nbsp;&nbsp;&nbsp;sMenuName string, sTooltip string) </td><td> </td>
-      <tr><td>ModifyTrayIcon(sIcon string) </td><td> </td>
-      <tr><td>RadioEnd(p *Widget, iSel int) </td><td> </td>
-      <tr><td>TabPage(pTab *Widget, sCaption string) </td><td> </td>
-      <tr><td>TabPageEnd(pTab *Widget) </td><td> </td>
-      <tr><td>BrwSetArray(p *Widget,<br>&nbsp;&nbsp;&nbsp;arr *[][]string) </td><td> </td>
-      <tr><td>BrwGetArray(p *Widget) [][]string </td><td> </td>
-      <tr><td>BrwSetColumn(p *Widget, ic int,<br>&nbsp;&nbsp;&nbsp;sHead string, iAlignHead int,
-              <br>&nbsp;&nbsp;&nbsp;iAlignData int, bEditable bool, iLength int) </td><td> </td>
-      <tr><td>BrwSetColumnEx(p *Widget, ic int,<br>&nbsp;&nbsp;&nbsp;sParam string, xParam interface{}) </td><td> </td>
-      <tr><td>BrwDelColumn(p *Widget, ic int) </td><td> </td>
+      <tr><td>InitTray(sIcon string,<br>&nbsp;&nbsp;&nbsp;sMenuName string, sTooltip string) </td>
+        <td>Устанавливает опции размещения иконки главного окна в tray (только для Windows). </td>
+      <tr><td>ModifyTrayIcon(sIcon string) </td><td>Изменяет иконку в tray. </td>
+      <tr><td>RadioEnd(p *Widget, iSel int) </td><td>Завершает объявление радиогруппы. </td>
+      <tr><td>TabPage(pTab *Widget, sCaption string) </td><td>Начинает объявление страницы виджета tab </td>
+      <tr><td>TabPageEnd(pTab *Widget) </td><td>Завершает объявление страницы виджета tab </td>
+      <tr><td>BrwSetArray(pBrowse *Widget,<br>&nbsp;&nbsp;&nbsp;arr *[][]string) </td><td>Устанавливает массив для отображения в виджет browse</td>
+      <tr><td>BrwGetArray(pBrowse*Widget) [][]string </td><td>Получает отредактированный массив от обратно от виджета browse. </td>
+      <tr><td>BrwSetColumn(pBrowse *Widget, ic int,<br>&nbsp;&nbsp;&nbsp;sHead string, iAlignHead int,
+              <br>&nbsp;&nbsp;&nbsp;iAlignData int, bEditable bool, iLength int) </td><td>Устанавливает опции колонки номер <i>ic</i> виджета browse:<br>
+         <i>iAlignHead</i> - выравнивание заголовка, <i>iAlignData</i> - выравнивание ячейки,
+         <i>bEditable</i> - возможность редактирования, <i>iLength</i> - длина.</td>
+      <tr><td>BrwSetColumnEx(pBrowse *Widget, ic int,<br>&nbsp;&nbsp;&nbsp;sParam string, xParam interface{}) </td>
+        <td>Устанавливает дополнительные опции колонки номер <i>ic</i> виджета browse; <i>sParam</i> - название опции, <i>xParam</i> - значение. </td>
+      <tr><td>BrwDelColumn(pBrowse *Widget, ic int) </td><td>Удаляет колонку номер <i>ic</i> виджета browse </td>
       <tr><td>SetVar(sVarName string, sValue string) </td><td>Создает на GuiServer Public переменную <i>sVarName</i> (если ее нет) и устанавливает ее значение <i>sValue</i></td>
       <tr><td>GetVar(sVarName string) string </td><td>Возвращает с GuiServer значение переменной <i>sVarName</i></td>
       <tr><td>SetImagePath(sValue string) </td><td>Передает на GuiServer путь по умолчанию для файлов изображений</td>
@@ -637,6 +665,7 @@ func fu1([]string) string {
      <p><strong class="title"><a name="Print" href="#_Print"> 10.  Печать</a></strong></p>
      <p>Первое, что надо сделать при при создании печатного документа - это создать структуру <i>Printer</i>, которая
         имеет следующий вид:</p>
+     <br>
      <pre class="brush: go;">
 type Printer struct {
 	Name       string      // Идентификатор принтера
@@ -645,6 +674,7 @@ type Printer struct {
 	IFormType  int         // Тип бумаги, <a href="#Pril3">см. в Приложении</a>, по умолчанию - DMPAPER_A4
 	BLandscape bool        // True, если нужна альбомная ориентация
 }</pre>
+     <br>
      <p>Здесь <i>Name</i> - идентификатор принтера, поле, аналогичное таким же идентификаторам в <i>Widget</i>, <i>Font</i>, <i>Style</i>. <i>SPrinter</i> - имя
         принтера в системе. Если <i>SPrinter</i> не указан, будет использоваться принтер по умолчанию; если
         его значение - &quot;...&quot;, то появится стандартное диалоговое окно для выбора принтера. </p>
@@ -672,6 +702,7 @@ type Printer struct {
      </table>
      <p>Все координаты указаны в миллиметрах.</p>
      <p>Вот пример печати одной простой страницы:</p>
+     <br>
      <pre class="brush: go;">
 func fprint(p []string) string {
     // Функция первоначально вызывается из главного меню
@@ -696,6 +727,13 @@ func fprint(p []string) string {
 	}
 	return ""
 }</pre>
+     <br>
+
+     <p><strong class="title"><a name="Conc" href="#_Conc"> 11.  Заключение</a></strong></p>
+     <p>Если что-то осталось неясным, какой-то информации не хватает, смотрите примеры в external/testdata,
+        раздел по External в туториале <a target="_blank" href="https://github.com/alkresin/etutor">etutor</a>.
+        Еще один источник информации - <a target="_blank" href="https://groups.google.com/d/forum/guiserver">группа Guiserver на GoogleGroups</a>. </p>
+     <p></p>
      <br>
 
      <p><strong class="title"><a name="Pril" href="#_Pril"> A.  Приложения</a></strong></p>
