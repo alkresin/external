@@ -24,12 +24,23 @@ const (
 	Version  = "1.1"
 )
 
+type ConnEx struct {
+	iType int8
+	iPort int
+	sIp   string
+	conn  net.Conn
+	f     os.File
+}
+
 var sLogName = "egui.log"
 var bEndProg = false
 var bWait = false
 
 var connOut, connIn net.Conn
 var bConnExist = false
+
+var pConnOut, pConnIn *ConnEx
+
 var bPacket = false
 var sPacketBuf string
 
@@ -94,6 +105,9 @@ func Init(sOpt string) int {
 		cmd.Start()
 	}
 	time.Sleep(100 * time.Millisecond)
+
+	pConnOut = &ConnEx{ iType: 1, iPort: iPort, sIp: sIp }
+	pConnIn = &ConnEx{ iType: 1, iPort: iPort+1, sIp: sIp }
 
 	connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
 	if err != nil {
@@ -415,4 +429,39 @@ func Wait() {
 		time.Sleep(20 * time.Millisecond)
 	}
 	bWait = false
+}
+
+func (p *ConnEx) Connect() string {
+
+	var s string = ""
+	var err error
+
+	if p.iType == 1 {
+		p.conn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", p.sIp, p.iPort))
+		if err != nil {
+			time.Sleep(1000 * time.Millisecond)
+			p.conn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", p.sIp, p.iPort))
+			if err != nil {
+				time.Sleep(3000 * time.Millisecond)
+				p.conn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", p.sIp, p.iPort))
+				WriteLog(fmt.Sprintln(p.sIp, p.iPort))
+				WriteLog(fmt.Sprintln(err))
+			}
+		}
+	}
+
+	return s
+}
+
+func (p *ConnEx) Close() {
+}
+
+func (p *ConnEx) Read(pBuff *[]byte) (int, error) {
+
+   return 0, nil
+}
+
+func (p *ConnEx) Write(pBuff []byte) (int, error) {
+
+   return 0, nil
 }
