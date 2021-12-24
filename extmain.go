@@ -28,6 +28,7 @@ type ConnEx struct {
 	iType int8
 	iPort int
 	sIp   string
+	sFileName string
 	conn  net.Conn
 	f     os.File
 }
@@ -36,7 +37,7 @@ var sLogName = "egui.log"
 var bEndProg = false
 var bWait = false
 
-var connOut, connIn net.Conn
+//var connOut, connIn net.Conn
 var bConnExist = false
 
 var pConnOut, pConnIn *ConnEx
@@ -62,9 +63,11 @@ func Init(sOpt string) int {
 
 	var err error
 
+	iConnType := 1
 	iPort := 3101
 	sServer := "guiserver"
 	sIp := "127.0.0.1"
+	sFileName := ""
 	sLog := ""
 	if sOpt != "" {
 		var arr []string
@@ -88,6 +91,8 @@ func Init(sOpt string) int {
 				sIp = strings.TrimSpace(s[8:])
 			} else if len(s) > 5 && s[:4] == "port" {
 				iPort, _ = strconv.Atoi(strings.TrimSpace(s[5:]))
+			} else if len(s) > 5 && s[:4] == "type" {
+				iConnType, _ = strconv.Atoi(strings.TrimSpace(s[5:]))
 			} else if len(s) > 2 && s[:3] == "log" {
 				if s[4:5] == "1" {
 					sLog = "-log1"
@@ -106,10 +111,13 @@ func Init(sOpt string) int {
 	}
 	time.Sleep(100 * time.Millisecond)
 
-	pConnOut = &ConnEx{ iType: 1, iPort: iPort, sIp: sIp }
-	pConnIn = &ConnEx{ iType: 1, iPort: iPort+1, sIp: sIp }
+	if iConnType == 2 {
+		sFileName = os.TempDir() + string(os.PathSeparator) + "gs"
+	}
+	pConnOut = &ConnEx{ iType: int8(iConnType), iPort: iPort, sIp: sIp, sFileName: sFileName+".gs1" }
+	pConnIn = &ConnEx{ iType: int8(iConnType), iPort: iPort+1, sIp: sIp, sFileName: sFileName+".gs1" }
 
-	connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
+	/* connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
 	if err != nil {
 		time.Sleep(1000 * time.Millisecond)
 		connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
@@ -120,37 +128,53 @@ func Init(sOpt string) int {
 			WriteLog(fmt.Sprintln(err))
 			return 1
 		}
+	} */
+	if !pConnOut.Connect() {
+		return 1
 	}
-	iBufLen, err := connOut.Read(buf)
+
+	//iBufLen, err := connOut.Read(buf)
+	iBufLen, err := pConnOut.Read(&buf)
+
 	if err != nil {
 		WriteLog(fmt.Sprintln(err))
-		connOut.Close()
+		//connOut.Close()
+		pConnOut.Close()
 		return 1
 	}
 	sVer := string(buf[:iBufLen-1])
 	sVer = sVer[(strings.Index(sVer, "/") + 1):]
 
-	connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
+	/* connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
 	if err != nil {
 		time.Sleep(1000 * time.Millisecond)
-		connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
+		connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
 		if err != nil {
 			WriteLog(fmt.Sprintln(sServer, sIp, iPort+1))
 			WriteLog(fmt.Sprintln(err))
 			return 1
 		}
+	} */
+	if !pConnIn.Connect() {
+		return 1
 	}
-	_, err = connIn.Read(buf)
+
+	//_, err = connIn.Read(buf)
+	_, err = pConnIn.Read(&buf)
+
 	if err != nil {
 		WriteLog(fmt.Sprintln(err))
-		connIn.Close()
+		//connIn.Close()
+		pConnIn.Close()
 		return 1
 	}
 
 	if sVer != VerProto {
 		WriteLog("\r\nProtocol version mismatched. Need " + VerProto + ", received " + sVer)
-		connIn.Close()
-		connOut.Close()
+		//connIn.Close()
+		//connOut.Close()
+		pConnOut.Close()
+		pConnIn.Close()
 		return 2
 	}
 
@@ -165,7 +189,8 @@ func Init(sOpt string) int {
 // Exit closes the connection to Guiserver.
 func Exit() {
 	if bConnExist {
-		connOut.Close()
+		//connOut.Close()
+		pConnOut.Close()
 	}
 }
 
@@ -178,8 +203,8 @@ func listen(iPort int) {
 	for {
 
 		bErr = false
-		//length, err := connIn.Read(buffer)
-		length, err := read(connIn, &buffer)
+		//length, err := read(connIn, &buffer)
+		length, err := pConnIn.Read(&buffer)
 
 		if err != nil {
 			//WriteLog("Read error\r\n")
@@ -203,7 +228,8 @@ func listen(iPort int) {
 		if !bErr && len(arr) > 0 {
 			switch arr[0] {
 			case "runproc":
-				sendResponse(connIn, "[\"Ok\"]")
+				//sendResponse(connIn, "[\"Ok\"]")
+				pConnIn.Write( "[\"Ok\"]" )
 				if len(arr) > 1 {
 					if bWait {
 						tmp := make([]string, len(arr))
@@ -231,16 +257,20 @@ func listen(iPort int) {
 						//WriteLog(fmt.Sprintf("pgo> (%s) len:%d\r\n",arr[2],len(ap) ))
 						s := fnc(ap)
 						b, _ := json.Marshal(s)
-						sendResponse(connIn, string(b))
+						//sendResponse(connIn, string(b))
+						pConnIn.Write(string(b))
 					} else {
-						sendResponse(connIn, "[\"Err\"]")
+						//sendResponse(connIn, "[\"Err\"]")
+						pConnIn.Write("[\"Err\"]")
 					}
 				} else {
 					bErr = true
-					sendResponse(connIn, "[\"Err\"]")
+					//sendResponse(connIn, "[\"Err\"]")
+					pConnIn.Write("[\"Err\"]")
 				}
 			case "exit":
-				sendResponse(connIn, "[\"Ok\"]")
+				//sendResponse(connIn, "[\"Ok\"]")
+				pConnIn.Write("[\"Ok\"]")
 				if len(arr) > 1 {
 					oW := Wnd(arr[1])
 					if oW != nil {
@@ -250,13 +280,16 @@ func listen(iPort int) {
 					bErr = true
 				}
 			case "endapp":
-				sendResponse(connIn, "[\"Goodbye\"]")
+				//sendResponse(connIn, "[\"Goodbye\"]")
+				pConnIn.Write("[\"Goodbye\"]")
 				time.Sleep(100 * time.Millisecond)
 				bEndProg = true
-				connIn.Close()
+				//connIn.Close()
+				pConnIn.Close()
 				return
 			default:
-				sendResponse(connIn, "[\"Error\"]")
+				//sendResponse(connIn, "[\"Error\"]")
+				pConnIn.Write("[\"Error\"]")
 				bErr = true
 			}
 		}
@@ -266,6 +299,7 @@ func listen(iPort int) {
 	}
 }
 
+/*
 func read(conn net.Conn, pBuff *[]byte) (int, error) {
 	*pBuff = (*pBuff)[:0]
 	tmp := make([]byte, 256)
@@ -286,6 +320,7 @@ func read(conn net.Conn, pBuff *[]byte) (int, error) {
 func sendResponse(conn net.Conn, s string) {
 	conn.Write([]byte("+" + s + "\n"))
 }
+*/
 
 func sendout(s string) bool {
 
@@ -299,14 +334,16 @@ func sendout(s string) bool {
 			return false
 		}
 
-		_, err = connOut.Write([]byte("+" + s + "\n"))
+		//_, err = connOut.Write([]byte("+" + s + "\n"))
+		_, err = pConnOut.Write("+" + s + "\n")
 		if err != nil {
 			fmt.Println(err)
 			return false
 		}
 
 		buf := make([]byte, 128)
-		_, err = connOut.Read(buf)
+		//_, err = connOut.Read(buf)
+		_, err = pConnOut.Read(&buf)
 		if err != nil {
 			fmt.Println(err)
 			return false
@@ -325,13 +362,15 @@ func sendoutAndReturn(s string) []byte {
 		return []byte("")
 	}
 
-	_, err = connOut.Write([]byte("+" + s + "\n"))
+	//_, err = connOut.Write([]byte("+" + s + "\n"))
+	_, err = pConnOut.Write("+" + s + "\n")
 	if err != nil {
 		fmt.Println(err)
 		return []byte("")
 	}
 	//length, err = connOut.Read(buf)
-	length, err := read(connOut, &buf)
+	//length, err := read(connOut, &buf)
+	length, err := pConnOut.Read(&buf)
 	if err != nil {
 		fmt.Println(err)
 		return []byte("")
@@ -431,9 +470,8 @@ func Wait() {
 	bWait = false
 }
 
-func (p *ConnEx) Connect() string {
+func (p *ConnEx) Connect() bool {
 
-	var s string = ""
 	var err error
 
 	if p.iType == 1 {
@@ -446,22 +484,55 @@ func (p *ConnEx) Connect() string {
 				p.conn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", p.sIp, p.iPort))
 				WriteLog(fmt.Sprintln(p.sIp, p.iPort))
 				WriteLog(fmt.Sprintln(err))
+				return false
 			}
 		}
+	} else if p.iType == 2 {
+		os.Remove(p.sFileName)
 	}
 
-	return s
+	return true
 }
 
 func (p *ConnEx) Close() {
+
+	if p.iType == 1 {
+		p.conn.Close()
+	} else if p.iType == 2 {
+	}
 }
 
 func (p *ConnEx) Read(pBuff *[]byte) (int, error) {
 
+	if p.iType == 1 {
+		*pBuff = (*pBuff)[:0]
+		tmp := make([]byte, 256)
+		for {
+			length, err := p.conn.Read(tmp)
+			if err != nil {
+				WriteLog("Read error\r\n")
+				return 0, err
+			}
+			*pBuff = append(*pBuff, tmp[:length]...)
+			if tmp[length-1] == '\n' {
+				break
+			}
+		}
+		return len(*pBuff), nil
+	} else if p.iType == 2 {
+	}
+
    return 0, nil
 }
 
-func (p *ConnEx) Write(pBuff []byte) (int, error) {
+func (p *ConnEx) Write( s string ) (int, error) {
 
-   return 0, nil
+	var err error
+
+	if p.iType == 1 {
+		_, err = p.conn.Write( []byte(s) )
+	} else if p.iType == 2 {
+	}
+
+	return 0, err
 }
