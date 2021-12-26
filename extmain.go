@@ -482,13 +482,29 @@ func (p *ConnEx) Connect() bool {
 			if err != nil {
 				time.Sleep(3000 * time.Millisecond)
 				p.conn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", p.sIp, p.iPort))
-				WriteLog(fmt.Sprintln(p.sIp, p.iPort))
-				WriteLog(fmt.Sprintln(err))
-				return false
+				if err != nil {
+					WriteLog(fmt.Sprintln(p.sIp, p.iPort))
+					WriteLog(fmt.Sprintln(err))
+					return false
+				}
 			}
 		}
 	} else if p.iType == 2 {
 		os.Remove(p.sFileName)
+		p.f,err = os.OpenFile(p.sFileName, os.O_RDWR, 0644)
+		if err != nil {
+			time.Sleep(1000 * time.Millisecond)
+			p.f,err = os.OpenFile(p.sFileName, os.O_RDWR, 0644)
+			if err != nil {
+				time.Sleep(3000 * time.Millisecond)
+				p.f,err = os.OpenFile(p.sFileName, os.O_RDWR, 0644)
+				if err != nil {
+					WriteLog(p.sFileName)
+					WriteLog(fmt.Sprintln(err))
+					return false
+				}
+			}
+		}
 	}
 
 	return true
@@ -499,6 +515,7 @@ func (p *ConnEx) Close() {
 	if p.iType == 1 {
 		p.conn.Close()
 	} else if p.iType == 2 {
+		p.f.Close()
 	}
 }
 
