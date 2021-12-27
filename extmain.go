@@ -30,7 +30,7 @@ type ConnEx struct {
 	sIp   string
 	sFileName string
 	conn  net.Conn
-	f     os.File
+	f    *os.File
 }
 
 var sLogName = "egui.log"
@@ -117,80 +117,53 @@ func Init(sOpt string) int {
 	pConnOut = &ConnEx{ iType: int8(iConnType), iPort: iPort, sIp: sIp, sFileName: sFileName+".gs1" }
 	pConnIn = &ConnEx{ iType: int8(iConnType), iPort: iPort+1, sIp: sIp, sFileName: sFileName+".gs1" }
 
-	/* connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
-	if err != nil {
-		time.Sleep(1000 * time.Millisecond)
-		connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
-		if err != nil {
-			time.Sleep(3000 * time.Millisecond)
-			connOut, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort))
-			WriteLog(fmt.Sprintln(sServer, sIp, iPort))
-			WriteLog(fmt.Sprintln(err))
-			return 1
-		}
-	} */
 	if !pConnOut.Connect() {
 		return 1
 	}
 
-	//iBufLen, err := connOut.Read(buf)
+	bConnExist = true
+	
 	iBufLen, err := pConnOut.Read(&buf)
 
 	if err != nil {
 		WriteLog(fmt.Sprintln(err))
-		//connOut.Close()
 		pConnOut.Close()
+		bConnExist = false
 		return 1
 	}
 	sVer := string(buf[:iBufLen-1])
 	sVer = sVer[(strings.Index(sVer, "/") + 1):]
 
-	/* connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
-	if err != nil {
-		time.Sleep(1000 * time.Millisecond)
-		connIn, err = net.Dial("tcp4", fmt.Sprintf("%s:%d", sIp, iPort+1))
-		if err != nil {
-			WriteLog(fmt.Sprintln(sServer, sIp, iPort+1))
-			WriteLog(fmt.Sprintln(err))
-			return 1
-		}
-	} */
 	if !pConnIn.Connect() {
 		return 1
 	}
 
-	//_, err = connIn.Read(buf)
 	_, err = pConnIn.Read(&buf)
 
 	if err != nil {
 		WriteLog(fmt.Sprintln(err))
-		//connIn.Close()
-		pConnIn.Close()
+		Exit()
 		return 1
 	}
 
 	if sVer != VerProto {
 		WriteLog("\r\nProtocol version mismatched. Need " + VerProto + ", received " + sVer)
-		//connIn.Close()
-		//connOut.Close()
-		pConnOut.Close()
-		pConnIn.Close()
+		Exit()
 		return 2
 	}
 
-	bConnExist = true
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
 
 	return 0
-
 }
 
 // Exit closes the connection to Guiserver.
 func Exit() {
 	if bConnExist {
-		//connOut.Close()
+	    bConnExist = false
 		pConnOut.Close()
+		pConnIn.Close()
 	}
 }
 
@@ -285,7 +258,8 @@ func listen(iPort int) {
 				time.Sleep(100 * time.Millisecond)
 				bEndProg = true
 				//connIn.Close()
-				pConnIn.Close()
+				//pConnIn.Close()
+				Exit()
 				return
 			default:
 				//sendResponse(connIn, "[\"Error\"]")
@@ -549,6 +523,8 @@ func (p *ConnEx) Write( s string ) (int, error) {
 	if p.iType == 1 {
 		_, err = p.conn.Write( []byte(s) )
 	} else if p.iType == 2 {
+		p.f.WriteAt( []byte(s), 1 )
+		p.f.WriteAt( []byte{1}, 0 )
 	}
 
 	return 0, err
