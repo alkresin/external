@@ -106,7 +106,7 @@ func Init(sOpt string) int {
 	buf := make([]byte, 128)
 
 	if sServer != "" {
-		cmd := exec.Command(sServer, fmt.Sprintf("-p%d", iPort), sLog)
+		cmd := exec.Command(sServer, fmt.Sprintf("-p%d", iPort), fmt.Sprintf("-t%d", iConnType), sLog)
 		cmd.Start()
 	}
 	time.Sleep(100 * time.Millisecond)
@@ -495,9 +495,9 @@ func (p *ConnEx) Close() {
 
 func (p *ConnEx) Read(pBuff *[]byte) (int, error) {
 
+	*pBuff = (*pBuff)[:0]
+	tmp := make([]byte, 256)
 	if p.iType == 1 {
-		*pBuff = (*pBuff)[:0]
-		tmp := make([]byte, 256)
 		for {
 			length, err := p.conn.Read(tmp)
 			if err != nil {
@@ -511,6 +511,44 @@ func (p *ConnEx) Read(pBuff *[]byte) (int, error) {
 		}
 		return len(*pBuff), nil
 	} else if p.iType == 2 {
+		b1 := make([]byte, 1)
+		for bConnExist {
+			p.f.Seek(0,0)
+			_, err := p.f.Read(b1)
+			if err != nil {
+				WriteLog("Read error\r\n")
+				return 0, err
+			}
+			if b1[0] == 2 {
+				for ;; {
+					n, err := p.f.Read(tmp)
+					if err != nil {
+						WriteLog("Read error\r\n")
+						return 0, err
+					}
+					iPos := -1
+					for i := 0; i < n; i++ {
+						if tmp[i] == 10 {
+							iPos = i
+							break
+						}
+					}
+					if iPos >= 0 {
+						*pBuff = append(*pBuff, tmp[:iPos]...)
+						break
+					} else if n < len(tmp) {
+						*pBuff = append(*pBuff, tmp[:n]...)
+						break
+					} else {
+						*pBuff = append(*pBuff, tmp...)
+					}
+				}
+				break
+			} else {
+				time.Sleep(2 * time.Millisecond)
+			}
+		}
+		return len(*pBuff), nil
 	}
 
    return 0, nil
