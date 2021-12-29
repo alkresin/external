@@ -22,6 +22,7 @@ import (
 const (
 	VerProto = "1.1"
 	Version  = "1.1"
+	FileRoot = "gs"
 )
 
 type ConnEx struct {
@@ -41,6 +42,8 @@ var bWait = false
 var bConnExist = false
 
 var pConnOut, pConnIn *ConnEx
+var sDir = ""
+var sFileRoot = FileRoot
 
 var bPacket = false
 var sPacketBuf string
@@ -93,6 +96,14 @@ func Init(sOpt string) int {
 				iPort, _ = strconv.Atoi(strings.TrimSpace(s[5:]))
 			} else if len(s) > 5 && s[:4] == "type" {
 				iConnType, _ = strconv.Atoi(strings.TrimSpace(s[5:]))
+			} else if len(s) > 5 && s[:3] == "dir" {
+				sDir = strings.TrimSpace(s[4:])
+			} else if len(s) > 5 && s[:4] == "file" {
+				sFileRoot = strings.TrimSpace(s[5:])
+				if strings.Contains(sFileRoot, "*") {
+					sz := strconv.Itoa(int((time.Now().UnixNano() / 1000000) % 100000))
+					sFileRoot = strings.Replace(sFileRoot, "*", sz, -1)
+				}
 			} else if len(s) > 2 && s[:3] == "log" {
 				if s[4:5] == "1" {
 					sLog = "-log1"
@@ -106,16 +117,24 @@ func Init(sOpt string) int {
 	buf := make([]byte, 128)
 
 	if sServer != "" {
-		cmd := exec.Command(sServer, fmt.Sprintf("-p%d", iPort), fmt.Sprintf("-t%d", iConnType), sLog)
+		var cmd *exec.Cmd
+		if iConnType == 2 && (sDir != "" || sFileRoot != FileRoot) {
+			cmd = exec.Command(sServer, fmt.Sprintf("-p%d", iPort), "-t2", sLog, "-d"+sDir, "-f"+sFileRoot )
+		} else {
+			cmd = exec.Command(sServer, fmt.Sprintf("-p%d", iPort), fmt.Sprintf("-t%d", iConnType), sLog)
+		}
 		cmd.Start()
 	}
 	time.Sleep(100 * time.Millisecond)
 
 	if iConnType == 2 {
-		sFileName = os.TempDir() + string(os.PathSeparator) + "gs"
+		if sDir == "" {
+			sDir = os.TempDir()
+		}
+		sFileName = sDir + string(os.PathSeparator) + sFileRoot
 	}
 	pConnOut = &ConnEx{ iType: int8(iConnType), iPort: iPort, sIp: sIp, sFileName: sFileName+".gs1" }
-	pConnIn = &ConnEx{ iType: int8(iConnType), iPort: iPort+1, sIp: sIp, sFileName: sFileName+".gs1" }
+	pConnIn = &ConnEx{ iType: int8(iConnType), iPort: iPort+1, sIp: sIp, sFileName: sFileName+".gs2" }
 
 	if !pConnOut.Connect() {
 		return 1
@@ -152,6 +171,8 @@ func Init(sOpt string) int {
 		return 2
 	}
 
+	pConnIn.Write( "[\"Ok\"]" )
+	
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
 
@@ -161,7 +182,9 @@ func Init(sOpt string) int {
 // Exit closes the connection to Guiserver.
 func Exit() {
 	if bConnExist {
-	    bConnExist = false
+		bConnExist = false
+		pConnOut.Write("+[\"exit\"]\n")
+		time.Sleep(10 * time.Millisecond)
 		pConnOut.Close()
 		pConnIn.Close()
 	}
@@ -176,7 +199,6 @@ func listen(iPort int) {
 	for {
 
 		bErr = false
-		//length, err := read(connIn, &buffer)
 		length, err := pConnIn.Read(&buffer)
 
 		if err != nil {
@@ -260,6 +282,7 @@ func listen(iPort int) {
 				//connIn.Close()
 				//pConnIn.Close()
 				Exit()
+				//WriteLog("The End")
 				return
 			default:
 				//sendResponse(connIn, "[\"Error\"]")
@@ -534,10 +557,10 @@ func (p *ConnEx) Read(pBuff *[]byte) (int, error) {
 						}
 					}
 					if iPos >= 0 {
-						*pBuff = append(*pBuff, tmp[:iPos]...)
+						*pBuff = append(*pBuff, tmp[:iPos+1]...)
 						break
 					} else if n < len(tmp) {
-						*pBuff = append(*pBuff, tmp[:n]...)
+						*pBuff = append(*pBuff, tmp[:n+1]...)
 						break
 					} else {
 						*pBuff = append(*pBuff, tmp...)
@@ -548,6 +571,7 @@ func (p *ConnEx) Read(pBuff *[]byte) (int, error) {
 				time.Sleep(2 * time.Millisecond)
 			}
 		}
+		//WriteLog(string(*pBuff))
 		return len(*pBuff), nil
 	}
 
