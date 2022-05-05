@@ -109,11 +109,14 @@ func main() {
        конца строки ( &quot;\n&quot; ). Вот они (приведены значения по умолчанию):</p>
     <br>
     <pre>
-    guiserver=guiserver.exe
-    address=127.0.0.1
-    port=3101
-    log=0</pre>
-    <p>Если вам надо изменить, например, номер порта и уровень журналирования (0...2), вы можете
+    guiserver=guiserver.exe   //Имя исполняемого файла GuiServer
+    type=1                    //Способ соединения, 1 - по tcp/ip, 2 - файловое соединение
+    dir=                      //Каталог для файлов (при type=2), по умолчанию - временный каталог
+    file=gs                   //Префикс имен файлов (при type=2)
+    address=127.0.0.1         //Ip компьютера с GuiServer (при type=1)
+    port=3101                 //Порт GuiServer (при type=1)
+    log=0                     //Уровень журналирования (0...2)</pre>
+    <p>Если вам надо изменить, например, номер порта и уровень журналирования, вы можете
        использовать такой вызов <i>Init()</i>:</p>
     <pre>
     egui.Init("port=4801\nlog=1")</pre>
@@ -571,6 +574,7 @@ func fu1([]string) string {
      <p><strong class="title"><a name="Func" href="#_Func"> 9.  Функции</a></strong></p>
      <p></p>
      <table class="tabl2">
+      <tr><td>Init(sOpt string) int </td><td>Инициализация соединения с GuiServer, <a href="#Init">подробнее см. здесь</a> </td>
       <tr><td>InitMainWindow(pWnd *Widget) bool </td><td>Создает главное окно </td>
       <tr><td>InitDialog(pWnd *Widget) bool </td><td>Создает диалоговое окно </td>
       <tr><td>BeginPacket() </td><td>Начало пакетной передачи данных </td>
