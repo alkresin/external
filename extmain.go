@@ -116,6 +116,14 @@ func Init(sOpt string) int {
 
 	buf := make([]byte, 128)
 
+	if iConnType == 2 {
+		if sDir == "" {
+			sDir = os.TempDir()
+		}
+		sFileName = sDir + string(os.PathSeparator) + sFileRoot
+	}
+    os.Remove(sFileName)
+
 	if sServer != "" {
 		var cmd *exec.Cmd
 		if iConnType == 2 && (sDir != "" || sFileRoot != FileRoot) {
@@ -127,12 +135,6 @@ func Init(sOpt string) int {
 	}
 	time.Sleep(100 * time.Millisecond)
 
-	if iConnType == 2 {
-		if sDir == "" {
-			sDir = os.TempDir()
-		}
-		sFileName = sDir + string(os.PathSeparator) + sFileRoot
-	}
 	pConnOut = &ConnEx{ iType: int8(iConnType), iPort: iPort, sIp: sIp, sFileName: sFileName+".gs1" }
 	pConnIn = &ConnEx{ iType: int8(iConnType), iPort: iPort+1, sIp: sIp, sFileName: sFileName+".gs2" }
 
@@ -487,7 +489,7 @@ func (p *ConnEx) Connect() bool {
 			}
 		}
 	} else if p.iType == 2 {
-		os.Remove(p.sFileName)
+		//os.Remove(p.sFileName)
 		p.f,err = os.OpenFile(p.sFileName, os.O_RDWR, 0644)
 		if err != nil {
 			time.Sleep(1000 * time.Millisecond)
