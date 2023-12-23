@@ -121,8 +121,8 @@ func Init(sOpt string) int {
 			sDir = os.TempDir()
 		}
 		sFileName = sDir + string(os.PathSeparator) + sFileRoot
+		os.Remove(sFileName)
 	}
-    os.Remove(sFileName)
 
 	if sServer != "" {
 		var cmd *exec.Cmd
