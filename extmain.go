@@ -173,7 +173,7 @@ func Init(sOpt string) int {
 		return 2
 	}
 
-	pConnIn.Write( "[\"Ok\"]" )
+	//pConnIn.Write( "[\"Ok\"]" )
 	
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
@@ -255,10 +255,10 @@ func listen(iPort int) {
 						s := fnc(ap)
 						b, _ := json.Marshal(s)
 						//sendResponse(connIn, string(b))
-						pConnIn.Write(string(b))
+						pConnIn.Write("+" + string(b) + "\n")
 					} else {
 						//sendResponse(connIn, "[\"Err\"]")
-						pConnIn.Write("[\"Err\"]")
+						pConnIn.Write("+[\"Err\"]" + "\n")
 					}
 				} else {
 					bErr = true
