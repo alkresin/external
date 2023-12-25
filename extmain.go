@@ -121,7 +121,9 @@ func Init(sOpt string) int {
 			sDir = os.TempDir()
 		}
 		sFileName = sDir + string(os.PathSeparator) + sFileRoot
-		os.Remove(sFileName)
+		if sServer != "" {
+			os.Remove(sFileName)
+		}
 	}
 
 	if sServer != "" {
