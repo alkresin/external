@@ -178,7 +178,6 @@ func Init(sOpt string) int {
 	if iConnType == 2 {
 		pConnIn.Write( "+[\"Ok\"]\n" )
 	}
-	WriteLog( "Init-1\r\n" )
 
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
