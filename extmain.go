@@ -176,8 +176,9 @@ func Init(sOpt string) int {
 	}
 
 	if iConnType == 2 {
-		pConnIn.Write( "[\"Ok\"]" )
+		pConnIn.Write( "+[\"Ok\"]\n" )
 	}
+	WriteLog( "Init-1\r\n" )
 
 	go listen(iPort + 1)
 	time.Sleep(100 * time.Millisecond)
@@ -230,7 +231,7 @@ func listen(iPort int) {
 			switch arr[0] {
 			case "runproc":
 				//sendResponse(connIn, "[\"Ok\"]")
-				pConnIn.Write( "[\"Ok\"]" )
+				pConnIn.Write( "+[\"Ok\"]\n" )
 				if len(arr) > 1 {
 					if bWait {
 						tmp := make([]string, len(arr))
@@ -267,11 +268,11 @@ func listen(iPort int) {
 				} else {
 					bErr = true
 					//sendResponse(connIn, "[\"Err\"]")
-					pConnIn.Write("[\"Err\"]")
+					pConnIn.Write("+[\"Err\"]\n")
 				}
 			case "exit":
 				//sendResponse(connIn, "[\"Ok\"]")
-				pConnIn.Write("[\"Ok\"]")
+				pConnIn.Write("+[\"Ok\"]\n")
 				if len(arr) > 1 {
 					oW := Wnd(arr[1])
 					if oW != nil {
@@ -282,7 +283,7 @@ func listen(iPort int) {
 				}
 			case "endapp":
 				//sendResponse(connIn, "[\"Goodbye\"]")
-				pConnIn.Write("[\"Goodbye\"]")
+				pConnIn.Write("+[\"Goodbye\"]\n")
 				time.Sleep(100 * time.Millisecond)
 				bEndProg = true
 				//connIn.Close()
@@ -292,7 +293,7 @@ func listen(iPort int) {
 				return
 			default:
 				//sendResponse(connIn, "[\"Error\"]")
-				pConnIn.Write("[\"Error\"]")
+				pConnIn.Write("+[\"Error\"]\n")
 				bErr = true
 			}
 		}
